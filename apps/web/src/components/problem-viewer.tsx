@@ -5,6 +5,8 @@ import { useState, useCallback, useRef } from "react";
 import type { ProblemDefinition } from "@primer/shared/src/content-schema";
 
 interface ProblemViewerProps {
+  /** The DB problem ID (for response tracking) */
+  problemId: string;
   problem: ProblemDefinition;
   onComplete?: (results: StepResult[]) => void;
 }
@@ -16,7 +18,7 @@ interface StepResult {
   hintsUsed: number;
 }
 
-export function ProblemViewer({ problem, onComplete }: ProblemViewerProps) {
+export function ProblemViewer({ problemId, problem, onComplete }: ProblemViewerProps) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [answer, setAnswer] = useState("");
   const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(
@@ -27,6 +29,7 @@ export function ProblemViewer({ problem, onComplete }: ProblemViewerProps) {
   const [stepResults, setStepResults] = useState<StepResult[]>([]);
   const [completed, setCompleted] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const stepStartTime = useRef(Date.now());
 
   const currentStep = problem.steps[currentStepIndex];
   const isLastStep = currentStepIndex === problem.steps.length - 1;
@@ -48,6 +51,24 @@ export function ProblemViewer({ problem, onComplete }: ProblemViewerProps) {
         false);
 
     setAttempts((a) => a + 1);
+
+    // Record response + BKT update (fire-and-forget — don't block UI)
+    const responseTimeMs = Date.now() - stepStartTime.current;
+    fetch("/api/responses", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        problemId,
+        stepIndex: currentStepIndex,
+        correct,
+        responseTimeMs,
+        hintsUsed: hintsRevealed,
+        attemptNumber: attempts + 1,
+        kcIds: currentStep.kcs,
+      }),
+    }).catch(() => {
+      // Silent fail — don't break the learning flow for tracking errors
+    });
 
     if (correct) {
       setFeedback("correct");
@@ -73,6 +94,7 @@ export function ProblemViewer({ problem, onComplete }: ProblemViewerProps) {
           setFeedback(null);
           setHintsRevealed(0);
           setAttempts(0);
+          stepStartTime.current = Date.now();
         }
       }, 1200);
     } else {
@@ -83,6 +105,8 @@ export function ProblemViewer({ problem, onComplete }: ProblemViewerProps) {
   }, [
     answer,
     currentStep,
+    currentStepIndex,
+    problemId,
     attempts,
     hintsRevealed,
     isLastStep,

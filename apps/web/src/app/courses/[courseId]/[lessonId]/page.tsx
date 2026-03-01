@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { MathText } from "@primer/math-renderer";
-import { ProblemViewer } from "@/components/problem-viewer";
+import { AdaptiveLesson } from "@/components/adaptive-lesson";
 import type { ProblemDefinition } from "@primer/shared/src/content-schema";
 
 export const dynamic = "force-dynamic";
@@ -47,11 +47,14 @@ export default async function LessonPage({ params }: LessonPageProps) {
       ? moduleLessons[currentIndex + 1]
       : null;
 
-  // Cast JSON content to ProblemDefinition
-  const problems: ProblemDefinition[] = lesson.problems.map((p) => ({
-    ...(p.content as unknown as ProblemDefinition),
-    id: p.id,
-    title: p.title,
+  // Build static problem list (used as fallback for unauthenticated users)
+  const staticProblems = lesson.problems.map((p) => ({
+    dbId: p.id,
+    problem: {
+      ...(p.content as unknown as ProblemDefinition),
+      id: p.id,
+      title: p.title,
+    } as ProblemDefinition,
   }));
 
   return (
@@ -84,20 +87,8 @@ export default async function LessonPage({ params }: LessonPageProps) {
         </div>
       )}
 
-      {/* Problems */}
-      <div className="space-y-6">
-        <h2 className="text-lg font-semibold">
-          Practice ({problems.length} problems)
-        </h2>
-        {problems.map((problem, i) => (
-          <div key={problem.id}>
-            <div className="text-sm text-muted-foreground mb-2">
-              Problem {i + 1} of {problems.length}
-            </div>
-            <ProblemViewer problem={problem} />
-          </div>
-        ))}
-      </div>
+      {/* Adaptive problem selection (falls back to static for unauthenticated) */}
+      <AdaptiveLesson lessonId={lessonId} staticProblems={staticProblems} />
 
       {/* Lesson navigation */}
       <div className="flex justify-between items-center mt-10 pt-6 border-t border-border">

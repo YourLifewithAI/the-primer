@@ -2,6 +2,16 @@
  * Shared types, constants, and validators for The Primer platform.
  */
 
+// Re-export BKT engine
+export {
+  type BKTParams,
+  type BKTUpdateResult,
+  bktUpdate,
+  defaultBKTParams,
+  predictCorrect,
+  estimateToMastery,
+} from "./bkt";
+
 // Re-export content schema
 export {
   type KCDefinition,
