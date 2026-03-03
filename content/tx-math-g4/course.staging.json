@@ -1,0 +1,663 @@
+{
+  "id": "tx-math-g4",
+  "title": "Texas Grade 4 Mathematics",
+  "description": "Grade 4 mathematics aligned to Texas Essential Knowledge and Skills (TEKS). Covers whole number operations, fractions, algebraic reasoning, geometry, measurement, and data analysis.",
+  "subject": "MATH",
+  "gradeLevels": [4],
+  "standardsAlignment": "Texas Essential Knowledge and Skills (TEKS) 2024",
+  "license": "Original content, MIT License",
+  "knowledgeComponents": [
+    {
+      "id": "kc_place_value_10x",
+      "name": "Place Value: 10 Times Relationships",
+      "description": "Interpret the value of each place-value position as 10 times the position to the right and as one-tenth the value of the position to its left.",
+      "subject": "MATH",
+      "gradeLevels": [4],
+      "prerequisites": [],
+      "teksCode": "4.2A"
+    },
+    {
+      "id": "kc_expanded_notation_billions",
+      "name": "Expanded Notation Through Billions",
+      "description": "Represent the value of a digit in whole numbers through 1,000,000,000 and decimals to the hundredths using expanded notation and numerals.",
+      "subject": "MATH",
+      "gradeLevels": [4],
+      "prerequisites": ["kc_place_value_10x"],
+      "teksCode": "4.2B"
+    },
+    {
+      "id": "kc_compare_whole_numbers_billions",
+      "name": "Compare and Order Whole Numbers to One Billion",
+      "description": "Compare and order whole numbers to 1,000,000,000 using the symbols >, <, or =.",
+      "subject": "MATH",
+      "gradeLevels": [4],
+      "prerequisites": ["kc_expanded_notation_billions"],
+      "teksCode": "4.2C"
+    },
+    {
+      "id": "kc_round_whole_numbers",
+      "name": "Round Whole Numbers",
+      "description": "Round whole numbers to a given place value through the hundred thousands place.",
+      "subject": "MATH",
+      "gradeLevels": [4],
+      "prerequisites": ["kc_compare_whole_numbers_billions"],
+      "teksCode": "4.2D"
+    },
+    {
+      "id": "kc_represent_decimals",
+      "name": "Represent Decimals Using Models and Money",
+      "description": "Represent decimals, including tenths and hundredths, using concrete and visual models and money.",
+      "subject": "MATH",
+      "gradeLevels": [4],
+      "prerequisites": ["kc_place_value_10x"],
+      "teksCode": "4.2E"
+    },
+    {
+      "id": "kc_compare_decimals_hundredths",
+      "name": "Compare and Order Decimals to Hundredths",
+      "description": "Compare and order decimals using concrete and visual models to the hundredths.",
+      "subject": "MATH",
+      "gradeLevels": [4],
+      "prerequisites": ["kc_represent_decimals"],
+      "teksCode": "4.2F"
+    },
+    {
+      "id": "kc_decimals_to_fractions",
+      "name": "Relate Decimals to Fractions (Tenths and Hundredths)",
+      "description": "Relate decimals to fractions that name tenths and hundredths.",
+      "subject": "MATH",
+      "gradeLevels": [4],
+      "prerequisites": ["kc_represent_decimals"],
+      "teksCode": "4.2G"
+    },
+    {
+      "id": "kc_decimal_number_line",
+      "name": "Decimals on a Number Line",
+      "description": "Determine the corresponding decimal to the tenths or hundredths place of a specified point on a number line.",
+      "subject": "MATH",
+      "gradeLevels": [4],
+      "prerequisites": ["kc_compare_decimals_hundredths", "kc_decimals_to_fractions"],
+      "teksCode": "4.2H"
+    },
+    {
+      "id": "kc_unit_fractions",
+      "name": "Fractions as Sums of Unit Fractions",
+      "description": "Represent a fraction a/b as a sum of fractions 1/b (unit fractions).",
+      "subject": "MATH",
+      "gradeLevels": [4],
+      "prerequisites": [],
+      "teksCode": "4.3A"
+    },
+    {
+      "id": "kc_decompose_fractions",
+      "name": "Decompose Fractions in Multiple Ways",
+      "description": "Decompose a fraction in more than one way into a sum of fractions with the same denominator using concrete and pictorial models.",
+      "subject": "MATH",
+      "gradeLevels": [4],
+      "prerequisites": ["kc_unit_fractions"],
+      "teksCode": "4.3B"
+    },
+    {
+      "id": "kc_equivalent_fractions",
+      "name": "Equivalent Fractions",
+      "description": "Determine if two given fractions are equivalent using a variety of methods.",
+      "subject": "MATH",
+      "gradeLevels": [4],
+      "prerequisites": ["kc_unit_fractions"],
+      "teksCode": "4.3C"
+    },
+    {
+      "id": "kc_compare_fractions",
+      "name": "Compare Fractions with Unlike Numerators and Denominators",
+      "description": "Compare two fractions with different numerators and different denominators using objects, pictorial models, benchmarks, and equivalent forms.",
+      "subject": "MATH",
+      "gradeLevels": [4],
+      "prerequisites": ["kc_equivalent_fractions"],
+      "teksCode": "4.3D"
+    },
+    {
+      "id": "kc_add_subtract_fractions",
+      "name": "Add and Subtract Fractions with Equal Denominators",
+      "description": "Represent and solve addition and subtraction of fractions with equal denominators using objects and pictorial models.",
+      "subject": "MATH",
+      "gradeLevels": [4],
+      "prerequisites": ["kc_decompose_fractions"],
+      "teksCode": "4.3E"
+    },
+    {
+      "id": "kc_benchmark_fractions",
+      "name": "Benchmark Fractions for Reasonableness",
+      "description": "Evaluate the reasonableness of sums and differences of fractions using benchmark fractions 0, 1/4, 1/2, 3/4, and 1.",
+      "subject": "MATH",
+      "gradeLevels": [4],
+      "prerequisites": ["kc_compare_fractions", "kc_add_subtract_fractions"],
+      "teksCode": "4.3F"
+    },
+    {
+      "id": "kc_fractions_decimals_number_line",
+      "name": "Fractions and Decimals on a Number Line",
+      "description": "Represent fractions and decimals to the tenths or hundredths as distances from zero on a number line.",
+      "subject": "MATH",
+      "gradeLevels": [4],
+      "prerequisites": ["kc_decimal_number_line", "kc_compare_fractions"],
+      "teksCode": "4.3G"
+    }
+  ],
+  "modules": [
+    {
+      "id": "mod_whole_numbers_fractions",
+      "title": "Whole Numbers and Fractions",
+      "description": "Understanding place value through one billion, comparing and rounding whole numbers, representing and comparing decimals, and working with fractions including equivalence, comparison, and addition and subtraction.",
+      "lessons": [
+        {
+          "id": "lesson_pv_whole_01",
+          "title": "Place Value Through One Billion",
+          "content": "Every digit in a number has a value based on its **place**, or position.\n\nHere are the place values from right to left:\n$$\\text{ones} \\rightarrow \\text{tens} \\rightarrow \\text{hundreds} \\rightarrow \\text{thousands} \\rightarrow \\text{ten thousands} \\rightarrow \\text{hundred thousands} \\rightarrow \\text{millions} \\rightarrow \\text{ten millions} \\rightarrow \\text{hundred millions} \\rightarrow \\text{billions}$$\n\nEach place is **10 times** the value of the place to its right.\n\nFor example, the tens place is 10 times the ones place: $10 \\times 1 = 10$.\nThe hundreds place is 10 times the tens place: $10 \\times 10 = 100$.\n\nWe can write numbers in **expanded notation** to show each digit's value.\n\nExample: $3,406,052$\n$$3{,}406{,}052 = 3{,}000{,}000 + 400{,}000 + 6{,}000 + 50 + 2$$\n\nTo **compare** whole numbers, start at the highest place value and work right until you find a difference.\n\nTo **round** a number, look at the digit to the right of the place you are rounding to. If it is $5$ or more, round up. If it is less than $5$, round down.",
+          "problems": [
+            {
+              "id": "prob_pv_w_001",
+              "title": "The 10-Times Relationship",
+              "difficulty": 1,
+              "context": "Look at the number $55{,}000$.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "The $5$ in the ten-thousands place is how many times the value of the $5$ in the thousands place?",
+                  "correctAnswer": "10",
+                  "acceptableFormats": ["10", "ten", "10 times"],
+                  "kcs": ["kc_place_value_10x"],
+                  "hints": [
+                    { "type": "scaffold", "content": "What is the value of the $5$ in the ten-thousands place? What is the value of the $5$ in the thousands place?" },
+                    { "type": "more_specific", "content": "Ten-thousands: $50{,}000$. Thousands: $5{,}000$. Divide the bigger value by the smaller value: $50{,}000 \\div 5{,}000 = ?$" },
+                    { "type": "bottom_out", "content": "$50{,}000 \\div 5{,}000 = 10$. Each place to the left is $10$ times the place to its right." }
+                  ],
+                  "explanation": "The ten-thousands place is $10$ times the thousands place because $50{,}000 = 10 \\times 5{,}000$."
+                }
+              ]
+            },
+            {
+              "id": "prob_pv_w_002",
+              "title": "Write in Expanded Notation",
+              "difficulty": 2,
+              "context": "Look at the number $7{,}304{,}021$.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "What is the value of the digit $3$ in $7{,}304{,}021$?",
+                  "correctAnswer": "300000",
+                  "acceptableFormats": ["300000", "300,000", "three hundred thousand"],
+                  "kcs": ["kc_expanded_notation_billions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Count the places from right to left: ones, tens, hundreds, thousands, ten-thousands, hundred-thousands, millions. Which place is the $3$ in?" },
+                    { "type": "more_specific", "content": "The $3$ is in the hundred-thousands place. A digit in the hundred-thousands place has a value of digit $\\times 100{,}000$." },
+                    { "type": "bottom_out", "content": "The $3$ is in the hundred-thousands place: $3 \\times 100{,}000 = 300{,}000$." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Write $7{,}304{,}021$ in expanded notation.",
+                  "correctAnswer": "7000000 + 300000 + 4000 + 20 + 1",
+                  "acceptableFormats": ["7000000 + 300000 + 4000 + 20 + 1", "7,000,000 + 300,000 + 4,000 + 20 + 1", "7000000+300000+4000+20+1"],
+                  "kcs": ["kc_expanded_notation_billions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Write the value of each non-zero digit separately. What does each digit (7, 3, 4, 0, 0, 2, 1) contribute?" },
+                    { "type": "more_specific", "content": "$7$ is in the millions place ($7{,}000{,}000$). $3$ is in the hundred-thousands place ($300{,}000$). $4$ is in the thousands place ($4{,}000$). $2$ is in the tens place ($20$). $1$ is in the ones place ($1$). The zeros don't add anything." },
+                    { "type": "bottom_out", "content": "$7{,}304{,}021 = 7{,}000{,}000 + 300{,}000 + 4{,}000 + 20 + 1$" }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_pv_w_003",
+              "title": "Compare Whole Numbers",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Which symbol makes this true? $4{,}726{,}018$ ___ $4{,}729{,}018$. Use >, <, or =.",
+                  "correctAnswer": "<",
+                  "acceptableFormats": ["<", "less than"],
+                  "kcs": ["kc_compare_whole_numbers_billions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Both numbers have the same number of digits. Start at the highest place value (millions) and compare digit by digit until you find a difference." },
+                    { "type": "more_specific", "content": "Millions: $4 = 4$. Hundred-thousands: $7 = 7$. Ten-thousands: $2 = 2$. Thousands: $6$ vs $9$. Which is larger?" },
+                    { "type": "bottom_out", "content": "In the thousands place, $6 < 9$. So $4{,}726{,}018 < 4{,}729{,}018$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_pv_w_004",
+              "title": "Round to the Nearest Ten Thousand",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Round $583{,}247$ to the nearest ten thousand.",
+                  "correctAnswer": "580000",
+                  "acceptableFormats": ["580000", "580,000"],
+                  "kcs": ["kc_round_whole_numbers"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Find the ten-thousands digit. It is $8$ (in $583{,}247$, the ten-thousands place has an $8$). Now look at the digit to its right — the thousands digit." },
+                    { "type": "more_specific", "content": "The thousands digit is $3$. Since $3 < 5$, we round down — keep the ten-thousands digit at $8$ and replace everything to its right with zeros." },
+                    { "type": "bottom_out", "content": "The thousands digit is $3 < 5$, so round down. $583{,}247$ rounded to the nearest ten thousand is $580{,}000$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_pv_w_005",
+              "title": "Rounding in Context",
+              "difficulty": 3,
+              "context": "A city has a population of $2{,}847{,}563$ people.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Round the population to the nearest hundred thousand.",
+                  "correctAnswer": "2800000",
+                  "acceptableFormats": ["2800000", "2,800,000"],
+                  "kcs": ["kc_round_whole_numbers"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Find the hundred-thousands digit. In $2{,}847{,}563$, count from the right: ones, tens, hundreds, thousands, ten-thousands, hundred-thousands. Which digit is in the hundred-thousands place?" },
+                    { "type": "more_specific", "content": "The hundred-thousands digit is $8$. Now look one place to its right — the ten-thousands digit is $4$. Since $4 < 5$, we round down. Keep the $8$ and replace all digits to its right with zeros." },
+                    { "type": "bottom_out", "content": "The ten-thousands digit is $4 < 5$, so round down. $2{,}847{,}563$ rounded to the nearest hundred thousand is $2{,}800{,}000$." }
+                  ],
+                  "explanation": "In $2{,}847{,}563$: hundred-thousands digit = $8$, ten-thousands digit = $4$. Since $4 < 5$, round down to $2{,}800{,}000$."
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Now round $2{,}847{,}563$ to the nearest million.",
+                  "correctAnswer": "3000000",
+                  "acceptableFormats": ["3000000", "3,000,000"],
+                  "kcs": ["kc_round_whole_numbers"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Find the millions digit. It is $2$. Now look at the digit to its right — the hundred-thousands digit." },
+                    { "type": "more_specific", "content": "The hundred-thousands digit is $8$. Since $8 \\geq 5$, round up the millions digit." },
+                    { "type": "bottom_out", "content": "The hundred-thousands digit is $8 \\geq 5$, so round up: $2$ becomes $3$. The answer is $3{,}000{,}000$." }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lesson_decimals_01",
+          "title": "Decimals: Tenths, Hundredths, and Money",
+          "content": "A **decimal** is a number with a decimal point that separates the whole number part from the fractional part.\n\nThe place values after the decimal point are:\n- **Tenths** (one place after the decimal) — like $0.3$\n- **Hundredths** (two places after the decimal) — like $0.07$\n\nMoney is a great model for decimals:\n- $1$ dollar $= \\$1.00$ (a whole)\n- $1$ dime $= \\$0.10$ (one tenth of a dollar)\n- $1$ penny $= \\$0.01$ (one hundredth of a dollar)\n\nWe can also show decimals with **base-ten blocks**:\n- A flat (100 small squares) $= 1$ whole\n- A rod (10 small squares) $= 0.1$ (one tenth)\n- A small cube $= 0.01$ (one hundredth)\n\nTo **compare decimals**, line up the decimal points and compare digit by digit from left to right.\n\nDecimals and fractions are related: $0.3 = \\frac{3}{10}$ and $0.07 = \\frac{7}{100}$.\n\nOn a **number line**, each tick mark between whole numbers can represent tenths or hundredths.",
+          "problems": [
+            {
+              "id": "prob_dec_001",
+              "title": "Name a Decimal Using Money",
+              "difficulty": 1,
+              "context": "You have $3$ dollars, $4$ dimes, and $7$ pennies.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Write the total amount as a decimal.",
+                  "correctAnswer": "3.47",
+                  "acceptableFormats": ["3.47", "$3.47", "3.47 dollars"],
+                  "kcs": ["kc_represent_decimals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Dollars go before the decimal point. Dimes are tenths (one place after). Pennies are hundredths (two places after)." },
+                    { "type": "more_specific", "content": "$3$ dollars $= 3$. $4$ dimes $= 0.4$. $7$ pennies $= 0.07$. Add them together." },
+                    { "type": "bottom_out", "content": "$3 + 0.4 + 0.07 = 3.47$, or $\\$3.47$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_dec_002",
+              "title": "Compare Two Decimals",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Which symbol makes this true? $0.6$ ___ $0.59$. Use >, <, or =.",
+                  "correctAnswer": ">",
+                  "acceptableFormats": [">", "greater than"],
+                  "kcs": ["kc_compare_decimals_hundredths"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Write both numbers with the same number of decimal places: $0.60$ and $0.59$. Now compare digit by digit." },
+                    { "type": "more_specific", "content": "Tenths place: $6$ vs $5$. Which digit is larger?" },
+                    { "type": "bottom_out", "content": "$6 > 5$ in the tenths place, so $0.60 > 0.59$, meaning $0.6 > 0.59$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_dec_003",
+              "title": "Relate Decimals to Fractions",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Write $0.7$ as a fraction.",
+                  "correctAnswer": "7/10",
+                  "acceptableFormats": ["7/10", "7 tenths", "7 over 10"],
+                  "kcs": ["kc_decimals_to_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "What place value is the $7$ in? The name of that place value tells you the denominator." },
+                    { "type": "more_specific", "content": "The $7$ is in the tenths place. So the denominator is $10$ and the numerator is $7$." },
+                    { "type": "bottom_out", "content": "$0.7 = \\frac{7}{10}$ because the $7$ is in the tenths place." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Write $0.43$ as a fraction.",
+                  "correctAnswer": "43/100",
+                  "acceptableFormats": ["43/100", "43 hundredths", "43 over 100"],
+                  "kcs": ["kc_decimals_to_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "The last digit of $0.43$ is in the hundredths place. So the denominator is $100$. What is the numerator?" },
+                    { "type": "bottom_out", "content": "$0.43 = \\frac{43}{100}$ because $43$ hundredths is read as $\\frac{43}{100}$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_dec_004",
+              "title": "Find a Point on a Number Line",
+              "difficulty": 2,
+              "context": "A number line goes from $0$ to $1$. It is divided into $10$ equal parts. An arrow points to the $6$th mark.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "What decimal does the arrow point to?",
+                  "correctAnswer": "0.6",
+                  "acceptableFormats": ["0.6", ".6", "6/10", "0.60"],
+                  "kcs": ["kc_decimal_number_line"],
+                  "hints": [
+                    { "type": "scaffold", "content": "When a number line from $0$ to $1$ is split into $10$ equal parts, each part is $\\frac{1}{10} = 0.1$." },
+                    { "type": "more_specific", "content": "Count $6$ parts from $0$. Each part is $0.1$, so $6$ parts $= 6 \\times 0.1$." },
+                    { "type": "bottom_out", "content": "$6 \\times 0.1 = 0.6$. The arrow points to $0.6$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_dec_005",
+              "title": "Order Three Decimals",
+              "difficulty": 3,
+              "context": "Three students measured a plant. Amara: $0.82$ cm growth. Ben: $0.79$ cm growth. Cora: $0.8$ cm growth.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Order the growth amounts from least to greatest.",
+                  "correctAnswer": "0.79, 0.8, 0.82",
+                  "acceptableFormats": ["0.79, 0.8, 0.82", "0.79, 0.80, 0.82", ".79, .8, .82", "0.79 0.8 0.82"],
+                  "kcs": ["kc_compare_decimals_hundredths"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Write all three with the same number of decimal places: $0.82$, $0.79$, $0.80$. Now compare the tenths digit first." },
+                    { "type": "more_specific", "content": "Tenths: $8$, $7$, $8$. Ben's $0.79$ has $7$ in the tenths place, so it is the smallest. Now compare the two with $8$ in the tenths: $0.82$ and $0.80$. Compare hundredths." },
+                    { "type": "bottom_out", "content": "$0.79 < 0.80 < 0.82$. Order from least to greatest: $0.79, 0.8, 0.82$." }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lesson_fractions_01",
+          "title": "Understanding and Comparing Fractions",
+          "content": "A **fraction** names equal parts of a whole.\n\nIn the fraction $\\frac{a}{b}$:\n- $b$ (the **denominator**) tells how many equal parts the whole is divided into\n- $a$ (the **numerator**) tells how many of those parts we have\n\n**Unit fractions** have a numerator of $1$, like $\\frac{1}{4}$ or $\\frac{1}{8}$. Any fraction can be written as a sum of unit fractions:\n$$\\frac{3}{4} = \\frac{1}{4} + \\frac{1}{4} + \\frac{1}{4}$$\n\nA fraction can also be **decomposed** (broken apart) in more than one way:\n$$\\frac{5}{6} = \\frac{3}{6} + \\frac{2}{6} = \\frac{4}{6} + \\frac{1}{6} = \\frac{1}{6} + \\frac{1}{6} + \\frac{1}{6} + \\frac{1}{6} + \\frac{1}{6}$$\n\n**Equivalent fractions** name the same amount. To find an equivalent fraction, multiply or divide the numerator and denominator by the same number:\n$$\\frac{1}{2} = \\frac{2}{4} = \\frac{3}{6}$$\n\nTo **compare fractions** with different denominators, you can:\n- Find equivalent fractions with the same denominator\n- Use benchmark fractions ($0$, $\\frac{1}{4}$, $\\frac{1}{2}$, $\\frac{3}{4}$, $1$) to estimate\n- Use models like fraction bars or number lines",
+          "problems": [
+            {
+              "id": "prob_frac_001",
+              "title": "Write as a Sum of Unit Fractions",
+              "difficulty": 1,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Write $\\frac{4}{5}$ as a sum of unit fractions.",
+                  "correctAnswer": "1/5 + 1/5 + 1/5 + 1/5",
+                  "acceptableFormats": ["1/5 + 1/5 + 1/5 + 1/5", "1/5+1/5+1/5+1/5"],
+                  "kcs": ["kc_unit_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "A unit fraction has $1$ in the numerator and the same denominator as the original fraction. How many unit fractions do you need?" },
+                    { "type": "more_specific", "content": "Since the numerator is $4$, you need $4$ unit fractions. Each unit fraction is $\\frac{1}{5}$." },
+                    { "type": "bottom_out", "content": "$\\frac{4}{5} = \\frac{1}{5} + \\frac{1}{5} + \\frac{1}{5} + \\frac{1}{5}$" }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_frac_002",
+              "title": "Decompose a Fraction Two Ways",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Decompose $\\frac{7}{8}$ as a sum of fractions in two different ways. Write your first way.",
+                  "correctAnswer": "4/8 + 3/8",
+                  "acceptableFormats": ["4/8 + 3/8", "3/8 + 4/8", "5/8 + 2/8", "2/8 + 5/8", "6/8 + 1/8", "1/8 + 6/8", "1/8 + 1/8 + 1/8 + 1/8 + 1/8 + 1/8 + 1/8"],
+                  "kcs": ["kc_decompose_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Think of two numbers that add up to $7$ (the numerator). Both fractions will have $8$ as the denominator." },
+                    { "type": "more_specific", "content": "For example: $4 + 3 = 7$. So $\\frac{7}{8} = \\frac{4}{8} + \\frac{3}{8}$. Can you think of another pair?" },
+                    { "type": "bottom_out", "content": "One way: $\\frac{4}{8} + \\frac{3}{8}$. Another way: $\\frac{5}{8} + \\frac{2}{8}$. Both work because $4+3=7$ and $5+2=7$." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Write a different way to decompose $\\frac{7}{8}$.",
+                  "correctAnswer": "5/8 + 2/8",
+                  "acceptableFormats": ["5/8 + 2/8", "2/8 + 5/8", "6/8 + 1/8", "1/8 + 6/8", "3/8 + 4/8", "4/8 + 3/8", "1/8 + 2/8 + 4/8", "1/8 + 1/8 + 5/8", "2/8 + 2/8 + 3/8"],
+                  "kcs": ["kc_decompose_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Choose a different pair of numbers that add up to $7$. Or break it into $3$ or more parts." },
+                    { "type": "bottom_out", "content": "For example: $\\frac{5}{8} + \\frac{2}{8}$ or $\\frac{6}{8} + \\frac{1}{8}$. As long as the numerators add to $7$ and the denominator stays $8$, it works." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_frac_003",
+              "title": "Are These Fractions Equivalent?",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Are $\\frac{2}{3}$ and $\\frac{8}{12}$ equivalent? Write yes or no.",
+                  "correctAnswer": "yes",
+                  "acceptableFormats": ["yes", "Yes", "YES", "equivalent", "they are equivalent"],
+                  "kcs": ["kc_equivalent_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "To check if fractions are equivalent, you can multiply the numerator and denominator of one fraction by the same number to see if you get the other fraction." },
+                    { "type": "more_specific", "content": "What number do you multiply $3$ by to get $12$? Multiply the numerator ($2$) by the same number. Do you get $8$?" },
+                    { "type": "bottom_out", "content": "$3 \\times 4 = 12$ and $2 \\times 4 = 8$. So $\\frac{2}{3} = \\frac{8}{12}$. Yes, they are equivalent." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_frac_004",
+              "title": "Compare Fractions with Different Denominators",
+              "difficulty": 3,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Which is larger: $\\frac{3}{4}$ or $\\frac{5}{8}$? Find equivalent fractions with the same denominator to compare.",
+                  "correctAnswer": "3/4",
+                  "acceptableFormats": ["3/4", "3 fourths", "three fourths"],
+                  "kcs": ["kc_compare_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "To compare, make the denominators the same. Can you rename $\\frac{3}{4}$ with a denominator of $8$?" },
+                    { "type": "more_specific", "content": "$\\frac{3}{4} = \\frac{?}{8}$. Multiply numerator and denominator by $2$: $\\frac{3 \\times 2}{4 \\times 2} = \\frac{6}{8}$. Now compare $\\frac{6}{8}$ and $\\frac{5}{8}$." },
+                    { "type": "bottom_out", "content": "$\\frac{3}{4} = \\frac{6}{8}$ and $\\frac{6}{8} > \\frac{5}{8}$, so $\\frac{3}{4} > \\frac{5}{8}$. The larger fraction is $\\frac{3}{4}$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_frac_005",
+              "title": "Compare Fractions Using Benchmarks",
+              "difficulty": 3,
+              "context": "Maya has eaten $\\frac{5}{12}$ of a pizza. Carlos has eaten $\\frac{7}{10}$ of a pizza (the same size).",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Is $\\frac{5}{12}$ greater than, less than, or equal to $\\frac{1}{2}$? Use this to help compare.",
+                  "correctAnswer": "less than",
+                  "acceptableFormats": ["less than", "<", "less", "smaller than"],
+                  "kcs": ["kc_compare_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "For $\\frac{5}{12}$: $\\frac{1}{2}$ of $12$ is $6$. Is $5$ less than, equal to, or greater than $6$?" },
+                    { "type": "bottom_out", "content": "Since $5 < 6$, we know $\\frac{5}{12} < \\frac{6}{12} = \\frac{1}{2}$. So $\\frac{5}{12}$ is less than $\\frac{1}{2}$." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Is $\\frac{7}{10}$ greater than, less than, or equal to $\\frac{1}{2}$?",
+                  "correctAnswer": "greater than",
+                  "acceptableFormats": ["greater than", ">", "greater", "bigger than"],
+                  "kcs": ["kc_compare_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$\\frac{1}{2}$ of $10$ is $5$. Is $7$ greater than $5$?" },
+                    { "type": "bottom_out", "content": "Since $7 > 5$, we know $\\frac{7}{10} > \\frac{5}{10} = \\frac{1}{2}$." }
+                  ]
+                },
+                {
+                  "id": "step_3",
+                  "prompt": "Who ate more pizza, Maya or Carlos? Use your answers above.",
+                  "correctAnswer": "Carlos",
+                  "acceptableFormats": ["Carlos", "carlos"],
+                  "kcs": ["kc_compare_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Maya ate less than $\\frac{1}{2}$. Carlos ate more than $\\frac{1}{2}$. Who ate more?" },
+                    { "type": "bottom_out", "content": "Maya ($\\frac{5}{12}$) ate less than $\\frac{1}{2}$ and Carlos ($\\frac{7}{10}$) ate more than $\\frac{1}{2}$. Carlos ate more." }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lesson_fractions_02",
+          "title": "Adding, Subtracting, and Placing Fractions on a Number Line",
+          "content": "**Adding fractions with the same denominator:**\n\nWhen fractions have the same denominator, add the numerators and keep the denominator:\n$$\\frac{2}{6} + \\frac{3}{6} = \\frac{2 + 3}{6} = \\frac{5}{6}$$\n\n**Subtracting fractions with the same denominator:**\n$$\\frac{5}{6} - \\frac{2}{6} = \\frac{5 - 2}{6} = \\frac{3}{6}$$\n\n**Benchmark fractions** ($0$, $\\frac{1}{4}$, $\\frac{1}{2}$, $\\frac{3}{4}$, $1$) help us check if our answer is reasonable. For example, if you add $\\frac{3}{8} + \\frac{4}{8}$, you can estimate: $\\frac{3}{8}$ is close to $\\frac{1}{2}$ and $\\frac{4}{8}$ equals $\\frac{1}{2}$, so the answer should be close to $1$.\n\n**Fractions and decimals on a number line:**\n\nA number line from $0$ to $1$ divided into $10$ equal parts shows tenths. Each mark is $\\frac{1}{10} = 0.1$.\n\nA number line divided into $100$ equal parts shows hundredths. Each mark is $\\frac{1}{100} = 0.01$.\n\nSo $\\frac{3}{10}$ and $0.3$ land on the exact same point on the number line.",
+          "problems": [
+            {
+              "id": "prob_frac_ops_001",
+              "title": "Add Fractions with the Same Denominator",
+              "difficulty": 1,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Calculate: $\\frac{3}{8} + \\frac{2}{8}$",
+                  "correctAnswer": "5/8",
+                  "acceptableFormats": ["5/8", "5 eighths", "5 over 8"],
+                  "kcs": ["kc_add_subtract_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "When fractions have the same denominator, keep the denominator and add only the numerators." },
+                    { "type": "more_specific", "content": "The denominator stays $8$. Add the numerators: $3 + 2 = ?$" },
+                    { "type": "bottom_out", "content": "$3 + 2 = 5$, so $\\frac{3}{8} + \\frac{2}{8} = \\frac{5}{8}$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_frac_ops_002",
+              "title": "Subtract Fractions with the Same Denominator",
+              "difficulty": 1,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Calculate: $\\frac{7}{10} - \\frac{3}{10}$",
+                  "correctAnswer": "4/10",
+                  "acceptableFormats": ["4/10", "2/5", "4 tenths", "4 over 10"],
+                  "kcs": ["kc_add_subtract_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Keep the denominator the same and subtract the numerators." },
+                    { "type": "bottom_out", "content": "$7 - 3 = 4$, so $\\frac{7}{10} - \\frac{3}{10} = \\frac{4}{10}$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_frac_ops_003",
+              "title": "Check Reasonableness with Benchmarks",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "A student says $\\frac{1}{4} + \\frac{2}{4} = \\frac{3}{8}$. Use benchmark fractions to explain why this answer is NOT reasonable.",
+                  "correctAnswer": "the sum should be 3/4",
+                  "acceptableFormats": ["the sum should be 3/4", "3/4", "should be 3/4", "answer should be 3/4 not 3/8", "the denominator stays 4"],
+                  "kcs": ["kc_benchmark_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$\\frac{1}{4}$ is the benchmark $\\frac{1}{4}$. $\\frac{2}{4}$ equals the benchmark $\\frac{1}{2}$. What does $\\frac{1}{4} + \\frac{1}{2}$ equal?" },
+                    { "type": "more_specific", "content": "$\\frac{1}{4} + \\frac{1}{2} = \\frac{1}{4} + \\frac{2}{4} = \\frac{3}{4}$. The correct answer should be $\\frac{3}{4}$. Is $\\frac{3}{8}$ equal to $\\frac{3}{4}$?" },
+                    { "type": "bottom_out", "content": "The correct answer is $\\frac{3}{4}$ because $1 + 2 = 3$ and the denominator stays $4$. The student incorrectly added the denominators too. $\\frac{3}{8}$ is only half of $\\frac{3}{4}$, so it is NOT reasonable." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_frac_ops_004",
+              "title": "Fraction and Decimal Word Problem",
+              "difficulty": 3,
+              "context": "Jaylen is making a fruit salad. He uses $\\frac{3}{4}$ cup of strawberries and $\\frac{1}{4}$ cup of blueberries.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "How many cups of fruit does Jaylen use in all?",
+                  "correctAnswer": "1",
+                  "acceptableFormats": ["1", "4/4", "1 cup", "one cup", "one whole cup"],
+                  "kcs": ["kc_add_subtract_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Add the fractions: $\\frac{3}{4} + \\frac{1}{4}$. Both have the same denominator, so add the numerators." },
+                    { "type": "more_specific", "content": "$3 + 1 = 4$ and the denominator is $4$, so the sum is $\\frac{4}{4}$. What does $\\frac{4}{4}$ equal?" },
+                    { "type": "bottom_out", "content": "$\\frac{3}{4} + \\frac{1}{4} = \\frac{4}{4} = 1$. Jaylen uses $1$ cup of fruit in all." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "He then eats $\\frac{2}{4}$ cup. How much fruit salad is left?",
+                  "correctAnswer": "2/4",
+                  "acceptableFormats": ["2/4", "1/2", "one half", "half a cup", "0.5"],
+                  "kcs": ["kc_add_subtract_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Subtract: $\\frac{4}{4} - \\frac{2}{4}$. Keep the denominator, subtract the numerators." },
+                    { "type": "bottom_out", "content": "$\\frac{4}{4} - \\frac{2}{4} = \\frac{2}{4}$ cup. That equals $\\frac{1}{2}$ cup." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_frac_ops_005",
+              "title": "Locate Fractions and Decimals on a Number Line",
+              "difficulty": 3,
+              "context": "A number line goes from $0$ to $1$ and is divided into $10$ equal parts.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "What point on the number line is the same as $\\frac{6}{10}$? Write it as a decimal.",
+                  "correctAnswer": "0.6",
+                  "acceptableFormats": ["0.6", ".6", "0.60"],
+                  "kcs": ["kc_fractions_decimals_number_line"],
+                  "hints": [
+                    { "type": "scaffold", "content": "The number line is split into $10$ equal parts, so each mark represents $\\frac{1}{10}$. Count $6$ marks from $0$." },
+                    { "type": "more_specific", "content": "$\\frac{6}{10}$ means $6$ of the $10$ equal parts. As a decimal, the denominator $10$ means tenths." },
+                    { "type": "bottom_out", "content": "$\\frac{6}{10} = 0.6$. They land on the exact same point on the number line." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Which is farther from $0$ on the number line: $\\frac{4}{10}$ or $0.45$?",
+                  "correctAnswer": "0.45",
+                  "acceptableFormats": ["0.45", ".45", "45/100", "0.45 is farther"],
+                  "kcs": ["kc_fractions_decimals_number_line"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Farther from $0$ means a larger value. Convert $\\frac{4}{10}$ to a decimal, or convert $0.45$ to a fraction, and compare." },
+                    { "type": "more_specific", "content": "$\\frac{4}{10} = 0.4 = 0.40$. Now compare $0.40$ and $0.45$." },
+                    { "type": "bottom_out", "content": "$0.40 < 0.45$ because $0$ hundredths $< 5$ hundredths. So $0.45$ is farther from $0$ on the number line." }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

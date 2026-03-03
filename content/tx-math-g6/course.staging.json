@@ -1,0 +1,877 @@
+{
+  "id": "tx-math-g6",
+  "title": "Texas Grade 6 Mathematics",
+  "description": "Grade 6 mathematics aligned to Texas Essential Knowledge and Skills (TEKS). Covers rational numbers, proportionality, expressions, equations, geometry, and statistics.",
+  "subject": "MATH",
+  "gradeLevels": [6],
+  "standardsAlignment": "Texas Essential Knowledge and Skills (TEKS) 2024",
+  "license": "Original content, MIT License",
+  "knowledgeComponents": [
+    {
+      "id": "kc_classify_rationals",
+      "name": "Classify Rational Numbers Using Venn Diagrams",
+      "description": "Classify whole numbers, integers, and rational numbers using a visual representation such as a Venn diagram. Understand that whole numbers are a subset of integers, and integers are a subset of rational numbers.",
+      "subject": "MATH",
+      "gradeLevels": [6],
+      "prerequisites": [],
+      "teksCode": "6.2A"
+    },
+    {
+      "id": "kc_opposites_absolute_value",
+      "name": "Opposites and Absolute Value",
+      "description": "Identify a number, its opposite, and its absolute value. Understand that the absolute value of a number is its distance from zero on a number line, and that opposites have the same absolute value.",
+      "subject": "MATH",
+      "gradeLevels": [6],
+      "prerequisites": ["kc_classify_rationals"],
+      "teksCode": "6.2B"
+    },
+    {
+      "id": "kc_compare_order_rationals",
+      "name": "Compare and Order Rational Numbers on a Number Line",
+      "description": "Locate, compare, and order integers and rational numbers on a number line. Use symbols >, <, and = to compare values.",
+      "subject": "MATH",
+      "gradeLevels": [6],
+      "prerequisites": ["kc_opposites_absolute_value"],
+      "teksCode": "6.2C"
+    },
+    {
+      "id": "kc_order_rationals_context",
+      "name": "Order Rational Numbers in Real-World Contexts",
+      "description": "Order a set of rational numbers arising from mathematical and real-world contexts, including positive and negative fractions and decimals.",
+      "subject": "MATH",
+      "gradeLevels": [6],
+      "prerequisites": ["kc_compare_order_rationals"],
+      "teksCode": "6.2D"
+    },
+    {
+      "id": "kc_fraction_notation_division",
+      "name": "Fraction Notation as Division",
+      "description": "Extend representations for division to include fraction notation. Understand that a/b represents a ÷ b where b ≠ 0, and can be used to express division with any integers.",
+      "subject": "MATH",
+      "gradeLevels": [6],
+      "prerequisites": ["kc_classify_rationals"],
+      "teksCode": "6.2E"
+    },
+    {
+      "id": "kc_divide_by_fraction_reciprocal",
+      "name": "Dividing by a Fraction is Multiplying by Its Reciprocal",
+      "description": "Understand and apply the rule that dividing by a rational number is equivalent to multiplying by its reciprocal. Identify reciprocal pairs and apply to division problems.",
+      "subject": "MATH",
+      "gradeLevels": [6],
+      "prerequisites": ["kc_fraction_notation_division"],
+      "teksCode": "6.3A"
+    },
+    {
+      "id": "kc_multiply_fraction_effect",
+      "name": "Effect of Multiplying by a Fraction",
+      "description": "Determine whether a quantity increases or decreases when multiplied by a fraction. Understand that multiplying by a fraction greater than 1 increases a quantity and multiplying by a fraction less than 1 decreases it.",
+      "subject": "MATH",
+      "gradeLevels": [6],
+      "prerequisites": ["kc_divide_by_fraction_reciprocal"],
+      "teksCode": "6.3B"
+    },
+    {
+      "id": "kc_integer_operations_models",
+      "name": "Integer Operations with Concrete Models",
+      "description": "Represent integer operations (addition, subtraction, multiplication, division) with concrete models such as number lines and two-color counters, and connect these representations to algorithms.",
+      "subject": "MATH",
+      "gradeLevels": [6],
+      "prerequisites": ["kc_opposites_absolute_value"],
+      "teksCode": "6.3C"
+    },
+    {
+      "id": "kc_integer_operations_fluency",
+      "name": "Add, Subtract, Multiply, and Divide Integers Fluently",
+      "description": "Add, subtract, multiply, and divide integers fluently using standard algorithms. Apply rules for signs in multiplication and division of integers.",
+      "subject": "MATH",
+      "gradeLevels": [6],
+      "prerequisites": ["kc_integer_operations_models"],
+      "teksCode": "6.3D"
+    },
+    {
+      "id": "kc_rational_number_operations",
+      "name": "Multiply and Divide Positive Rational Numbers Fluently",
+      "description": "Multiply and divide positive rational numbers, including fractions and mixed numbers, fluently. Simplify results and interpret answers in context.",
+      "subject": "MATH",
+      "gradeLevels": [6],
+      "prerequisites": ["kc_divide_by_fraction_reciprocal", "kc_integer_operations_fluency"],
+      "teksCode": "6.3E"
+    }
+  ],
+  "modules": [
+    {
+      "id": "mod_rational_numbers",
+      "title": "Rational Numbers and Operations",
+      "description": "Understanding and working with rational numbers — classifying them, placing them on number lines, and performing all four operations with integers and positive rational numbers.",
+      "lessons": [
+        {
+          "id": "lesson_rn_01",
+          "title": "The Number Family: Classifying Rational Numbers",
+          "content": "Numbers belong to families, and smaller families nest inside bigger ones — like a set of Russian dolls.\n\n**Whole numbers** are the counting numbers and zero: $0, 1, 2, 3, \\ldots$\n\n**Integers** include all whole numbers AND their negatives: $\\ldots, -3, -2, -1, 0, 1, 2, 3, \\ldots$\n\n**Rational numbers** include all integers AND any number that can be written as $\\frac{a}{b}$ where $a$ and $b$ are integers and $b \\neq 0$. This includes fractions and terminating or repeating decimals.\n\nThe relationship looks like this on a Venn diagram:\n$$\\text{Whole Numbers} \\subset \\text{Integers} \\subset \\text{Rational Numbers}$$\n\nEvery whole number is an integer. Every integer is a rational number. But not every rational number is an integer (for example, $\\frac{3}{4}$).",
+          "problems": [
+            {
+              "id": "prob_rn_001",
+              "title": "Classify a Number",
+              "difficulty": 1,
+              "context": "Think about the number $-5$.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Is $-5$ a whole number, an integer, a rational number, or all that apply? List all categories it belongs to.",
+                  "correctAnswer": "integer, rational number",
+                  "acceptableFormats": ["integer, rational number", "integer and rational number", "rational number, integer", "rational and integer", "it is an integer and a rational number"],
+                  "kcs": ["kc_classify_rationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Remember: whole numbers are $0, 1, 2, 3, \\ldots$ — no negatives. Can $-5$ be in that group?" },
+                    { "type": "more_specific", "content": "$-5$ is negative, so it is NOT a whole number. Integers include negatives. Is $-5$ in the list $\\ldots, -3, -2, -1, 0, 1, 2, 3, \\ldots$? And can you write $-5$ as a fraction?" },
+                    { "type": "bottom_out", "content": "$-5$ is an integer (it's a negative whole number). It's also a rational number because $-5 = \\frac{-5}{1}$. It is NOT a whole number." }
+                  ],
+                  "explanation": "$-5$ is an integer because integers include all negatives of whole numbers. It is also a rational number because every integer can be written as $\\frac{n}{1}$."
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_002",
+              "title": "Classify Fractions and Decimals",
+              "difficulty": 2,
+              "context": "Consider the numbers $\\frac{3}{4}$, $0$, and $-2$.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Which of these numbers is a whole number but NOT a negative integer? Choose: $\\frac{3}{4}$, $0$, or $-2$.",
+                  "correctAnswer": "0",
+                  "acceptableFormats": ["0", "zero"],
+                  "kcs": ["kc_classify_rationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Whole numbers are $0, 1, 2, 3, \\ldots$ Negative integers are $-1, -2, -3, \\ldots$ Which number from the list fits in the whole numbers?" },
+                    { "type": "bottom_out", "content": "$0$ is a whole number. $-2$ is a negative integer. $\\frac{3}{4}$ is a rational number but not an integer at all." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Which of the three numbers is a rational number but NOT an integer?",
+                  "correctAnswer": "3/4",
+                  "acceptableFormats": ["3/4", "3 over 4", "0.75", "three fourths"],
+                  "kcs": ["kc_classify_rationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Integers are whole numbers and their negatives: $\\ldots, -2, -1, 0, 1, 2, \\ldots$ Which of the three numbers is not on that list?" },
+                    { "type": "bottom_out", "content": "$\\frac{3}{4}$ is a rational number (it's already in $\\frac{a}{b}$ form) but it is not an integer because it falls between $0$ and $1$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_003",
+              "title": "Venn Diagram Placement",
+              "difficulty": 2,
+              "context": "You are filling in a Venn diagram with three rings: the outer ring is Rational Numbers, the middle ring is Integers, and the inner ring is Whole Numbers.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Where does $7$ go in the Venn diagram? Answer with the innermost ring it belongs to.",
+                  "correctAnswer": "whole numbers",
+                  "acceptableFormats": ["whole numbers", "whole number", "inner ring", "innermost ring"],
+                  "kcs": ["kc_classify_rationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Is $7$ a counting number (or zero)? If so, it belongs to whole numbers — the innermost ring." },
+                    { "type": "bottom_out", "content": "$7$ is a whole number. It also belongs to all the outer rings, but we place it in the innermost ring it fits: Whole Numbers." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Where does $-3$ go — which ring is the innermost one it belongs to?",
+                  "correctAnswer": "integers",
+                  "acceptableFormats": ["integers", "integer", "middle ring"],
+                  "kcs": ["kc_classify_rationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Is $-3$ a whole number? No — it's negative. Is it an integer? Yes. Can it go in the even smaller Whole Numbers ring?" },
+                    { "type": "bottom_out", "content": "$-3$ is an integer but NOT a whole number, so its innermost ring is Integers (the middle ring)." }
+                  ]
+                },
+                {
+                  "id": "step_3",
+                  "prompt": "Where does $\\frac{1}{2}$ go — which ring is the innermost one it belongs to?",
+                  "correctAnswer": "rational numbers",
+                  "acceptableFormats": ["rational numbers", "rational number", "outer ring"],
+                  "kcs": ["kc_classify_rationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Is $\\frac{1}{2}$ a whole number? No. Is it an integer (a whole number or its negative)? No — it's between $0$ and $1$. Is it a rational number?" },
+                    { "type": "bottom_out", "content": "$\\frac{1}{2}$ is rational (it's written as $\\frac{a}{b}$) but NOT an integer, so it goes in the outermost ring: Rational Numbers only." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_004",
+              "title": "Is the Statement True or False?",
+              "difficulty": 3,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "True or false: All integers are rational numbers.",
+                  "correctAnswer": "true",
+                  "acceptableFormats": ["true", "yes"],
+                  "kcs": ["kc_classify_rationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Can every integer be written as a fraction $\\frac{a}{b}$? For example, can $5$ be written that way?" },
+                    { "type": "bottom_out", "content": "TRUE. Every integer $n$ can be written as $\\frac{n}{1}$, which is a valid rational number. Integers are a subset of rational numbers." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "True or false: All rational numbers are integers.",
+                  "correctAnswer": "false",
+                  "acceptableFormats": ["false", "no"],
+                  "kcs": ["kc_classify_rationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Can you think of a rational number that is NOT an integer? Hint: think about fractions." },
+                    { "type": "bottom_out", "content": "FALSE. For example, $\\frac{1}{2}$ is a rational number but not an integer. Rational numbers include fractions and decimals that are between integers." }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lesson_rn_02",
+          "title": "Opposites, Absolute Value, and the Number Line",
+          "content": "A **number line** stretches in both directions. Positive numbers are to the right of zero; negative numbers are to the left.\n\nThe **opposite** of a number is the same distance from zero, but on the other side. The opposite of $3$ is $-3$. The opposite of $-7$ is $7$. The opposite of $0$ is $0$.\n\n**Absolute value** is the distance from zero — it is always zero or positive. We write it with vertical bars:\n$$|-8| = 8 \\quad \\text{and} \\quad |8| = 8$$\n\nWhen **comparing** numbers on a number line, the number farther to the right is always greater:\n$$-1 > -5 \\quad \\text{because } -1 \\text{ is to the right of } -5$$",
+          "problems": [
+            {
+              "id": "prob_rn_005",
+              "title": "Find the Opposite",
+              "difficulty": 1,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "What is the opposite of $-9$?",
+                  "correctAnswer": "9",
+                  "acceptableFormats": ["9", "+9", "positive 9"],
+                  "kcs": ["kc_opposites_absolute_value"],
+                  "hints": [
+                    { "type": "scaffold", "content": "The opposite of a number is the same distance from zero on the other side of the number line. $-9$ is $9$ steps to the left of zero. What is $9$ steps to the right?" },
+                    { "type": "bottom_out", "content": "The opposite of $-9$ is $9$. They are both $9$ units from zero." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_006",
+              "title": "Calculate Absolute Value",
+              "difficulty": 1,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "What is $|-15|$?",
+                  "correctAnswer": "15",
+                  "acceptableFormats": ["15"],
+                  "kcs": ["kc_opposites_absolute_value"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Absolute value means distance from zero. How far is $-15$ from $0$ on a number line?" },
+                    { "type": "bottom_out", "content": "$-15$ is $15$ units from zero, so $|-15| = 15$. Absolute value is never negative." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "What is $|15|$?",
+                  "correctAnswer": "15",
+                  "acceptableFormats": ["15"],
+                  "kcs": ["kc_opposites_absolute_value"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$15$ is already positive. How far is $15$ from $0$?" },
+                    { "type": "bottom_out", "content": "$|15| = 15$ because $15$ is $15$ units from zero. Notice that $|-15| = |15| = 15$. Opposites have the same absolute value." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_007",
+              "title": "Compare Integers on a Number Line",
+              "difficulty": 2,
+              "context": "Use your understanding of the number line to compare.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Which symbol makes this true? $-4$ ___ $-10$. Use >, <, or =.",
+                  "correctAnswer": ">",
+                  "acceptableFormats": [">", "greater than"],
+                  "kcs": ["kc_compare_order_rationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "On a number line, which is farther to the right: $-4$ or $-10$? The one farther right is greater." },
+                    { "type": "more_specific", "content": "$-10$ is farther to the left (more negative). $-4$ is closer to zero. Numbers closer to zero (on the negative side) are greater." },
+                    { "type": "bottom_out", "content": "$-4 > -10$ because $-4$ is to the right of $-10$ on the number line." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Order these integers from least to greatest: $-3, 5, -8, 0, 2$",
+                  "correctAnswer": "-8, -3, 0, 2, 5",
+                  "acceptableFormats": ["-8, -3, 0, 2, 5", "-8 -3 0 2 5", "-8,-3,0,2,5"],
+                  "kcs": ["kc_compare_order_rationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Place all five numbers on a mental number line. They go from left (least) to right (greatest). Which is farthest left? Which is farthest right?" },
+                    { "type": "more_specific", "content": "The negatives come first (most negative first): $-8, -3$. Then $0$. Then the positives: $2, 5$." },
+                    { "type": "bottom_out", "content": "From least to greatest: $-8, -3, 0, 2, 5$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_008",
+              "title": "Absolute Value in Context",
+              "difficulty": 3,
+              "context": "A submarine is at an elevation of $-340$ feet (below sea level). A helicopter is flying at an elevation of $+1,200$ feet.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "What is the absolute value of the submarine's elevation?",
+                  "correctAnswer": "340",
+                  "acceptableFormats": ["340", "340 feet"],
+                  "kcs": ["kc_opposites_absolute_value"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Absolute value is distance from zero (sea level). The submarine is at $-340$ feet. How many feet is that from sea level?" },
+                    { "type": "bottom_out", "content": "$|-340| = 340$ feet. The submarine is $340$ feet below sea level." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Which is farther from sea level — the submarine or the helicopter? Use absolute values to decide.",
+                  "correctAnswer": "helicopter",
+                  "acceptableFormats": ["helicopter", "the helicopter"],
+                  "kcs": ["kc_opposites_absolute_value"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Find the absolute value of both elevations. Then compare those distances." },
+                    { "type": "more_specific", "content": "$|-340| = 340$ feet. $|1200| = 1200$ feet. Which is greater?" },
+                    { "type": "bottom_out", "content": "$1200 > 340$, so the helicopter is farther from sea level. It is $1,200$ feet above, while the submarine is only $340$ feet below." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_009",
+              "title": "Order Rational Numbers Including Fractions",
+              "difficulty": 3,
+              "context": "You need to order these rational numbers on a number line.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Order from least to greatest: $-\\frac{1}{2}$, $-2$, $\\frac{3}{4}$, $0$, $-\\frac{3}{4}$",
+                  "correctAnswer": "-2, -3/4, -1/2, 0, 3/4",
+                  "acceptableFormats": ["-2, -3/4, -1/2, 0, 3/4", "-2, -0.75, -0.5, 0, 0.75", "-2 < -3/4 < -1/2 < 0 < 3/4"],
+                  "kcs": ["kc_compare_order_rationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Convert fractions to decimals to make comparing easier. $\\frac{3}{4} = 0.75$, $-\\frac{3}{4} = -0.75$, $-\\frac{1}{2} = -0.5$. Now order: $-2, -0.75, -0.5, 0, 0.75$." },
+                    { "type": "more_specific", "content": "Start from the most negative. $-2$ is the farthest left. Then $-0.75$, then $-0.5$, then $0$, then $0.75$." },
+                    { "type": "bottom_out", "content": "From least to greatest: $-2, -\\frac{3}{4}, -\\frac{1}{2}, 0, \\frac{3}{4}$." }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lesson_rn_03",
+          "title": "Rational Numbers in Real-World Contexts",
+          "content": "Rational numbers show up everywhere in real life — temperatures, bank accounts, elevations, and sports statistics all use negative and positive values.\n\n**Ordering rational numbers in context** means understanding what larger or smaller values actually mean in the situation. For example:\n- In golf, a lower score is better, so $-3$ is better than $+2$.\n- In a bank account, a higher number is better, so $\\$50$ is better than $-\\$20$.\n- For temperature, the greater the number, the warmer it is.\n\n**Fraction notation as division:** The fraction $\\frac{a}{b}$ means $a \\div b$. For example:\n$$\\frac{15}{4} = 15 \\div 4 = 3.75$$\nThis works even with variables. If $4$ friends share $15$ pizza slices equally, each gets $\\frac{15}{4}$ slices.",
+          "problems": [
+            {
+              "id": "prob_rn_010",
+              "title": "Ordering Temperatures",
+              "difficulty": 2,
+              "context": "Five cities recorded these temperatures one January morning: Austin $28^\\circ$F, Denver $-5^\\circ$F, Miami $62^\\circ$F, Minneapolis $-18^\\circ$F, Seattle $34^\\circ$F.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Order the cities from coldest to warmest.",
+                  "correctAnswer": "Minneapolis, Denver, Austin, Seattle, Miami",
+                  "acceptableFormats": ["Minneapolis, Denver, Austin, Seattle, Miami", "Minneapolis Denver Austin Seattle Miami"],
+                  "kcs": ["kc_order_rationals_context"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Coldest = lowest temperature = least number. Order the temperatures from least to greatest: $-18, -5, 28, 34, 62$." },
+                    { "type": "more_specific", "content": "$-18$ (Minneapolis) is coldest. $-5$ (Denver) is next. $28$ (Austin), $34$ (Seattle), $62$ (Miami) follow." },
+                    { "type": "bottom_out", "content": "From coldest to warmest: Minneapolis ($-18^\\circ$), Denver ($-5^\\circ$), Austin ($28^\\circ$), Seattle ($34^\\circ$), Miami ($62^\\circ$)." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_011",
+              "title": "Golf Scores",
+              "difficulty": 2,
+              "context": "Four golfers have these scores relative to par: Jada $-4$, Marcus $+2$, Sofia $-1$, Kai $0$. In golf, the lowest score wins.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Who is in last place (highest score)?",
+                  "correctAnswer": "Marcus",
+                  "acceptableFormats": ["Marcus", "marcus"],
+                  "kcs": ["kc_order_rationals_context"],
+                  "hints": [
+                    { "type": "scaffold", "content": "In golf, the highest score is worst. Which number is greatest: $-4, +2, -1, 0$?" },
+                    { "type": "bottom_out", "content": "$+2$ is the greatest (farthest right on a number line), so Marcus is in last place." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Order the golfers from first place (best) to last place (worst).",
+                  "correctAnswer": "Jada, Sofia, Kai, Marcus",
+                  "acceptableFormats": ["Jada, Sofia, Kai, Marcus", "Jada Sofia Kai Marcus"],
+                  "kcs": ["kc_order_rationals_context"],
+                  "hints": [
+                    { "type": "scaffold", "content": "First place = lowest score = most negative. Order the scores: $-4, -1, 0, +2$." },
+                    { "type": "bottom_out", "content": "Scores from lowest to highest: $-4$ (Jada), $-1$ (Sofia), $0$ (Kai), $+2$ (Marcus)." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_012",
+              "title": "Fraction Notation as Division",
+              "difficulty": 2,
+              "context": "A class of $5$ students is sharing $13$ granola bars equally.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Write the division as a fraction. How many granola bars does each student get?",
+                  "correctAnswer": "13/5",
+                  "acceptableFormats": ["13/5", "13 over 5", "2 3/5", "2.6"],
+                  "kcs": ["kc_fraction_notation_division"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Division can be written as a fraction: $a \\div b = \\frac{a}{b}$. You are dividing $13$ by $5$. How do you write that as a fraction?" },
+                    { "type": "bottom_out", "content": "$13 \\div 5 = \\frac{13}{5} = 2\\frac{3}{5}$ granola bars per student." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_013",
+              "title": "Evaluate a Fraction as Division",
+              "difficulty": 3,
+              "context": "You are running a lemonade stand. You made $\\$9.60$ in profit to split equally among $4$ friends.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Write an expression using fraction notation to represent each friend's share.",
+                  "correctAnswer": "9.60/4",
+                  "acceptableFormats": ["9.60/4", "$9.60/4", "9.6/4", "\\frac{9.60}{4}"],
+                  "kcs": ["kc_fraction_notation_division"],
+                  "hints": [
+                    { "type": "scaffold", "content": "You are splitting $\\$9.60$ among $4$ people. Write this as a fraction where the total is the numerator and the number of people is the denominator." },
+                    { "type": "bottom_out", "content": "$\\frac{9.60}{4}$ represents each person's share." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Calculate each friend's share. How much does each person get?",
+                  "correctAnswer": "$2.40",
+                  "acceptableFormats": ["$2.40", "2.40", "$2.4", "2.4"],
+                  "kcs": ["kc_fraction_notation_division"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$\\frac{9.60}{4}$ means $9.60 \\div 4$. What is $9.60 \\div 4$?" },
+                    { "type": "bottom_out", "content": "$9.60 \\div 4 = 2.40$. Each friend gets $\\$2.40$." }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lesson_rn_04",
+          "title": "Integer Operations: Adding and Subtracting",
+          "content": "Working with negative numbers follows consistent rules.\n\n**Adding integers:**\n- Same signs: add the absolute values, keep the sign. Example: $(-3) + (-5) = -8$\n- Different signs: subtract the smaller absolute value from the larger, keep the sign of the larger. Example: $(-7) + 4 = -3$ (because $|-7| > |4|$)\n\n**Subtracting integers:** Subtraction means adding the opposite.\n$$a - b = a + (-b)$$\nExample: $5 - (-3) = 5 + 3 = 8$\n\n**Number line model:** Start at the first number. Adding a positive means move right. Adding a negative means move left.",
+          "problems": [
+            {
+              "id": "prob_rn_014",
+              "title": "Add Integers with the Same Sign",
+              "difficulty": 1,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Calculate: $(-8) + (-6)$",
+                  "correctAnswer": "-14",
+                  "acceptableFormats": ["-14", "negative 14"],
+                  "kcs": ["kc_integer_operations_models", "kc_integer_operations_fluency"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Both numbers are negative (same sign). Add their absolute values: $8 + 6 = ?$. Then keep the negative sign." },
+                    { "type": "more_specific", "content": "$8 + 6 = 14$. Both numbers were negative, so the answer is negative." },
+                    { "type": "bottom_out", "content": "$(-8) + (-6) = -14$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_015",
+              "title": "Add Integers with Different Signs",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Calculate: $(-11) + 7$",
+                  "correctAnswer": "-4",
+                  "acceptableFormats": ["-4", "negative 4"],
+                  "kcs": ["kc_integer_operations_models", "kc_integer_operations_fluency"],
+                  "hints": [
+                    { "type": "scaffold", "content": "The signs are different. Find the absolute values: $|-11| = 11$ and $|7| = 7$. Subtract: $11 - 7 = ?$. Which number has the larger absolute value?" },
+                    { "type": "more_specific", "content": "$11 - 7 = 4$. Since $|-11| > |7|$, the answer takes the sign of $-11$, which is negative." },
+                    { "type": "bottom_out", "content": "$(-11) + 7 = -4$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_016",
+              "title": "Subtract Integers",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Rewrite $3 - (-9)$ as an addition problem.",
+                  "correctAnswer": "3 + 9",
+                  "acceptableFormats": ["3 + 9", "3+9"],
+                  "kcs": ["kc_integer_operations_models"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Subtracting a number is the same as adding its opposite. What is the opposite of $-9$?" },
+                    { "type": "bottom_out", "content": "The opposite of $-9$ is $+9$. So $3 - (-9) = 3 + 9$." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Now calculate $3 + 9$.",
+                  "correctAnswer": "12",
+                  "acceptableFormats": ["12"],
+                  "kcs": ["kc_integer_operations_fluency"],
+                  "hints": [
+                    { "type": "bottom_out", "content": "$3 + 9 = 12$. So $3 - (-9) = 12$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_017",
+              "title": "Temperature Change",
+              "difficulty": 3,
+              "context": "At midnight, the temperature was $-6^\\circ$F. By noon, it had risen $14^\\circ$. Then by evening, it fell $9^\\circ$.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "What was the temperature at noon?",
+                  "correctAnswer": "8",
+                  "acceptableFormats": ["8", "8°F", "8 degrees", "+8"],
+                  "kcs": ["kc_integer_operations_fluency"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Start at $-6^\\circ$ and add $+14$. That means moving $14$ steps to the right on the number line." },
+                    { "type": "bottom_out", "content": "$-6 + 14 = 8$. The temperature at noon was $8^\\circ$F." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "What was the temperature in the evening?",
+                  "correctAnswer": "-1",
+                  "acceptableFormats": ["-1", "-1°F", "-1 degrees", "negative 1"],
+                  "kcs": ["kc_integer_operations_fluency"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Start from the noon temperature ($8^\\circ$) and subtract $9$. $8 - 9 = ?$" },
+                    { "type": "bottom_out", "content": "$8 - 9 = -1$. The evening temperature was $-1^\\circ$F." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_018",
+              "title": "Multi-Step Integer Calculation",
+              "difficulty": 4,
+              "context": "A football team starts at the $35$-yard line. On three plays, they gain $8$ yards, lose $12$ yards, and gain $3$ yards.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Write an expression to represent the total yardage change over the three plays.",
+                  "correctAnswer": "8 + (-12) + 3",
+                  "acceptableFormats": ["8 + (-12) + 3", "8 - 12 + 3", "+8 + (-12) + 3"],
+                  "kcs": ["kc_integer_operations_models"],
+                  "hints": [
+                    { "type": "scaffold", "content": "A gain is positive and a loss is negative. Write each play as a signed number and add them." },
+                    { "type": "bottom_out", "content": "$+8 + (-12) + 3$ represents the yardage changes." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Calculate the net yardage change. Did the team gain or lose yards overall?",
+                  "correctAnswer": "-1",
+                  "acceptableFormats": ["-1", "-1 yards", "lost 1 yard", "net loss of 1"],
+                  "kcs": ["kc_integer_operations_fluency"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Add step by step: $8 + (-12) = ?$, then add $3$ to the result." },
+                    { "type": "more_specific", "content": "$8 + (-12) = -4$. Then $-4 + 3 = ?$" },
+                    { "type": "bottom_out", "content": "$8 + (-12) + 3 = -4 + 3 = -1$. The team lost $1$ yard overall." }
+                  ]
+                },
+                {
+                  "id": "step_3",
+                  "prompt": "What yard line are they on now?",
+                  "correctAnswer": "34",
+                  "acceptableFormats": ["34", "34-yard line", "the 34"],
+                  "kcs": ["kc_integer_operations_fluency"],
+                  "hints": [
+                    { "type": "scaffold", "content": "They started at the $35$-yard line and had a net change of $-1$ yard. $35 + (-1) = ?$" },
+                    { "type": "bottom_out", "content": "$35 + (-1) = 34$. They are on the $34$-yard line." }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lesson_rn_05",
+          "title": "Integer Operations: Multiplying and Dividing",
+          "content": "Multiplying and dividing integers follows simple sign rules:\n\n**Sign rules:**\n- Positive $\\times$ Positive = Positive: $3 \\times 4 = 12$\n- Negative $\\times$ Negative = Positive: $(-3) \\times (-4) = 12$\n- Positive $\\times$ Negative = Negative: $3 \\times (-4) = -12$\n- Negative $\\times$ Positive = Negative: $(-3) \\times 4 = -12$\n\nThe same rules apply to division:\n- $(-20) \\div 4 = -5$ (different signs → negative)\n- $(-20) \\div (-4) = 5$ (same signs → positive)\n\n**Memory trick:** Same signs give a positive result. Different signs give a negative result.",
+          "problems": [
+            {
+              "id": "prob_rn_019",
+              "title": "Multiply Two Integers",
+              "difficulty": 1,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Calculate: $(-6) \\times 7$",
+                  "correctAnswer": "-42",
+                  "acceptableFormats": ["-42", "negative 42"],
+                  "kcs": ["kc_integer_operations_fluency"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Ignore the signs first: $6 \\times 7 = 42$. Now check the signs: one is negative and one is positive. Same or different?" },
+                    { "type": "bottom_out", "content": "Different signs → negative. $(-6) \\times 7 = -42$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_020",
+              "title": "Multiply Two Negative Integers",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Calculate: $(-8) \\times (-5)$",
+                  "correctAnswer": "40",
+                  "acceptableFormats": ["40", "+40", "positive 40"],
+                  "kcs": ["kc_integer_operations_fluency"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$8 \\times 5 = 40$. Are the signs the same or different here?" },
+                    { "type": "more_specific", "content": "Both are negative — same signs! Same signs give a positive result." },
+                    { "type": "bottom_out", "content": "$(-8) \\times (-5) = +40$. Negative times negative is positive." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_021",
+              "title": "Divide Integers",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Calculate: $(-45) \\div (-9)$",
+                  "correctAnswer": "5",
+                  "acceptableFormats": ["5", "+5", "positive 5"],
+                  "kcs": ["kc_integer_operations_fluency"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$45 \\div 9 = 5$. Check the signs: both negative. Same signs or different?" },
+                    { "type": "bottom_out", "content": "Same signs → positive. $(-45) \\div (-9) = 5$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_022",
+              "title": "Multi-Step with Multiplication and Division",
+              "difficulty": 3,
+              "context": "A diver descends $3$ feet per second for $8$ seconds.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "If descending is represented as a negative rate, write the multiplication expression for the diver's total change in elevation.",
+                  "correctAnswer": "(-3) × 8",
+                  "acceptableFormats": ["(-3) × 8", "-3 × 8", "(-3)(8)", "8 × (-3)", "-3 * 8"],
+                  "kcs": ["kc_integer_operations_models"],
+                  "hints": [
+                    { "type": "scaffold", "content": "The diver moves $-3$ feet each second for $8$ seconds. Total change = rate $\\times$ time." },
+                    { "type": "bottom_out", "content": "$(-3) \\times 8$ represents the total change in elevation." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Calculate the diver's total change in elevation.",
+                  "correctAnswer": "-24",
+                  "acceptableFormats": ["-24", "-24 feet", "negative 24"],
+                  "kcs": ["kc_integer_operations_fluency"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$3 \\times 8 = 24$. What sign does the answer have? One factor is negative, one is positive." },
+                    { "type": "bottom_out", "content": "Different signs → negative. $(-3) \\times 8 = -24$ feet. The diver moved $24$ feet deeper." }
+                  ]
+                },
+                {
+                  "id": "step_3",
+                  "prompt": "If the diver started at $-10$ feet, what is the diver's final elevation?",
+                  "correctAnswer": "-34",
+                  "acceptableFormats": ["-34", "-34 feet", "negative 34"],
+                  "kcs": ["kc_integer_operations_fluency"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Add the change to the starting elevation: $-10 + (-24) = ?$" },
+                    { "type": "bottom_out", "content": "$-10 + (-24) = -34$ feet. The diver is now at $-34$ feet." }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lesson_rn_06",
+          "title": "Dividing Fractions and Multiplying Positive Rational Numbers",
+          "content": "**Dividing by a fraction:** Dividing by a number is the same as multiplying by its reciprocal.\n\nThe **reciprocal** of a fraction $\\frac{a}{b}$ is $\\frac{b}{a}$ (flip numerator and denominator). For example:\n- Reciprocal of $\\frac{2}{3}$ is $\\frac{3}{2}$\n- Reciprocal of $5$ is $\\frac{1}{5}$ (since $5 = \\frac{5}{1}$)\n\n$$\\frac{3}{4} \\div \\frac{2}{5} = \\frac{3}{4} \\times \\frac{5}{2} = \\frac{15}{8}$$\n\n**Effect of multiplying by a fraction:**\n- Multiplying by a fraction **greater than 1** makes the number bigger: $8 \\times \\frac{3}{2} = 12$\n- Multiplying by a fraction **less than 1** makes the number smaller: $8 \\times \\frac{1}{4} = 2$\n\n**Mixed numbers:** Convert to improper fractions first, then multiply or divide.",
+          "problems": [
+            {
+              "id": "prob_rn_023",
+              "title": "Find the Reciprocal",
+              "difficulty": 1,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "What is the reciprocal of $\\frac{5}{8}$?",
+                  "correctAnswer": "8/5",
+                  "acceptableFormats": ["8/5", "8 over 5", "1 3/5"],
+                  "kcs": ["kc_divide_by_fraction_reciprocal"],
+                  "hints": [
+                    { "type": "scaffold", "content": "To find the reciprocal, flip the numerator and denominator. The numerator becomes the denominator and vice versa." },
+                    { "type": "bottom_out", "content": "The reciprocal of $\\frac{5}{8}$ is $\\frac{8}{5}$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_024",
+              "title": "Divide a Whole Number by a Fraction",
+              "difficulty": 2,
+              "context": "You have $6$ cups of flour. Each batch of cookies needs $\\frac{3}{4}$ cup.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Rewrite $6 \\div \\frac{3}{4}$ as a multiplication problem.",
+                  "correctAnswer": "6 × 4/3",
+                  "acceptableFormats": ["6 × 4/3", "6 * 4/3", "6 × (4/3)", "\\frac{6 \\times 4}{3}"],
+                  "kcs": ["kc_divide_by_fraction_reciprocal"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Dividing by a fraction means multiplying by its reciprocal. What is the reciprocal of $\\frac{3}{4}$?" },
+                    { "type": "bottom_out", "content": "Reciprocal of $\\frac{3}{4}$ is $\\frac{4}{3}$. So $6 \\div \\frac{3}{4} = 6 \\times \\frac{4}{3}$." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Calculate the result. How many batches of cookies can you make?",
+                  "correctAnswer": "8",
+                  "acceptableFormats": ["8", "8 batches"],
+                  "kcs": ["kc_rational_number_operations"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$6 \\times \\frac{4}{3} = \\frac{6 \\times 4}{3} = \\frac{24}{3}$. Now simplify." },
+                    { "type": "bottom_out", "content": "$\\frac{24}{3} = 8$. You can make $8$ batches of cookies." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_025",
+              "title": "Does Multiplying Increase or Decrease?",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Will $24 \\times \\frac{5}{6}$ be greater than, less than, or equal to $24$? Explain without calculating.",
+                  "correctAnswer": "less than",
+                  "acceptableFormats": ["less than", "smaller", "decrease", "it decreases"],
+                  "kcs": ["kc_multiply_fraction_effect"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Is $\\frac{5}{6}$ greater than $1$, equal to $1$, or less than $1$? If you multiply a number by something less than $1$, what happens to it?" },
+                    { "type": "more_specific", "content": "$\\frac{5}{6} < 1$ because $5 < 6$. Multiplying by a fraction less than $1$ gives you a smaller portion of the original number." },
+                    { "type": "bottom_out", "content": "$\\frac{5}{6} < 1$, so $24 \\times \\frac{5}{6} < 24$. The result will be less than $24$. (It's $20$.)" }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Will $24 \\times \\frac{7}{4}$ be greater than, less than, or equal to $24$?",
+                  "correctAnswer": "greater than",
+                  "acceptableFormats": ["greater than", "larger", "increase", "it increases"],
+                  "kcs": ["kc_multiply_fraction_effect"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Is $\\frac{7}{4}$ greater than $1$, equal to $1$, or less than $1$? Compare numerator and denominator." },
+                    { "type": "bottom_out", "content": "$\\frac{7}{4} > 1$ because $7 > 4$. Multiplying by a fraction greater than $1$ gives a larger result. $24 \\times \\frac{7}{4} = 42 > 24$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_026",
+              "title": "Divide Fractions by Fractions",
+              "difficulty": 3,
+              "context": "A recipe calls for $\\frac{2}{3}$ cup of sugar per serving. You want to make $\\frac{1}{2}$ of a serving.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "How much sugar do you need? Calculate $\\frac{2}{3} \\times \\frac{1}{2}$.",
+                  "correctAnswer": "1/3",
+                  "acceptableFormats": ["1/3", "one third", "0.333", "0.33"],
+                  "kcs": ["kc_rational_number_operations"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Multiply numerators together and denominators together: $\\frac{2 \\times 1}{3 \\times 2}$." },
+                    { "type": "bottom_out", "content": "$\\frac{2 \\times 1}{3 \\times 2} = \\frac{2}{6} = \\frac{1}{3}$ cup of sugar." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "You have $\\frac{5}{6}$ cup of sugar. How many full servings can you make? Calculate $\\frac{5}{6} \\div \\frac{2}{3}$.",
+                  "correctAnswer": "5/4",
+                  "acceptableFormats": ["5/4", "1 1/4", "1.25", "one and one fourth"],
+                  "kcs": ["kc_divide_by_fraction_reciprocal", "kc_rational_number_operations"],
+                  "hints": [
+                    { "type": "scaffold", "content": "To divide by $\\frac{2}{3}$, multiply by its reciprocal. What is the reciprocal of $\\frac{2}{3}$?" },
+                    { "type": "more_specific", "content": "Reciprocal of $\\frac{2}{3}$ is $\\frac{3}{2}$. Now calculate $\\frac{5}{6} \\times \\frac{3}{2}$." },
+                    { "type": "bottom_out", "content": "$\\frac{5}{6} \\times \\frac{3}{2} = \\frac{15}{12} = \\frac{5}{4} = 1\\frac{1}{4}$ servings." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rn_027",
+              "title": "Multiply Mixed Numbers",
+              "difficulty": 4,
+              "context": "A garden bed is $2\\frac{1}{2}$ feet wide and $3\\frac{1}{3}$ feet long.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Convert both mixed numbers to improper fractions.",
+                  "correctAnswer": "5/2 and 10/3",
+                  "acceptableFormats": ["5/2 and 10/3", "5/2, 10/3", "\\frac{5}{2} and \\frac{10}{3}"],
+                  "kcs": ["kc_rational_number_operations"],
+                  "hints": [
+                    { "type": "scaffold", "content": "To convert a mixed number $a\\frac{b}{c}$ to an improper fraction: multiply $a \\times c$, add $b$, write over $c$. Try $2\\frac{1}{2}$: $2 \\times 2 + 1 = 5$, so $\\frac{5}{2}$." },
+                    { "type": "more_specific", "content": "$2\\frac{1}{2} = \\frac{5}{2}$. Now convert $3\\frac{1}{3}$: $3 \\times 3 + 1 = 10$, so..." },
+                    { "type": "bottom_out", "content": "$2\\frac{1}{2} = \\frac{5}{2}$ and $3\\frac{1}{3} = \\frac{10}{3}$." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Multiply to find the area: $\\frac{5}{2} \\times \\frac{10}{3}$.",
+                  "correctAnswer": "25/3",
+                  "acceptableFormats": ["25/3", "8 1/3", "8.33", "8\\frac{1}{3}"],
+                  "kcs": ["kc_rational_number_operations"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Multiply numerators: $5 \\times 10$. Multiply denominators: $2 \\times 3$. Then simplify." },
+                    { "type": "more_specific", "content": "$\\frac{5 \\times 10}{2 \\times 3} = \\frac{50}{6}$. Simplify by dividing both by $2$." },
+                    { "type": "bottom_out", "content": "$\\frac{50}{6} = \\frac{25}{3} = 8\\frac{1}{3}$ square feet." }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

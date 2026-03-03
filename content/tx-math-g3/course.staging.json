@@ -1,0 +1,710 @@
+{
+  "id": "tx-math-g3",
+  "title": "Texas Grade 3 Mathematics",
+  "description": "Grade 3 mathematics aligned to Texas Essential Knowledge and Skills (TEKS). Covers place value, fractions, computation, geometry, measurement, and data analysis.",
+  "subject": "MATH",
+  "gradeLevels": [3],
+  "standardsAlignment": "Texas Essential Knowledge and Skills (TEKS) 2024",
+  "license": "Original content, MIT License",
+  "knowledgeComponents": [
+    {
+      "id": "kc_compose_decompose_100k",
+      "name": "Compose and Decompose Numbers to 100,000",
+      "description": "Compose and decompose numbers up to 100,000 using objects, pictorial models, and numbers, including expanded notation and standard form.",
+      "subject": "MATH",
+      "gradeLevels": [3],
+      "prerequisites": [],
+      "teksCode": "3.2A"
+    },
+    {
+      "id": "kc_place_value_relationship",
+      "name": "10-Times Place Value Relationship",
+      "description": "Describe the mathematical relationship between digits in a number, understanding that each place to the left is ten times the value of the place to its right.",
+      "subject": "MATH",
+      "gradeLevels": [3],
+      "prerequisites": ["kc_compose_decompose_100k"],
+      "teksCode": "3.2B"
+    },
+    {
+      "id": "kc_number_line_rounding",
+      "name": "Number Lines and Rounding",
+      "description": "Represent a number on a number line as between two consecutive multiples of 10, 100, 1,000, or 10,000 and use number lines to round whole numbers.",
+      "subject": "MATH",
+      "gradeLevels": [3],
+      "prerequisites": ["kc_compose_decompose_100k"],
+      "teksCode": "3.2C"
+    },
+    {
+      "id": "kc_compare_order_100k",
+      "name": "Compare and Order Numbers to 100,000",
+      "description": "Compare and order whole numbers up to 100,000 and represent the comparison using the symbols >, <, or =.",
+      "subject": "MATH",
+      "gradeLevels": [3],
+      "prerequisites": ["kc_compose_decompose_100k"],
+      "teksCode": "3.2D"
+    },
+    {
+      "id": "kc_represent_fractions",
+      "name": "Represent Fractions with Models",
+      "description": "Represent fractions greater than zero and less than or equal to one with denominators of 2, 3, 4, 6, and 8 using concrete objects and pictorial models including number lines.",
+      "subject": "MATH",
+      "gradeLevels": [3],
+      "prerequisites": [],
+      "teksCode": "3.3A"
+    },
+    {
+      "id": "kc_fractions_number_line",
+      "name": "Fractions on a Number Line",
+      "description": "Determine the fraction greater than zero and less than or equal to one that corresponds to a specified point on a number line.",
+      "subject": "MATH",
+      "gradeLevels": [3],
+      "prerequisites": ["kc_represent_fractions"],
+      "teksCode": "3.3B"
+    },
+    {
+      "id": "kc_unit_fractions",
+      "name": "Unit Fractions and Decomposition",
+      "description": "Compose and decompose a fraction a/b (where a is greater than zero and less than or equal to b) as a sum of unit fractions 1/b.",
+      "subject": "MATH",
+      "gradeLevels": [3],
+      "prerequisites": ["kc_represent_fractions"],
+      "teksCode": "3.3D"
+    },
+    {
+      "id": "kc_equivalent_fractions",
+      "name": "Equivalent Fractions",
+      "description": "Represent equivalent fractions with denominators of 2, 3, 4, 6, and 8 using a variety of objects and pictorial models, including number lines.",
+      "subject": "MATH",
+      "gradeLevels": [3],
+      "prerequisites": ["kc_represent_fractions", "kc_unit_fractions"],
+      "teksCode": "3.3F"
+    },
+    {
+      "id": "kc_equivalent_fractions_explain",
+      "name": "Explain Fraction Equivalence",
+      "description": "Explain that two fractions are equivalent if and only if they are both represented by the same point on a number line or represent the same portion of the same size whole.",
+      "subject": "MATH",
+      "gradeLevels": [3],
+      "prerequisites": ["kc_equivalent_fractions", "kc_fractions_number_line"],
+      "teksCode": "3.3G"
+    },
+    {
+      "id": "kc_compare_fractions",
+      "name": "Compare Fractions",
+      "description": "Compare two fractions having the same numerator or the same denominator using the symbols >, <, or =.",
+      "subject": "MATH",
+      "gradeLevels": [3],
+      "prerequisites": ["kc_equivalent_fractions_explain"],
+      "teksCode": "3.3H"
+    }
+  ],
+  "modules": [
+    {
+      "id": "mod_place_value_fractions",
+      "title": "Place Value and Fractions",
+      "description": "Understanding place value for numbers up to 100,000, rounding and comparing whole numbers, and building a strong foundation in fractions with denominators of 2, 3, 4, 6, and 8.",
+      "lessons": [
+        {
+          "id": "lesson_pv_g3_01",
+          "title": "Building Numbers Up to 100,000",
+          "content": "Every number is made of digits, and each digit's value depends on where it sits. The number $43,512$ has five digits:\n\n| Place | Digit | Value |\n|-------|-------|-------|\n| Ten-thousands | 4 | 40,000 |\n| Thousands | 3 | 3,000 |\n| Hundreds | 5 | 500 |\n| Tens | 1 | 10 |\n| Ones | 2 | 2 |\n\nWe can write this number in **expanded form** to show each part:\n$$43{,}512 = 40{,}000 + 3{,}000 + 500 + 10 + 2$$\n\nEach place to the left is **10 times** bigger than the place to its right.",
+          "problems": [
+            {
+              "id": "prob_pv_g3_001",
+              "title": "What Is Each Digit Worth?",
+              "difficulty": 1,
+              "context": "Look at the number $27,345$.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "What is the value of the digit $7$ in $27,345$?",
+                  "correctAnswer": "7000",
+                  "acceptableFormats": ["7000", "7,000", "seven thousand", "7 thousands"],
+                  "kcs": ["kc_compose_decompose_100k"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Let's name the places from right to left: ones, tens, hundreds, thousands, ten-thousands. Which place is the $7$ in?" },
+                    { "type": "more_specific", "content": "The $7$ is in the thousands place. A digit in the thousands place is worth that digit times $1,000$." },
+                    { "type": "bottom_out", "content": "The $7$ is in the thousands place, so its value is $7 \\times 1{,}000 = 7{,}000$." }
+                  ],
+                  "explanation": "In $27{,}345$, the $7$ sits in the thousands place, making its value $7{,}000$."
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Write $27,345$ in expanded form. Fill in the blanks: $20,000 + \\_\\_ + \\_\\_ + \\_\\_ + \\_\\_$",
+                  "correctAnswer": "20000 + 7000 + 300 + 40 + 5",
+                  "acceptableFormats": ["20000 + 7000 + 300 + 40 + 5", "20,000 + 7,000 + 300 + 40 + 5", "20000+7000+300+40+5"],
+                  "kcs": ["kc_compose_decompose_100k"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Break each digit into its place value. The $2$ is $20,000$, the $7$ is $7,000$. Now do the same for $3$, $4$, and $5$." },
+                    { "type": "more_specific", "content": "The $3$ is in the hundreds place ($300$), the $4$ is in the tens place ($40$), and the $5$ is in the ones place ($5$)." },
+                    { "type": "bottom_out", "content": "$27{,}345 = 20{,}000 + 7{,}000 + 300 + 40 + 5$" }
+                  ],
+                  "explanation": "Each digit becomes a separate addend showing its true value."
+                }
+              ]
+            },
+            {
+              "id": "prob_pv_g3_002",
+              "title": "Build a Number from Its Parts",
+              "difficulty": 2,
+              "context": "A number is made of these parts: $50,000 + 600 + 80 + 3$.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "What is this number in standard form?",
+                  "correctAnswer": "50683",
+                  "acceptableFormats": ["50683", "50,683"],
+                  "kcs": ["kc_compose_decompose_100k"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Think about each part: $50,000$ goes in the ten-thousands and thousands places, $600$ in the hundreds place, $80$ in the tens place, and $3$ in the ones place. What happens to the thousands place if there are no thousands?" },
+                    { "type": "more_specific", "content": "There are no thousands, so the thousands digit is $0$. The number looks like: $5$ _ $6$ $8$ $3$. What goes in the blank?" },
+                    { "type": "bottom_out", "content": "$50{,}000 + 0 + 600 + 80 + 3 = 50{,}683$. The thousands digit is $0$." }
+                  ],
+                  "explanation": "When a place value is missing, we use $0$ as a placeholder."
+                }
+              ]
+            },
+            {
+              "id": "prob_pv_g3_003",
+              "title": "The 10-Times Relationship",
+              "difficulty": 2,
+              "context": "In the number $44,444$, the digit $4$ appears in every place.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "The $4$ in the hundreds place is how many times the value of the $4$ in the tens place?",
+                  "correctAnswer": "10",
+                  "acceptableFormats": ["10", "ten", "10 times"],
+                  "kcs": ["kc_place_value_relationship"],
+                  "hints": [
+                    { "type": "scaffold", "content": "What is the value of the $4$ in the hundreds place? What is the value of the $4$ in the tens place? Divide the larger by the smaller." },
+                    { "type": "more_specific", "content": "Hundreds place: $400$. Tens place: $40$. What is $400 \\div 40$?" },
+                    { "type": "bottom_out", "content": "$400 \\div 40 = 10$. Each place to the left is $10$ times bigger than the place to its right." }
+                  ],
+                  "explanation": "Moving one place to the left always means the value is $10$ times bigger."
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "The $4$ in the thousands place is worth how much MORE than the $4$ in the hundreds place?",
+                  "correctAnswer": "3600",
+                  "acceptableFormats": ["3600", "3,600"],
+                  "kcs": ["kc_place_value_relationship"],
+                  "hints": [
+                    { "type": "scaffold", "content": "What is the value of $4$ in the thousands place? What is the value of $4$ in the hundreds place? Subtract to find how much more." },
+                    { "type": "more_specific", "content": "Thousands: $4{,}000$. Hundreds: $400$. Subtract: $4{,}000 - 400 = ?$" },
+                    { "type": "bottom_out", "content": "$4{,}000 - 400 = 3{,}600$ more." }
+                  ],
+                  "explanation": "The thousands digit is worth $3{,}600$ more than the hundreds digit in this number."
+                }
+              ]
+            },
+            {
+              "id": "prob_pv_g3_004",
+              "title": "Word Form to Standard Form",
+              "difficulty": 2,
+              "context": "A librarian counted sixty-two thousand, four hundred nine books.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Write this number in standard form.",
+                  "correctAnswer": "62409",
+                  "acceptableFormats": ["62409", "62,409"],
+                  "kcs": ["kc_compose_decompose_100k"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Break the words into parts: 'sixty-two thousand' tells you the first two digits, 'four hundred' tells you the hundreds digit, 'nine' tells you the ones digit. What goes in the tens place?" },
+                    { "type": "more_specific", "content": "Sixty-two thousand = $62,000$. Four hundred = $400$. Nine = $9$. There are no tens, so the tens digit is $0$." },
+                    { "type": "bottom_out", "content": "$62{,}000 + 400 + 9 = 62{,}409$." }
+                  ],
+                  "explanation": "When no tens are mentioned, we put $0$ in the tens place."
+                }
+              ]
+            },
+            {
+              "id": "prob_pv_g3_005",
+              "title": "Rounding on the Number Line",
+              "difficulty": 3,
+              "context": "Mia counted $3,672$ shells on the beach.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Which two multiples of $1,000$ is $3,672$ between?",
+                  "correctAnswer": "3000 and 4000",
+                  "acceptableFormats": ["3000 and 4000", "3,000 and 4,000", "3000, 4000"],
+                  "kcs": ["kc_number_line_rounding"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Multiples of $1,000$ are $1,000$; $2,000$; $3,000$; $4,000$; $5,000$... Which two does $3,672$ fall between?" },
+                    { "type": "bottom_out", "content": "$3,672$ is between $3,000$ and $4,000$ because $3,000 < 3,672 < 4,000$." }
+                  ],
+                  "explanation": "We look at the thousands digit ($3$) to find the lower multiple, then add $1,000$ for the upper."
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Is $3,672$ closer to $3,000$ or to $4,000$ on the number line? Round $3,672$ to the nearest thousand.",
+                  "correctAnswer": "4000",
+                  "acceptableFormats": ["4000", "4,000"],
+                  "kcs": ["kc_number_line_rounding"],
+                  "hints": [
+                    { "type": "scaffold", "content": "The halfway point between $3,000$ and $4,000$ is $3,500$. Is $3,672$ above or below $3,500$?" },
+                    { "type": "more_specific", "content": "$3,672 > 3,500$, so it is past the halfway point. That means it is closer to $4,000$." },
+                    { "type": "bottom_out", "content": "Since $3,672 \\geq 3,500$, we round up. $3,672$ rounds to $4,000$." }
+                  ],
+                  "explanation": "The hundreds digit ($6$) is $\\geq 5$, so we round up to the next thousand."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lesson_pv_g3_02",
+          "title": "Comparing and Ordering Large Numbers",
+          "content": "To compare two whole numbers, start at the leftmost digit and work right until you find digits that are different.\n\n**Example:** Compare $48,230$ and $48,519$.\n\n- Ten-thousands: $4 = 4$ (equal, keep going)\n- Thousands: $8 = 8$ (equal, keep going)\n- Hundreds: $2$ vs $5$ — different!\n- Since $2 < 5$, we know $48{,}230 < 48{,}519$\n\nSymbols to know:\n- $>$ means \"greater than\"\n- $<$ means \"less than\"\n- $=$ means \"equal to\"\n\nA helpful trick: the open end of the symbol always faces the bigger number, like a hungry mouth eating the bigger number.",
+          "problems": [
+            {
+              "id": "prob_cmp_g3_001",
+              "title": "Which Number is Bigger?",
+              "difficulty": 1,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Use >, <, or = to compare: $35,600$ ___ $35,060$",
+                  "correctAnswer": ">",
+                  "acceptableFormats": [">", "greater than"],
+                  "kcs": ["kc_compare_order_100k"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Line up the digits by place value and compare left to right. Start with the ten-thousands digit in each number." },
+                    { "type": "more_specific", "content": "Ten-thousands: $3 = 3$. Thousands: $5 = 5$. Hundreds: $6$ vs $0$. Which is bigger?" },
+                    { "type": "bottom_out", "content": "The hundreds digits differ: $6 > 0$. So $35{,}600 > 35{,}060$." }
+                  ],
+                  "explanation": "When the first two places are equal, we compare the hundreds digits: $6 > 0$."
+                }
+              ]
+            },
+            {
+              "id": "prob_cmp_g3_002",
+              "title": "Compare Numbers with Different Digits",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Use >, <, or = to compare: $9,850$ ___ $10,000$",
+                  "correctAnswer": "<",
+                  "acceptableFormats": ["<", "less than"],
+                  "kcs": ["kc_compare_order_100k"],
+                  "hints": [
+                    { "type": "scaffold", "content": "How many digits does $9,850$ have? How many does $10,000$ have? A number with more digits is always bigger." },
+                    { "type": "bottom_out", "content": "$9,850$ has $4$ digits and $10,000$ has $5$ digits. A $5$-digit number is always greater than a $4$-digit number. So $9{,}850 < 10{,}000$." }
+                  ],
+                  "explanation": "More digits means a bigger number: $5$-digit numbers are always greater than $4$-digit numbers."
+                }
+              ]
+            },
+            {
+              "id": "prob_cmp_g3_003",
+              "title": "Order Three Numbers from Least to Greatest",
+              "difficulty": 3,
+              "context": "Three towns have these populations: Riverside: $24,780$, Hillside: $24,078$, Lakeville: $25,004$.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Which town has the largest population?",
+                  "correctAnswer": "Lakeville",
+                  "acceptableFormats": ["Lakeville", "lakeville"],
+                  "kcs": ["kc_compare_order_100k"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Compare the ten-thousands digit in each number. $24,780$ starts with $2$, $24,078$ starts with $2$, and $25,004$ starts with $2$. Move to the thousands place." },
+                    { "type": "more_specific", "content": "Thousands digits: Riverside $4$, Hillside $4$, Lakeville $5$. Lakeville has $5$ in the thousands place — the biggest." },
+                    { "type": "bottom_out", "content": "Lakeville ($25,004$) has $5$ in the thousands place while the others have $4$. Lakeville is the largest." }
+                  ],
+                  "explanation": "The thousands digit $5$ in $25,004$ is larger than $4$ in the other two numbers."
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Order all three towns from least to greatest population.",
+                  "correctAnswer": "Hillside, Riverside, Lakeville",
+                  "acceptableFormats": ["Hillside, Riverside, Lakeville", "Hillside Riverside Lakeville", "24078, 24780, 25004", "24,078, 24,780, 25,004"],
+                  "kcs": ["kc_compare_order_100k"],
+                  "hints": [
+                    { "type": "scaffold", "content": "We know Lakeville is biggest. Now compare Riverside ($24,780$) and Hillside ($24,078$). The first three digits are the same: $24,_$. Compare the hundreds place." },
+                    { "type": "more_specific", "content": "Riverside hundreds: $7$. Hillside hundreds: $0$. Since $0 < 7$, Hillside is smaller than Riverside." },
+                    { "type": "bottom_out", "content": "From least to greatest: Hillside ($24,078$), Riverside ($24,780$), Lakeville ($25,004$)." }
+                  ],
+                  "explanation": "Compare place by place: $24,078 < 24,780 < 25,004$."
+                }
+              ]
+            },
+            {
+              "id": "prob_cmp_g3_004",
+              "title": "Round to the Nearest Hundred",
+              "difficulty": 2,
+              "context": "A farmer harvested $8,347$ apples.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Which two consecutive multiples of $100$ is $8,347$ between?",
+                  "correctAnswer": "8300 and 8400",
+                  "acceptableFormats": ["8300 and 8400", "8,300 and 8,400", "8300, 8400"],
+                  "kcs": ["kc_number_line_rounding"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Look at the hundreds digit in $8,347$. It's $3$, so the lower multiple of $100$ is $8,300$. What is the next multiple of $100$?" },
+                    { "type": "bottom_out", "content": "$8,347$ is between $8,300$ and $8,400$." }
+                  ],
+                  "explanation": "We look at the hundreds digit to find which multiples of $100$ surround the number."
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Round $8,347$ to the nearest hundred.",
+                  "correctAnswer": "8300",
+                  "acceptableFormats": ["8300", "8,300"],
+                  "kcs": ["kc_number_line_rounding"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Is $8,347$ closer to $8,300$ or $8,400$? The halfway point is $8,350$. Is $8,347$ above or below $8,350$?" },
+                    { "type": "more_specific", "content": "$8,347 < 8,350$, so it is below the halfway point. That means it's closer to $8,300$." },
+                    { "type": "bottom_out", "content": "The tens digit is $4$, which is less than $5$, so we round down. $8,347$ rounds to $8,300$." }
+                  ],
+                  "explanation": "The tens digit ($4$) is less than $5$, so the hundreds digit stays the same and we get $8,300$."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lesson_frac_g3_01",
+          "title": "What Is a Fraction?",
+          "content": "A fraction names equal parts of a whole. When we cut something into equal pieces and take some of them, we use a fraction to describe how many we have.\n\n$$\\frac{\\text{numerator}}{\\text{denominator}}$$\n\n- The **denominator** (bottom number) tells how many equal parts the whole is cut into.\n- The **numerator** (top number) tells how many parts we have.\n\n**Example:** If a pizza is cut into $4$ equal slices and you eat $3$ slices, you ate $\\frac{3}{4}$ of the pizza.\n\nWe can also show fractions on a number line. The number line from $0$ to $1$ can be split into equal parts. If we split it into $4$ equal parts, each part is $\\frac{1}{4}$.",
+          "problems": [
+            {
+              "id": "prob_frac_g3_001",
+              "title": "Name the Fraction",
+              "difficulty": 1,
+              "context": "A rectangle is divided into $8$ equal parts. Three of those parts are shaded.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "What fraction of the rectangle is shaded?",
+                  "correctAnswer": "3/8",
+                  "acceptableFormats": ["3/8", "three-eighths", "three eighths"],
+                  "kcs": ["kc_represent_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "The denominator tells how many equal parts total. The numerator tells how many are shaded. How many total parts? How many shaded?" },
+                    { "type": "more_specific", "content": "Total equal parts: $8$. Shaded parts: $3$. Write the shaded parts over the total parts." },
+                    { "type": "bottom_out", "content": "$\\frac{3}{8}$ of the rectangle is shaded. Three out of eight equal parts." }
+                  ],
+                  "explanation": "The numerator ($3$) counts shaded parts; the denominator ($8$) counts all equal parts."
+                }
+              ]
+            },
+            {
+              "id": "prob_frac_g3_002",
+              "title": "Fractions on a Number Line",
+              "difficulty": 2,
+              "context": "A number line goes from $0$ to $1$. It is divided into $6$ equal parts. A point is marked at the third tick mark after $0$.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "What fraction does the point represent?",
+                  "correctAnswer": "3/6",
+                  "acceptableFormats": ["3/6", "1/2", "three-sixths", "one-half"],
+                  "kcs": ["kc_fractions_number_line"],
+                  "hints": [
+                    { "type": "scaffold", "content": "The number line is divided into $6$ equal parts, so the denominator is $6$. The point is at the third mark. What is the numerator?" },
+                    { "type": "more_specific", "content": "Counting tick marks from $0$: first ($\\frac{1}{6}$), second ($\\frac{2}{6}$), third ($\\frac{3}{6}$). The third mark is $\\frac{3}{6}$." },
+                    { "type": "bottom_out", "content": "The point is at $\\frac{3}{6}$ (which is also equal to $\\frac{1}{2}$)." }
+                  ],
+                  "explanation": "Count the tick marks from $0$ to find the numerator; the denominator is the total number of equal parts."
+                }
+              ]
+            },
+            {
+              "id": "prob_frac_g3_003",
+              "title": "Decompose into Unit Fractions",
+              "difficulty": 2,
+              "context": "Maria ate $\\frac{3}{4}$ of a granola bar.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "A unit fraction has $1$ in the numerator. Write $\\frac{3}{4}$ as a sum of unit fractions.",
+                  "correctAnswer": "1/4 + 1/4 + 1/4",
+                  "acceptableFormats": ["1/4 + 1/4 + 1/4", "1/4+1/4+1/4"],
+                  "kcs": ["kc_unit_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "A unit fraction is $\\frac{1}{\\text{something}}$. Since our whole is cut into $4$ parts, each unit fraction is $\\frac{1}{4}$. How many $\\frac{1}{4}$'s make $\\frac{3}{4}$?" },
+                    { "type": "more_specific", "content": "We need $3$ parts, each of size $\\frac{1}{4}$. So we add three $\\frac{1}{4}$'s together." },
+                    { "type": "bottom_out", "content": "$\\frac{3}{4} = \\frac{1}{4} + \\frac{1}{4} + \\frac{1}{4}$" }
+                  ],
+                  "explanation": "$\\frac{3}{4}$ is three copies of the unit fraction $\\frac{1}{4}$."
+                }
+              ]
+            },
+            {
+              "id": "prob_frac_g3_004",
+              "title": "Unit Fractions with Sixths and Eighths",
+              "difficulty": 3,
+              "context": "Jamal colored $\\frac{5}{8}$ of a piece of paper.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Write $\\frac{5}{8}$ as a sum of unit fractions.",
+                  "correctAnswer": "1/8 + 1/8 + 1/8 + 1/8 + 1/8",
+                  "acceptableFormats": ["1/8 + 1/8 + 1/8 + 1/8 + 1/8", "1/8+1/8+1/8+1/8+1/8", "5 × 1/8", "5 times 1/8"],
+                  "kcs": ["kc_unit_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "The denominator is $8$, so the unit fraction is $\\frac{1}{8}$. The numerator is $5$, which tells us how many unit fractions to add. How many $\\frac{1}{8}$'s do we need?" },
+                    { "type": "more_specific", "content": "We need $5$ copies of $\\frac{1}{8}$." },
+                    { "type": "bottom_out", "content": "$\\frac{5}{8} = \\frac{1}{8} + \\frac{1}{8} + \\frac{1}{8} + \\frac{1}{8} + \\frac{1}{8}$" }
+                  ],
+                  "explanation": "The numerator tells you how many unit fractions to add: $5$ copies of $\\frac{1}{8}$."
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Jamal then colored $\\frac{2}{8}$ more. How many total unit fractions of $\\frac{1}{8}$ has he colored now?",
+                  "correctAnswer": "7",
+                  "acceptableFormats": ["7", "seven", "7/8"],
+                  "kcs": ["kc_unit_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$\\frac{5}{8}$ is $5$ unit fractions and $\\frac{2}{8}$ is $2$ unit fractions. How many is $5 + 2$?" },
+                    { "type": "bottom_out", "content": "$5 + 2 = 7$ unit fractions of $\\frac{1}{8}$, which means $\\frac{7}{8}$ of the paper is colored." }
+                  ],
+                  "explanation": "Adding unit fractions is just adding their count: $5 + 2 = 7$, so $\\frac{5}{8} + \\frac{2}{8} = \\frac{7}{8}$."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lesson_frac_g3_02",
+          "title": "Equivalent Fractions",
+          "content": "Sometimes two fractions look different but have the same value. These are called **equivalent fractions**.\n\nThink of it like cutting a sandwich in half versus cutting it into four pieces and taking two. Either way, you have the same amount!\n\n$$\\frac{1}{2} = \\frac{2}{4} = \\frac{4}{8}$$\n\nWe can see this on a number line too. Equivalent fractions land on **exactly the same point** on the number line.\n\nTo check if fractions are equivalent, think about whether they represent the same sized portion of the same sized whole.",
+          "problems": [
+            {
+              "id": "prob_eq_g3_001",
+              "title": "Are These Equivalent?",
+              "difficulty": 1,
+              "context": "Two circles are the same size. Circle A is divided into $2$ equal parts with $1$ part shaded. Circle B is divided into $4$ equal parts with $2$ parts shaded.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Write the fraction for Circle A and the fraction for Circle B.",
+                  "correctAnswer": "1/2 and 2/4",
+                  "acceptableFormats": ["1/2 and 2/4", "1/2, 2/4", "2/4 and 1/2"],
+                  "kcs": ["kc_represent_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "For each circle, the fraction is (shaded parts) ÷ (total equal parts). Circle A: $1$ shaded out of $2$ total. Circle B: $2$ shaded out of $4$ total." },
+                    { "type": "bottom_out", "content": "Circle A: $\\frac{1}{2}$. Circle B: $\\frac{2}{4}$." }
+                  ],
+                  "explanation": "Count shaded parts for the numerator and total parts for the denominator."
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Are $\\frac{1}{2}$ and $\\frac{2}{4}$ equivalent fractions? Type yes or no and explain how you know.",
+                  "correctAnswer": "yes",
+                  "acceptableFormats": ["yes", "Yes", "YES", "they are equivalent", "equal"],
+                  "kcs": ["kc_equivalent_fractions_explain"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Both circles are the same size. Does the shaded part look the same in both circles? If the shaded portions cover the same area on the same-sized whole, the fractions are equivalent." },
+                    { "type": "bottom_out", "content": "Yes! Both fractions shade exactly half of the same-sized whole, so $\\frac{1}{2} = \\frac{2}{4}$. They are equivalent." }
+                  ],
+                  "explanation": "When two fractions represent the same portion of the same-sized whole, they are equivalent."
+                }
+              ]
+            },
+            {
+              "id": "prob_eq_g3_002",
+              "title": "Find the Missing Numerator",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Find the missing number: $\\frac{1}{3} = \\frac{?}{6}$",
+                  "correctAnswer": "2",
+                  "acceptableFormats": ["2", "two"],
+                  "kcs": ["kc_equivalent_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "The denominator went from $3$ to $6$. To go from $3$ to $6$, you multiply by $2$. To keep the fraction equivalent, what do you do to the numerator?" },
+                    { "type": "more_specific", "content": "If you multiply the denominator by $2$ (from $3$ to $6$), you must also multiply the numerator by $2$." },
+                    { "type": "bottom_out", "content": "$1 \\times 2 = 2$, so $\\frac{1}{3} = \\frac{2}{6}$." }
+                  ],
+                  "explanation": "Multiplying both numerator and denominator by the same number gives an equivalent fraction."
+                }
+              ]
+            },
+            {
+              "id": "prob_eq_g3_003",
+              "title": "Equivalent Fractions on a Number Line",
+              "difficulty": 3,
+              "context": "A number line from $0$ to $1$ is divided into $8$ equal parts.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "On a number line divided into $8$ equal parts, $\\frac{4}{8}$ is marked. Name another fraction with a denominator of $2$, $3$, $4$, or $6$ that lands on the exact same point.",
+                  "correctAnswer": "1/2",
+                  "acceptableFormats": ["1/2", "2/4", "3/6", "4/8", "one-half", "one half"],
+                  "kcs": ["kc_equivalent_fractions_explain"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$\\frac{4}{8}$ is $4$ parts out of $8$ equal parts. Think: $4$ out of $8$ — can you simplify this? How many of $8$ does $4$ represent?" },
+                    { "type": "more_specific", "content": "$4$ is exactly half of $8$. So $\\frac{4}{8}$ represents exactly the halfway point, just like $\\frac{1}{2}$." },
+                    { "type": "bottom_out", "content": "$\\frac{4}{8} = \\frac{1}{2}$. Both fractions land on the exact same point on the number line — the halfway point." }
+                  ],
+                  "explanation": "Two fractions are equivalent when they mark the same point on a number line."
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "True or false: $\\frac{2}{3}$ and $\\frac{4}{6}$ land on the same point on a number line from $0$ to $1$.",
+                  "correctAnswer": "true",
+                  "acceptableFormats": ["true", "True", "TRUE", "yes", "Yes"],
+                  "kcs": ["kc_equivalent_fractions_explain"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Think about $\\frac{2}{3}$: the number line is divided into $3$ parts and we go to the $2$nd mark. For $\\frac{4}{6}$: divide into $6$ parts and go to the $4$th mark. Are these the same spot?" },
+                    { "type": "more_specific", "content": "Each third contains $2$ sixths. So the $2$nd third mark is the same as the $4$th sixth mark." },
+                    { "type": "bottom_out", "content": "True! $\\frac{2}{3} = \\frac{4}{6}$. They land on exactly the same point because $\\frac{2}{3}$ and $\\frac{4}{6}$ are equivalent fractions." }
+                  ],
+                  "explanation": "$\\frac{2}{3}$ and $\\frac{4}{6}$ are equivalent — $2 \\times 2 = 4$ and $3 \\times 2 = 6$."
+                }
+              ]
+            },
+            {
+              "id": "prob_eq_g3_004",
+              "title": "Find All Equivalent Fractions",
+              "difficulty": 3,
+              "context": "You have the fraction $\\frac{2}{4}$.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Which fractions from this list are equivalent to $\\frac{2}{4}$? Choose all that apply: $\\frac{1}{2}$, $\\frac{3}{6}$, $\\frac{4}{8}$, $\\frac{1}{4}$",
+                  "correctAnswer": "1/2, 3/6, 4/8",
+                  "acceptableFormats": ["1/2, 3/6, 4/8", "1/2 3/6 4/8", "3/6, 4/8, 1/2"],
+                  "kcs": ["kc_equivalent_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$\\frac{2}{4}$ means $2$ parts out of $4$ equal parts. Think about whether each fraction represents the same-sized portion. $\\frac{1}{2}$: half. $\\frac{2}{4}$: two of four, which is also half. What about the others?" },
+                    { "type": "more_specific", "content": "Check $\\frac{3}{6}$: $3$ out of $6$ — is that half? Check $\\frac{4}{8}$: $4$ out of $8$ — is that half? Check $\\frac{1}{4}$: $1$ out of $4$ — is that half?" },
+                    { "type": "bottom_out", "content": "$\\frac{1}{2}$, $\\frac{3}{6}$, and $\\frac{4}{8}$ are all equal to $\\frac{2}{4}$ — they all represent one half. $\\frac{1}{4}$ is smaller (just one quarter)." }
+                  ],
+                  "explanation": "$\\frac{2}{4} = \\frac{1}{2} = \\frac{3}{6} = \\frac{4}{8}$ — all represent the same half of the whole. $\\frac{1}{4}$ is only one quarter, so it's not equivalent."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lesson_frac_g3_03",
+          "title": "Comparing Fractions",
+          "content": "When we compare fractions, we can use $>$, $<$, or $=$.\n\nThere are two helpful patterns to remember:\n\n**Same denominator:** If the bottom numbers are the same, compare the top numbers. Bigger numerator = bigger fraction.\n$$\\frac{3}{8} < \\frac{5}{8} \\quad \\text{(same denominator, } 3 < 5 \\text{)}$$\n\n**Same numerator:** If the top numbers are the same, compare the bottom numbers. But here's the tricky part — a bigger denominator means each piece is *smaller*, so the fraction is smaller!\n$$\\frac{1}{3} > \\frac{1}{6} \\quad \\text{(same numerator, but thirds are bigger than sixths)}$$\n\nThink of it this way: if you cut a pizza into more slices, each slice is smaller.",
+          "problems": [
+            {
+              "id": "prob_cmpfrac_g3_001",
+              "title": "Compare Same-Denominator Fractions",
+              "difficulty": 1,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Use >, <, or = to compare: $\\frac{2}{6}$ ___ $\\frac{5}{6}$",
+                  "correctAnswer": "<",
+                  "acceptableFormats": ["<", "less than"],
+                  "kcs": ["kc_compare_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "The denominators are both $6$, so the pieces are all the same size. Just compare the numerators: $2$ vs $5$. Which is bigger?" },
+                    { "type": "bottom_out", "content": "$2 < 5$, so $\\frac{2}{6} < \\frac{5}{6}$. With the same denominator, the larger numerator means the larger fraction." }
+                  ],
+                  "explanation": "Same denominator: just compare the numerators. $2 < 5$ so $\\frac{2}{6} < \\frac{5}{6}$."
+                }
+              ]
+            },
+            {
+              "id": "prob_cmpfrac_g3_002",
+              "title": "Compare Same-Numerator Fractions",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Use >, <, or = to compare: $\\frac{3}{4}$ ___ $\\frac{3}{8}$",
+                  "correctAnswer": ">",
+                  "acceptableFormats": [">", "greater than"],
+                  "kcs": ["kc_compare_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "The numerators are both $3$. Imagine cutting a pie into $4$ pieces versus $8$ pieces. Which pieces are bigger — the fourths or the eighths?" },
+                    { "type": "more_specific", "content": "Fourths are bigger pieces than eighths (fewer cuts = bigger pieces). So $3$ fourths is more pie than $3$ eighths." },
+                    { "type": "bottom_out", "content": "$\\frac{3}{4} > \\frac{3}{8}$ because fourths are larger pieces than eighths. Same number of pieces, but bigger pieces = more total." }
+                  ],
+                  "explanation": "With the same numerator, a smaller denominator means bigger pieces, so the fraction is larger."
+                }
+              ]
+            },
+            {
+              "id": "prob_cmpfrac_g3_003",
+              "title": "Compare Fractions in a Story",
+              "difficulty": 2,
+              "context": "Lily read $\\frac{5}{6}$ of her book. Omar read $\\frac{5}{8}$ of his book. Both books are the same length.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Who read more of their book? Use >, <, or = to compare $\\frac{5}{6}$ ___ $\\frac{5}{8}$.",
+                  "correctAnswer": ">",
+                  "acceptableFormats": [">", "greater than", "Lily"],
+                  "kcs": ["kc_compare_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "The numerators are both $5$. Compare the denominators: $6$ versus $8$. Which gives bigger pieces — sixths or eighths?" },
+                    { "type": "more_specific", "content": "Sixths are bigger pieces than eighths (fewer pieces total means each piece is larger). So $5$ sixths is more than $5$ eighths." },
+                    { "type": "bottom_out", "content": "$\\frac{5}{6} > \\frac{5}{8}$, so Lily read more. Five large pieces (sixths) is more than five smaller pieces (eighths)." }
+                  ],
+                  "explanation": "Same numerator, so compare denominators: $6 < 8$ means sixths are larger pieces, so $\\frac{5}{6} > \\frac{5}{8}$."
+                }
+              ]
+            },
+            {
+              "id": "prob_cmpfrac_g3_004",
+              "title": "Compare Fractions with Same Denominator in Context",
+              "difficulty": 2,
+              "context": "A recipe uses $\\frac{7}{8}$ cup of flour. Dani only has $\\frac{3}{8}$ cup of flour.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Does Dani have enough flour? Compare $\\frac{3}{8}$ ___ $\\frac{7}{8}$.",
+                  "correctAnswer": "<",
+                  "acceptableFormats": ["<", "less than", "no", "No"],
+                  "kcs": ["kc_compare_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Both fractions have denominator $8$. Compare the numerators: $3$ vs $7$." },
+                    { "type": "bottom_out", "content": "$3 < 7$, so $\\frac{3}{8} < \\frac{7}{8}$. Dani does not have enough flour." }
+                  ],
+                  "explanation": "Since $3 < 7$ and both have denominator $8$, Dani has less than the recipe requires."
+                }
+              ]
+            },
+            {
+              "id": "prob_cmpfrac_g3_005",
+              "title": "Compare and Order Three Fractions",
+              "difficulty": 4,
+              "context": "Three children each have a same-sized granola bar. Sam ate $\\frac{1}{2}$, Priya ate $\\frac{1}{4}$, and Dev ate $\\frac{1}{8}$.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "All three fractions have numerator $1$. Order the denominators $2$, $4$, $8$ from largest piece size to smallest piece size.",
+                  "correctAnswer": "2, 4, 8",
+                  "acceptableFormats": ["2, 4, 8", "halves fourths eighths", "2 4 8"],
+                  "kcs": ["kc_compare_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Smaller denominator = larger piece. Which denominator gives the biggest piece: $2$, $4$, or $8$?" },
+                    { "type": "bottom_out", "content": "Denominator $2$ gives halves (biggest pieces), then $4$ gives fourths, then $8$ gives eighths (smallest pieces). Order: $2, 4, 8$." }
+                  ],
+                  "explanation": "A smaller denominator means fewer cuts, so each piece is larger."
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Who ate the most? Order the children from least eaten to most eaten.",
+                  "correctAnswer": "Dev, Priya, Sam",
+                  "acceptableFormats": ["Dev, Priya, Sam", "Dev Priya Sam", "1/8, 1/4, 1/2"],
+                  "kcs": ["kc_compare_fractions"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Since all numerators are $1$, bigger denominator = smaller piece = ate less. Who has the biggest denominator?" },
+                    { "type": "more_specific", "content": "Dev's $\\frac{1}{8}$ is smallest, Priya's $\\frac{1}{4}$ is in the middle, and Sam's $\\frac{1}{2}$ is largest." },
+                    { "type": "bottom_out", "content": "From least to most: Dev ($\\frac{1}{8}$), Priya ($\\frac{1}{4}$), Sam ($\\frac{1}{2}$). Sam ate the most." }
+                  ],
+                  "explanation": "$\\frac{1}{8} < \\frac{1}{4} < \\frac{1}{2}$: with the same numerator, larger denominator means smaller fraction."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

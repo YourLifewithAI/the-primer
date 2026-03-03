@@ -1,0 +1,629 @@
+{
+  "id": "tx-math-g8",
+  "title": "Texas Grade 8 Mathematics",
+  "description": "Grade 8 mathematics aligned to Texas Essential Knowledge and Skills (TEKS). Covers real numbers, proportionality, slope, linear functions, geometry, Pythagorean theorem, transformations, and data analysis.",
+  "subject": "MATH",
+  "gradeLevels": [8],
+  "standardsAlignment": "Texas Essential Knowledge and Skills (TEKS) 2024",
+  "license": "Original content, MIT License",
+  "knowledgeComponents": [
+    {
+      "id": "kc_real_number_system",
+      "name": "Sets and Subsets of Real Numbers",
+      "description": "Extend previous knowledge of sets and subsets using visual representations (Venn diagrams) to describe relationships between sets of real numbers: natural numbers, whole numbers, integers, rational numbers, and irrational numbers.",
+      "subject": "MATH",
+      "gradeLevels": [8],
+      "prerequisites": [],
+      "teksCode": "8.2A"
+    },
+    {
+      "id": "kc_approximate_irrationals",
+      "name": "Approximate Irrational Numbers",
+      "description": "Approximate the value of irrational numbers including pi and square roots of non-perfect-square numbers less than 225, and locate them on a number line.",
+      "subject": "MATH",
+      "gradeLevels": [8],
+      "prerequisites": ["kc_real_number_system"],
+      "teksCode": "8.2B"
+    },
+    {
+      "id": "kc_scientific_notation",
+      "name": "Scientific Notation",
+      "description": "Convert between standard decimal notation and scientific notation, including numbers greater than 1 and numbers between 0 and 1.",
+      "subject": "MATH",
+      "gradeLevels": [8],
+      "prerequisites": [],
+      "teksCode": "8.2C"
+    },
+    {
+      "id": "kc_order_real_numbers",
+      "name": "Order Real Numbers",
+      "description": "Order a set of real numbers arising from mathematical and real-world contexts, including integers, fractions, decimals, square roots, pi, and numbers in scientific notation.",
+      "subject": "MATH",
+      "gradeLevels": [8],
+      "prerequisites": ["kc_approximate_irrationals", "kc_scientific_notation"],
+      "teksCode": "8.2D"
+    }
+  ],
+  "modules": [
+    {
+      "id": "mod_real_numbers",
+      "title": "Real Numbers and Scientific Notation",
+      "description": "Sets and subsets of real numbers, approximating irrationals, scientific notation, and ordering real numbers.",
+      "lessons": [
+        {
+          "id": "lesson_rns_01",
+          "title": "The Real Number System",
+          "content": "All numbers you've worked with — and more — belong to the **real number system**. Real numbers are organized into nested subsets, like Russian nesting dolls.\n\n**Natural numbers** (also called counting numbers): $1, 2, 3, 4, \\ldots$\n\n**Whole numbers**: $0, 1, 2, 3, \\ldots$ (natural numbers plus zero)\n\n**Integers**: $\\ldots, -3, -2, -1, 0, 1, 2, 3, \\ldots$ (whole numbers plus their opposites)\n\n**Rational numbers**: any number that can be written as $\\frac{a}{b}$ where $a$ and $b$ are integers and $b \\neq 0$. This includes all terminating decimals (like $0.75$) and all repeating decimals (like $0.\\overline{3}$).\n\n**Irrational numbers**: numbers that CANNOT be written as $\\frac{a}{b}$. Their decimal expansions go on forever without repeating. Examples: $\\sqrt{2} \\approx 1.41421\\ldots$, $\\pi \\approx 3.14159\\ldots$\n\n**Real numbers** = rational numbers $\\cup$ irrational numbers.\n\nThe relationship: every natural number is also a whole number, which is also an integer, which is also a rational number. But irrational numbers stand apart — they are real but NOT rational.",
+          "problems": [
+            {
+              "id": "prob_rns_001",
+              "title": "Classify a Number",
+              "difficulty": 1,
+              "context": "Consider the number $-7$.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Is $-7$ a natural number, whole number, integer, rational number, and/or irrational number? List ALL categories it belongs to, separated by commas.",
+                  "correctAnswer": "integer, rational number",
+                  "acceptableFormats": ["integer, rational number", "integer, rational", "rational number, integer", "rational, integer", "integer and rational number", "integer and rational"],
+                  "kcs": ["kc_real_number_system"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Start with the smallest set. Is $-7$ a natural number (counting number starting at 1)? Is it a whole number (0, 1, 2, ...)? What about integers (..., -2, -1, 0, 1, 2, ...)?" },
+                    { "type": "more_specific", "content": "Natural numbers start at 1, so $-7$ is not natural. Whole numbers start at 0, so $-7$ is not a whole number. But integers include negatives — $-7$ IS an integer. Can $-7$ be written as $\\frac{a}{b}$?" },
+                    { "type": "bottom_out", "content": "$-7$ is not natural or whole (both require non-negative). $-7$ IS an integer (it appears on the number line as a whole step). $-7 = \\frac{-7}{1}$, so it IS rational. Its decimal is $-7.0$ — terminating — also confirming rational. It is NOT irrational." }
+                  ],
+                  "explanation": "$-7$ is an integer and a rational number (and a real number). It is not natural, whole, or irrational."
+                }
+              ]
+            },
+            {
+              "id": "prob_rns_002",
+              "title": "Classify Decimals and Fractions",
+              "difficulty": 2,
+              "context": "Examine these four numbers: $\\frac{3}{4}$, $0.\\overline{6}$, $\\sqrt{25}$, $\\sqrt{7}$.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Which of the four numbers is irrational?",
+                  "correctAnswer": "sqrt(7)",
+                  "acceptableFormats": ["sqrt(7)", "\\sqrt{7}", "the square root of 7", "square root of 7", "$\\sqrt{7}$"],
+                  "kcs": ["kc_real_number_system"],
+                  "hints": [
+                    { "type": "scaffold", "content": "A number is irrational if it cannot be written as a fraction and its decimal never ends or repeats. Check each: $\\frac{3}{4}$ is already a fraction. $0.\\overline{6}$ repeats. $\\sqrt{25} = ?$. $\\sqrt{7} = ?$" },
+                    { "type": "more_specific", "content": "$\\sqrt{25} = 5$, which is a whole number — rational. $\\sqrt{7}$ is not a perfect square. $7$ is between $4$ and $9$, so $\\sqrt{7}$ is between $2$ and $3$ but never equals an exact fraction." },
+                    { "type": "bottom_out", "content": "$\\frac{3}{4}$ is rational (already a fraction). $0.\\overline{6} = \\frac{2}{3}$ is rational (repeating decimal). $\\sqrt{25} = 5$ is rational (integer). $\\sqrt{7} \\approx 2.6457\\ldots$ never terminates or repeats — it is irrational." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Which of the four numbers is a natural number?",
+                  "correctAnswer": "sqrt(25)",
+                  "acceptableFormats": ["sqrt(25)", "\\sqrt{25}", "square root of 25", "$\\sqrt{25}$", "5"],
+                  "kcs": ["kc_real_number_system"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Natural numbers are the counting numbers: $1, 2, 3, \\ldots$ Which of the four numbers simplifies to a positive whole number?" },
+                    { "type": "bottom_out", "content": "$\\sqrt{25} = 5$, which is a natural number. The others are not: $\\frac{3}{4}$ is a fraction, $0.\\overline{6}$ is a repeating decimal, and $\\sqrt{7}$ is irrational." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rns_003",
+              "title": "True or False: Subset Relationships",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "True or false: Every integer is also a rational number.",
+                  "correctAnswer": "true",
+                  "acceptableFormats": ["true", "True", "TRUE"],
+                  "kcs": ["kc_real_number_system"],
+                  "hints": [
+                    { "type": "scaffold", "content": "A rational number is any number that can be written as $\\frac{a}{b}$ where $a$ and $b$ are integers. Can you write any integer in that form?" },
+                    { "type": "bottom_out", "content": "True. Any integer $n$ can be written as $\\frac{n}{1}$, which has an integer numerator and denominator. So every integer is rational." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "True or false: Every rational number is also an integer.",
+                  "correctAnswer": "false",
+                  "acceptableFormats": ["false", "False", "FALSE"],
+                  "kcs": ["kc_real_number_system"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Think of a rational number that is NOT an integer. Can you find one?" },
+                    { "type": "bottom_out", "content": "False. For example, $\\frac{1}{2} = 0.5$ is rational (it's a fraction) but it is NOT an integer. The integers are only the counting numbers, their negatives, and zero." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rns_004",
+              "title": "Classify a Repeating Decimal",
+              "difficulty": 2,
+              "context": "The number $0.\\overline{142857}$ is the decimal expansion of $\\frac{1}{7}$.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "What is the most specific set that $\\frac{1}{7}$ belongs to: natural, whole, integer, rational, or irrational?",
+                  "correctAnswer": "rational",
+                  "acceptableFormats": ["rational", "rational number", "Rational", "Rational number"],
+                  "kcs": ["kc_real_number_system"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Most specific means the smallest set it fits in. Can $\\frac{1}{7}$ be negative? Is it a counting number? Is it a whole number or integer? Or is it just a fraction?" },
+                    { "type": "more_specific", "content": "$\\frac{1}{7}$ is between 0 and 1, so it's not a natural number, whole number, or integer. It IS a fraction — that's exactly the definition of rational ($\\frac{a}{b}$ with integers top and bottom). And it repeats, so it can't be irrational." },
+                    { "type": "bottom_out", "content": "$\\frac{1}{7}$ is a rational number. It's written as a fraction of two integers, and its decimal $0.\\overline{142857}$ repeats — both sure signs of rational. It's not natural, whole, or integer." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_rns_005",
+              "title": "Which Set Does NOT Contain the Number?",
+              "difficulty": 3,
+              "context": "Consider the number $\\pi \\approx 3.14159265\\ldots$",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Which TWO sets does $\\pi$ NOT belong to? Choose from: natural numbers, whole numbers, integers, rational numbers, irrational numbers, real numbers.",
+                  "correctAnswer": "natural numbers, whole numbers, integers, rational numbers",
+                  "acceptableFormats": ["natural numbers, whole numbers, integers, rational numbers", "natural, whole, integer, rational", "not natural, whole, integer, or rational", "irrational and real only"],
+                  "kcs": ["kc_real_number_system"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Think about what $\\pi$ is: $3.14159265\\ldots$ goes on forever without repeating. That rules out some categories. What does $\\pi$ belong to? What does it NOT belong to?" },
+                    { "type": "more_specific", "content": "$\\pi$ is definitely a real number. Its decimal never terminates or repeats, so it IS irrational. But is it an integer? A whole number? A natural number? A rational number? Can it be written as $\\frac{a}{b}$?" },
+                    { "type": "bottom_out", "content": "$\\pi$ is irrational (non-terminating, non-repeating decimal) and real. It does NOT belong to: natural numbers (not a counting number), whole numbers (not 0, 1, 2...), integers (not a whole-step number), or rational numbers (cannot be written as $\\frac{a}{b}$). The question asks for TWO — the most important exclusions are rational numbers (since irrational = not rational) and integers." }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lesson_rns_02",
+          "title": "Approximating Irrational Numbers",
+          "content": "Irrational numbers like $\\sqrt{7}$ and $\\pi$ don't have exact decimal representations, but we can **approximate** them by figuring out which two integers they fall between.\n\n**Strategy for square roots:**\n1. Find the two perfect squares the radicand falls between.\n2. The square root falls between the square roots of those perfect squares.\n3. Narrow it down further by checking decimals.\n\nExample: Approximate $\\sqrt{50}$.\n- $49 < 50 < 64$, so $\\sqrt{49} < \\sqrt{50} < \\sqrt{64}$\n- That means $7 < \\sqrt{50} < 8$\n- To get closer: $7.0^2 = 49$, $7.1^2 = 50.41$ — too big. Try $7.07^2 = 49.9849$ — close!\n- $\\sqrt{50} \\approx 7.07$\n\n**For $\\pi$:** You should memorize that $\\pi \\approx 3.14159\\ldots$, and for most problems you can use $\\pi \\approx 3.14$.\n\n**Locating on a number line:** Once you have the approximation, you know which tick marks the irrational number falls between.",
+          "problems": [
+            {
+              "id": "prob_ai_001",
+              "title": "Between Which Two Integers?",
+              "difficulty": 1,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Between which two consecutive integers does $\\sqrt{40}$ lie? Write your answer as: ___ and ___",
+                  "correctAnswer": "6 and 7",
+                  "acceptableFormats": ["6 and 7", "6, 7", "between 6 and 7", "6 < sqrt(40) < 7"],
+                  "kcs": ["kc_approximate_irrationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Find the two perfect squares that 40 falls between. List perfect squares: $1, 4, 9, 16, 25, 36, 49, 64\\ldots$ Which two does 40 fall between?" },
+                    { "type": "more_specific", "content": "$36 < 40 < 49$. Now take the square root of each part." },
+                    { "type": "bottom_out", "content": "$36 < 40 < 49$, so $\\sqrt{36} < \\sqrt{40} < \\sqrt{49}$, meaning $6 < \\sqrt{40} < 7$. The two consecutive integers are $6$ and $7$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_ai_002",
+              "title": "Approximate to the Nearest Tenth",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "We know $\\sqrt{40}$ is between $6$ and $7$. Is $\\sqrt{40}$ closer to $6$ or to $7$? (Try squaring $6.5$.)",
+                  "correctAnswer": "6",
+                  "acceptableFormats": ["6", "closer to 6", "6.0", "nearer to 6"],
+                  "kcs": ["kc_approximate_irrationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$6.5^2 = 42.25$. Since $40 < 42.25$, is $\\sqrt{40}$ less than or greater than $6.5$?" },
+                    { "type": "more_specific", "content": "$6.5^2 = 42.25 > 40$, so $\\sqrt{40} < 6.5$. That means $\\sqrt{40}$ is in the lower half, between $6$ and $6.5$ — closer to $6$." },
+                    { "type": "bottom_out", "content": "$6.5^2 = 42.25 > 40$, so $\\sqrt{40} < 6.5$. This means $\\sqrt{40}$ is closer to $6$." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Now narrow it down. Try $6.3^2$ and $6.4^2$ to find $\\sqrt{40}$ to the nearest tenth.",
+                  "correctAnswer": "6.3",
+                  "acceptableFormats": ["6.3", "about 6.3", "approximately 6.3", "≈6.3"],
+                  "kcs": ["kc_approximate_irrationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Calculate: $6.3^2 = ?$ and $6.4^2 = ?$. Which one is closer to $40$?" },
+                    { "type": "more_specific", "content": "$6.3^2 = 39.69$ and $6.4^2 = 40.96$. The target is $40$. Which squared value is closer to $40$?" },
+                    { "type": "bottom_out", "content": "$6.3^2 = 39.69$ (difference: $0.31$) and $6.4^2 = 40.96$ (difference: $0.96$). Since $39.69$ is closer to $40$, we have $\\sqrt{40} \\approx 6.3$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_ai_003",
+              "title": "Approximate a Larger Square Root",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Between which two consecutive integers does $\\sqrt{130}$ lie?",
+                  "correctAnswer": "11 and 12",
+                  "acceptableFormats": ["11 and 12", "11, 12", "between 11 and 12"],
+                  "kcs": ["kc_approximate_irrationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Find perfect squares near 130. $10^2 = 100$, $11^2 = 121$, $12^2 = 144$, $13^2 = 169$. Which two does 130 fall between?" },
+                    { "type": "bottom_out", "content": "$121 < 130 < 144$, so $\\sqrt{121} < \\sqrt{130} < \\sqrt{144}$, meaning $11 < \\sqrt{130} < 12$." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Approximate $\\sqrt{130}$ to the nearest tenth.",
+                  "correctAnswer": "11.4",
+                  "acceptableFormats": ["11.4", "about 11.4", "approximately 11.4", "≈11.4"],
+                  "kcs": ["kc_approximate_irrationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Try $11.4^2$ and $11.5^2$. Calculate both and compare to $130$." },
+                    { "type": "more_specific", "content": "$11.4^2 = 129.96$ and $11.5^2 = 132.25$. Which is closer to $130$?" },
+                    { "type": "bottom_out", "content": "$11.4^2 = 129.96$ (just $0.04$ from $130$) and $11.5^2 = 132.25$ (about $2.25$ from $130$). So $\\sqrt{130} \\approx 11.4$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_ai_004",
+              "title": "Locate on a Number Line",
+              "difficulty": 3,
+              "context": "A number line has tick marks at every half integer: $\\ldots, 4, 4.5, 5, 5.5, 6, \\ldots$",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Between which two tick marks (halves) would you plot $\\sqrt{20}$?",
+                  "correctAnswer": "4 and 4.5",
+                  "acceptableFormats": ["4 and 4.5", "4.0 and 4.5", "between 4 and 4.5", "4 to 4.5"],
+                  "kcs": ["kc_approximate_irrationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "First, between which two integers is $\\sqrt{20}$? Then check whether it's above or below the midpoint (the $.5$)." },
+                    { "type": "more_specific", "content": "$16 < 20 < 25$, so $4 < \\sqrt{20} < 5$. Now check: $4.5^2 = 20.25$. Since $20 < 20.25$, $\\sqrt{20} < 4.5$." },
+                    { "type": "bottom_out", "content": "$4 < \\sqrt{20} < 5$. And $4.5^2 = 20.25 > 20$, so $\\sqrt{20} < 4.5$. Therefore $\\sqrt{20}$ falls between $4$ and $4.5$ on the number line." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Approximate $\\sqrt{20}$ to the nearest tenth.",
+                  "correctAnswer": "4.5",
+                  "acceptableFormats": ["4.5", "about 4.5", "approximately 4.5", "4.47"],
+                  "kcs": ["kc_approximate_irrationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Try values in the range $4.0$ to $4.5$. What is $4.4^2$? What is $4.5^2$?" },
+                    { "type": "more_specific", "content": "$4.4^2 = 19.36$ and $4.5^2 = 20.25$. How far is each from $20$?" },
+                    { "type": "bottom_out", "content": "$4.4^2 = 19.36$ (off by $0.64$) and $4.5^2 = 20.25$ (off by $0.25$). Since $20.25$ is closer to $20$, $\\sqrt{20} \\approx 4.5$ to the nearest tenth. (The more precise value is $\\approx 4.47$.)" }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_ai_005",
+              "title": "Locate Pi on a Number Line",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Using $\\pi \\approx 3.14159$, between which two consecutive integers does $\\pi$ fall?",
+                  "correctAnswer": "3 and 4",
+                  "acceptableFormats": ["3 and 4", "3, 4", "between 3 and 4"],
+                  "kcs": ["kc_approximate_irrationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$\\pi \\approx 3.14159\\ldots$ What whole numbers are just below and just above $3.14$?" },
+                    { "type": "bottom_out", "content": "$3 < 3.14159\\ldots < 4$, so $\\pi$ falls between $3$ and $4$." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "A number line shows tick marks at tenths between 3 and 4: $3.0, 3.1, 3.2, \\ldots$ Between which two tenths does $\\pi$ fall?",
+                  "correctAnswer": "3.1 and 3.2",
+                  "acceptableFormats": ["3.1 and 3.2", "between 3.1 and 3.2", "3.1 to 3.2"],
+                  "kcs": ["kc_approximate_irrationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$\\pi \\approx 3.14$. Look at the tenths digit. Is it $3.1$-something or $3.2$-something?" },
+                    { "type": "bottom_out", "content": "$\\pi \\approx 3.14159\\ldots$ The tenths digit is $1$, so $3.1 < \\pi < 3.2$." }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lesson_rns_03",
+          "title": "Scientific Notation",
+          "content": "**Scientific notation** is a compact way to write very large or very small numbers. A number in scientific notation looks like:\n$$a \\times 10^n$$\nwhere $1 \\leq a < 10$ and $n$ is an integer.\n\n**Very large numbers** have a positive exponent:\n$$93{,}000{,}000 = 9.3 \\times 10^7$$\nCount how many places the decimal moved left — that's the exponent.\n\n**Very small numbers** have a negative exponent:\n$$0.000056 = 5.6 \\times 10^{-5}$$\nCount how many places the decimal moved right — that's the absolute value of the exponent (make it negative).\n\n**Converting back to standard form:**\n- Positive exponent → move decimal right\n- Negative exponent → move decimal left\n\nRemember: $10^0 = 1$, $10^1 = 10$, $10^2 = 100$, $10^3 = 1{,}000$, and so on.",
+          "problems": [
+            {
+              "id": "prob_sn_001",
+              "title": "Standard to Scientific — Large Number",
+              "difficulty": 1,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Write $45{,}000$ in scientific notation.",
+                  "correctAnswer": "4.5 × 10^4",
+                  "acceptableFormats": ["4.5 × 10^4", "4.5 x 10^4", "4.5 * 10^4", "4.5e4", "4.5 × 10⁴"],
+                  "kcs": ["kc_scientific_notation"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Move the decimal point in $45{,}000.$ to the left until you have a number between $1$ and $10$. Count how many places you moved it." },
+                    { "type": "more_specific", "content": "The decimal in $45{,}000$ starts at the end: $45000.$. Moving left: $4500.0$ (1), $450.00$ (2), $45.000$ (3), $4.5000$ (4). You moved it 4 places. The number between 1 and 10 is $4.5$." },
+                    { "type": "bottom_out", "content": "Move the decimal $4$ places left to get $4.5$. So $45{,}000 = 4.5 \\times 10^4$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_sn_002",
+              "title": "Standard to Scientific — Small Number",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Write $0.00038$ in scientific notation.",
+                  "correctAnswer": "3.8 × 10^-4",
+                  "acceptableFormats": ["3.8 × 10^-4", "3.8 x 10^-4", "3.8e-4", "3.8 × 10⁻⁴", "3.8 * 10^(-4)"],
+                  "kcs": ["kc_scientific_notation"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Move the decimal point in $0.00038$ to the right until you have a number between $1$ and $10$. Count the moves — that count becomes a negative exponent." },
+                    { "type": "more_specific", "content": "Starting at $0.00038$: move right: $0.0038$ (1), $0.038$ (2), $0.38$ (3), $3.8$ (4). You moved $4$ places to the right, so the exponent is $-4$." },
+                    { "type": "bottom_out", "content": "Move the decimal $4$ places right to get $3.8$. Because you moved right (the number is small), the exponent is negative: $0.00038 = 3.8 \\times 10^{-4}$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_sn_003",
+              "title": "Scientific to Standard — Large Number",
+              "difficulty": 1,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Write $2.07 \\times 10^5$ in standard decimal notation.",
+                  "correctAnswer": "207000",
+                  "acceptableFormats": ["207000", "207,000"],
+                  "kcs": ["kc_scientific_notation"],
+                  "hints": [
+                    { "type": "scaffold", "content": "A positive exponent means move the decimal point to the right. Move the decimal in $2.07$ exactly $5$ places to the right." },
+                    { "type": "more_specific", "content": "$2.07$ → move right 5 places: $20.7$ (1), $207$ (2), $2070$ (3), $20700$ (4), $207000$ (5). Fill empty spots with zeros." },
+                    { "type": "bottom_out", "content": "Move the decimal in $2.07$ five places right: $207{,}000$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_sn_004",
+              "title": "Scientific to Standard — Small Number",
+              "difficulty": 2,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Write $6.4 \\times 10^{-3}$ in standard decimal notation.",
+                  "correctAnswer": "0.0064",
+                  "acceptableFormats": ["0.0064", ".0064"],
+                  "kcs": ["kc_scientific_notation"],
+                  "hints": [
+                    { "type": "scaffold", "content": "A negative exponent means move the decimal point to the LEFT. Move the decimal in $6.4$ exactly $3$ places to the left." },
+                    { "type": "more_specific", "content": "$6.4$ → move left 3 places: $0.64$ (1), $0.064$ (2), $0.0064$ (3). Fill in zeros as placeholders." },
+                    { "type": "bottom_out", "content": "Move the decimal in $6.4$ three places left: $0.0064$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_sn_005",
+              "title": "Recognize Valid Scientific Notation",
+              "difficulty": 2,
+              "context": "A student wrote $32.5 \\times 10^3$ as her answer.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Is $32.5 \\times 10^3$ in proper scientific notation? Answer yes or no, and explain why.",
+                  "correctAnswer": "no",
+                  "acceptableFormats": ["no", "No", "NO", "no, 32.5 is not between 1 and 10", "not valid"],
+                  "kcs": ["kc_scientific_notation"],
+                  "hints": [
+                    { "type": "scaffold", "content": "In scientific notation, the number in front of $\\times 10^n$ must be at least $1$ but less than $10$. Is $32.5$ between $1$ and $10$?" },
+                    { "type": "bottom_out", "content": "No. $32.5$ is not in the range $[1, 10)$. The coefficient must satisfy $1 \\leq a < 10$. The correct scientific notation is $3.25 \\times 10^4$." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Rewrite $32.5 \\times 10^3$ in proper scientific notation.",
+                  "correctAnswer": "3.25 × 10^4",
+                  "acceptableFormats": ["3.25 × 10^4", "3.25 x 10^4", "3.25e4", "3.25 * 10^4"],
+                  "kcs": ["kc_scientific_notation"],
+                  "hints": [
+                    { "type": "scaffold", "content": "First, convert $32.5 \\times 10^3$ to standard form, then re-express in scientific notation. Or: adjust $32.5$ to $3.25$ by dividing by $10$ — you must compensate by multiplying the exponent part by $10$ too." },
+                    { "type": "more_specific", "content": "$32.5 = 3.25 \\times 10^1$, so $32.5 \\times 10^3 = 3.25 \\times 10^1 \\times 10^3 = 3.25 \\times 10^4$." },
+                    { "type": "bottom_out", "content": "$32.5 \\times 10^3 = 32{,}500$. Now write in proper scientific notation: $3.25 \\times 10^4$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_sn_006",
+              "title": "Real-World Scientific Notation",
+              "difficulty": 3,
+              "context": "The distance from Earth to the Sun is approximately $150{,}000{,}000$ kilometers. The diameter of a red blood cell is approximately $0.000008$ meters.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Write the distance from Earth to the Sun in scientific notation.",
+                  "correctAnswer": "1.5 × 10^8",
+                  "acceptableFormats": ["1.5 × 10^8", "1.5 x 10^8", "1.5e8", "1.5 * 10^8"],
+                  "kcs": ["kc_scientific_notation"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$150{,}000{,}000$ — move the decimal left until you have a number between 1 and 10. Count the moves." },
+                    { "type": "more_specific", "content": "$150{,}000{,}000. \\to 1.5$. Count: $8$ places left. So the exponent is $+8$." },
+                    { "type": "bottom_out", "content": "$150{,}000{,}000 = 1.5 \\times 10^8$ km." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Write the diameter of a red blood cell in scientific notation.",
+                  "correctAnswer": "8 × 10^-6",
+                  "acceptableFormats": ["8 × 10^-6", "8 x 10^-6", "8e-6", "8.0 × 10^-6", "8.0 x 10^-6"],
+                  "kcs": ["kc_scientific_notation"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$0.000008$ — move the decimal right until you have a number between 1 and 10. Count the moves (the exponent will be negative)." },
+                    { "type": "more_specific", "content": "$0.000008 \\to 8$. Count: $6$ places right. So the exponent is $-6$." },
+                    { "type": "bottom_out", "content": "$0.000008 = 8 \\times 10^{-6}$ meters." }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "lesson_rns_04",
+          "title": "Ordering Real Numbers",
+          "content": "To **order a set of real numbers**, you need to convert everything to the same form so you can compare.\n\n**Steps:**\n1. Convert any scientific notation to standard decimal form (or to a decimal approximation)\n2. Approximate any irrational numbers (square roots, $\\pi$) as decimals\n3. Convert any fractions to decimals (divide numerator by denominator)\n4. Compare all decimals and order them\n\n**Example:** Order from least to greatest: $\\sqrt{5}$, $2.3$, $\\frac{7}{3}$, $2.1 \\times 10^0$\n- $\\sqrt{5} \\approx 2.236$\n- $2.3 = 2.3$\n- $\\frac{7}{3} \\approx 2.333$\n- $2.1 \\times 10^0 = 2.1 \\times 1 = 2.1$\n\nOrder: $2.1 < 2.236 < 2.3 < 2.333\\ldots$\n\nSo: $2.1 \\times 10^0$, $\\sqrt{5}$, $2.3$, $\\frac{7}{3}$",
+          "problems": [
+            {
+              "id": "prob_ord_001",
+              "title": "Order Integers and Fractions",
+              "difficulty": 1,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Order from least to greatest: $-3$, $\\frac{1}{2}$, $-1.5$, $0$",
+                  "correctAnswer": "-3, -1.5, 0, 1/2",
+                  "acceptableFormats": ["-3, -1.5, 0, 1/2", "-3, -1.5, 0, 0.5", "-3 -1.5 0 1/2", "-3 < -1.5 < 0 < 1/2"],
+                  "kcs": ["kc_order_real_numbers"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Convert everything to decimals: $-3 = -3.0$, $\\frac{1}{2} = 0.5$, $-1.5 = -1.5$, $0 = 0.0$. Now order from most negative to most positive." },
+                    { "type": "bottom_out", "content": "In decimal form: $-3.0, -1.5, 0.0, 0.5$. Least to greatest: $-3, -1.5, 0, \\frac{1}{2}$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_ord_002",
+              "title": "Order with Irrational Numbers",
+              "difficulty": 3,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Approximate $\\sqrt{10}$ to the nearest tenth.",
+                  "correctAnswer": "3.2",
+                  "acceptableFormats": ["3.2", "about 3.2", "approximately 3.2", "≈3.2"],
+                  "kcs": ["kc_approximate_irrationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$9 < 10 < 16$, so $3 < \\sqrt{10} < 4$. Try $3.1^2$ and $3.2^2$." },
+                    { "type": "more_specific", "content": "$3.1^2 = 9.61$ and $3.2^2 = 10.24$. Which is closer to $10$?" },
+                    { "type": "bottom_out", "content": "$3.1^2 = 9.61$ (off by $0.39$) and $3.2^2 = 10.24$ (off by $0.24$). So $\\sqrt{10} \\approx 3.2$." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Order from least to greatest: $\\sqrt{10}$, $\\pi$, $3.05$, $\\frac{10}{3}$",
+                  "correctAnswer": "3.05, sqrt(10), pi, 10/3",
+                  "acceptableFormats": ["3.05, sqrt(10), pi, 10/3", "3.05, sqrt(10), pi, 10/3", "3.05, \\sqrt{10}, \\pi, 10/3", "3.05 < sqrt(10) < pi < 10/3"],
+                  "kcs": ["kc_order_real_numbers"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Convert each to a decimal approximation: $\\sqrt{10} \\approx 3.162$, $\\pi \\approx 3.14159$, $3.05$, $\\frac{10}{3} \\approx 3.333$. Then order." },
+                    { "type": "more_specific", "content": "Decimals: $3.05$, $3.162$, $3.14159$, $3.333$. Compare carefully — $3.14$ vs $3.16$: which is smaller?" },
+                    { "type": "bottom_out", "content": "Decimal approximations: $3.05 < 3.14159 < 3.162 < 3.333$. So: $3.05 < \\pi < \\sqrt{10} < \\frac{10}{3}$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_ord_003",
+              "title": "Order with Scientific Notation",
+              "difficulty": 3,
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Convert these to standard form: $3.2 \\times 10^3$ and $4.1 \\times 10^2$",
+                  "correctAnswer": "3200 and 410",
+                  "acceptableFormats": ["3200 and 410", "3,200 and 410", "3200, 410"],
+                  "kcs": ["kc_scientific_notation"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$3.2 \\times 10^3$: move the decimal 3 places right. $4.1 \\times 10^2$: move the decimal 2 places right." },
+                    { "type": "bottom_out", "content": "$3.2 \\times 10^3 = 3200$ and $4.1 \\times 10^2 = 410$." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Order from least to greatest: $3.2 \\times 10^3$, $4.1 \\times 10^2$, $2{,}750$, $3.9 \\times 10^3$",
+                  "correctAnswer": "4.1 × 10^2, 2750, 3.2 × 10^3, 3.9 × 10^3",
+                  "acceptableFormats": ["4.1 × 10^2, 2750, 3.2 × 10^3, 3.9 × 10^3", "4.1 x 10^2, 2750, 3.2 x 10^3, 3.9 x 10^3", "410, 2750, 3200, 3900"],
+                  "kcs": ["kc_order_real_numbers"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Convert all to standard form first: $3.2 \\times 10^3 = ?$, $4.1 \\times 10^2 = ?$, $3.9 \\times 10^3 = ?$, and $2{,}750$ stays as is." },
+                    { "type": "more_specific", "content": "Standard forms: $3{,}200$, $410$, $2{,}750$, $3{,}900$. Now order: $410 < 2{,}750 < 3{,}200 < 3{,}900$." },
+                    { "type": "bottom_out", "content": "Standard forms: $4.1 \\times 10^2 = 410$, $2{,}750 = 2{,}750$, $3.2 \\times 10^3 = 3{,}200$, $3.9 \\times 10^3 = 3{,}900$. Least to greatest: $4.1 \\times 10^2$, $2{,}750$, $3.2 \\times 10^3$, $3.9 \\times 10^3$." }
+                  ]
+                }
+              ]
+            },
+            {
+              "id": "prob_ord_004",
+              "title": "Mixed Real Numbers — Full Order",
+              "difficulty": 4,
+              "context": "A science class is comparing some measured values that appear in different forms.",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Approximate $\\sqrt{3}$ to the nearest hundredth.",
+                  "correctAnswer": "1.73",
+                  "acceptableFormats": ["1.73", "about 1.73", "≈1.73", "1.732"],
+                  "kcs": ["kc_approximate_irrationals"],
+                  "hints": [
+                    { "type": "scaffold", "content": "$1 < \\sqrt{3} < 2$. Try $1.7^2 = 2.89$ and $1.8^2 = 3.24$. Then narrow it down." },
+                    { "type": "more_specific", "content": "$1.7^2 = 2.89$ and $1.8^2 = 3.24$, so $1.7 < \\sqrt{3} < 1.8$. Try $1.73^2 = 2.9929$ and $1.74^2 = 3.0276$." },
+                    { "type": "bottom_out", "content": "$1.73^2 = 2.9929$ (close to $3$!) and $1.74^2 = 3.0276$. Since $2.9929$ is closer to $3$, $\\sqrt{3} \\approx 1.73$." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Order from least to greatest: $\\sqrt{3}$, $1.7 \\times 10^0$, $\\frac{5}{3}$, $1.8$",
+                  "correctAnswer": "1.7 × 10^0, sqrt(3), 5/3, 1.8",
+                  "acceptableFormats": ["1.7 × 10^0, sqrt(3), 5/3, 1.8", "1.7 x 10^0, sqrt(3), 5/3, 1.8", "1.7, sqrt(3), 5/3, 1.8", "1.7, 1.73, 1.667, 1.8"],
+                  "kcs": ["kc_order_real_numbers"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Convert each: $1.7 \\times 10^0 = 1.7 \\times 1 = 1.7$. $\\frac{5}{3} = 1.666\\ldots$. $\\sqrt{3} \\approx 1.73$. $1.8 = 1.8$. Now compare." },
+                    { "type": "more_specific", "content": "Decimals: $1.7$, $1.73$, $1.666\\ldots$, $1.8$. Order: which is smallest — $1.666$, $1.7$, $1.73$, or $1.8$?" },
+                    { "type": "bottom_out", "content": "$1.666\\ldots < 1.7 < 1.73 < 1.8$. Matching back: $\\frac{5}{3} < 1.7 \\times 10^0 < \\sqrt{3} < 1.8$. Wait — let me re-check: $\\frac{5}{3} \\approx 1.667 < 1.7 < 1.73 \\approx \\sqrt{3} < 1.8$. So order is: $\\frac{5}{3}$, $1.7 \\times 10^0$, $\\sqrt{3}$, $1.8$." }
+                  ],
+                  "explanation": "Decimal approximations: $\\frac{5}{3} \\approx 1.667$, $1.7 \\times 10^0 = 1.7$, $\\sqrt{3} \\approx 1.732$, $1.8 = 1.8$. Least to greatest: $\\frac{5}{3}$, $1.7 \\times 10^0$, $\\sqrt{3}$, $1.8$."
+                }
+              ]
+            },
+            {
+              "id": "prob_ord_005",
+              "title": "Real-World Ordering",
+              "difficulty": 4,
+              "context": "Four measurements are listed. A scientist needs to sort them from smallest to largest: the mass of a bacterium ($2.3 \\times 10^{-12}$ grams), the mass of a grain of sand ($6.7 \\times 10^{-4}$ grams), the mass of a small ant ($1.0 \\times 10^{-3}$ grams), and the mass of a mosquito ($2.5 \\times 10^{-3}$ grams).",
+              "steps": [
+                {
+                  "id": "step_1",
+                  "prompt": "Write the four masses in standard decimal form.",
+                  "correctAnswer": "0.0000000000023, 0.00067, 0.001, 0.0025",
+                  "acceptableFormats": ["0.0000000000023, 0.00067, 0.001, 0.0025", "2.3 × 10^-12 = 0.0000000000023; 6.7 × 10^-4 = 0.00067; 1.0 × 10^-3 = 0.001; 2.5 × 10^-3 = 0.0025"],
+                  "kcs": ["kc_scientific_notation"],
+                  "hints": [
+                    { "type": "scaffold", "content": "For each, move the decimal left by the absolute value of the exponent. $2.3 \\times 10^{-12}$: move decimal $12$ places left. $6.7 \\times 10^{-4}$: move $4$ places left." },
+                    { "type": "more_specific", "content": "$2.3 \\times 10^{-12}$: 12 places left → $0.0000000000023$. $6.7 \\times 10^{-4}$: 4 places left → $0.00067$. $1.0 \\times 10^{-3}$: 3 places left → $0.001$. $2.5 \\times 10^{-3}$: 3 places left → $0.0025$." },
+                    { "type": "bottom_out", "content": "$2.3 \\times 10^{-12} = 0.0000000000023$ g; $6.7 \\times 10^{-4} = 0.00067$ g; $1.0 \\times 10^{-3} = 0.001$ g; $2.5 \\times 10^{-3} = 0.0025$ g." }
+                  ]
+                },
+                {
+                  "id": "step_2",
+                  "prompt": "Order the four masses from least (smallest) to greatest (largest), using their original scientific notation.",
+                  "correctAnswer": "2.3 × 10^-12, 6.7 × 10^-4, 1.0 × 10^-3, 2.5 × 10^-3",
+                  "acceptableFormats": ["2.3 × 10^-12, 6.7 × 10^-4, 1.0 × 10^-3, 2.5 × 10^-3", "bacterium, sand, ant, mosquito", "2.3x10^-12, 6.7x10^-4, 1.0x10^-3, 2.5x10^-3"],
+                  "kcs": ["kc_order_real_numbers"],
+                  "hints": [
+                    { "type": "scaffold", "content": "Use the decimal forms from step 1. Compare: $0.0000000000023$, $0.00067$, $0.001$, $0.0025$. Which is smallest?" },
+                    { "type": "more_specific", "content": "The bacterium has exponent $-12$ — far smaller than the others (exponents $-4$ and $-3$). Among the last three: compare exponents and then coefficients." },
+                    { "type": "bottom_out", "content": "From smallest to largest: $2.3 \\times 10^{-12}$ (bacterium) $< 6.7 \\times 10^{-4}$ (sand) $< 1.0 \\times 10^{-3}$ (ant) $< 2.5 \\times 10^{-3}$ (mosquito)." }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
