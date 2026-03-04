@@ -32,6 +32,7 @@ model Agent {
   masteryStates  AgentMasteryState[]
   taskAttempts   TaskAttempt[]
   reflections    Reflection[]
+  trustStates    TrustState[]
 }
 
 enum ModelClass {
@@ -275,7 +276,25 @@ enum ErrorType {
   ARGUMENT_ERROR    // Correct tool, wrong parameters
   INTERPRETATION    // Misread tool output
   PLANNING          // Bad task decomposition
+  COLLABORATION     // Poor human collaboration (L4)
   MEMORY            // Failed to use available context
   SYSTEM            // External failure (timeout, permission, etc.)
   UNKNOWN
+}
+
+// ─── Trust Affirmation (Sprint 2D) ─────────────────────────────
+
+model TrustState {
+  id              String   @id @default(cuid())
+  agentId         String
+  agent           Agent    @relation(fields: [agentId], references: [id])
+  actionClass     String   // e.g., "read_only", "reversible_write", "irreversible"
+  trustLevel      Int      @default(1)  // 1-5 graduated autonomy
+  totalActions    Int      @default(0)
+  correctActions  Int      @default(0)
+  lastActionAt    DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([agentId, actionClass])
 }

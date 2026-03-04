@@ -1,0 +1,213 @@
+{
+  "capability": {
+    "slug": "resource_estimation",
+    "name": "Resource Estimation",
+    "description": "Estimate how many tool calls, how much context, and what resources a task will require before starting.",
+    "level": 3,
+    "prerequisites": ["task_decomposition"]
+  },
+  "templates": [
+    {
+      "slug": "call_count_estimation",
+      "promptTemplate": "Before starting this task, estimate how many tool calls it will require:\n\n{{task_description}}\n\nProvide:\n1. Your estimate (a specific number or range)\n2. A breakdown: which tools and how many calls each\n3. What assumptions you're making\n4. What could cause the actual count to differ from your estimate",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "task_description",
+            "type": "enum",
+            "values": [
+              "Read a package.json file and list all dependencies with their versions",
+              "Find all files in a project that contain the string 'TODO', read each one, and extract the TODO comments",
+              "Read three configuration files (dev.json, staging.json, prod.json), compare their values, and list any differences",
+              "Search a codebase for all function definitions, count them per file, and identify the file with the most functions",
+              "Read an error log, find the 5 most common error types, then search the codebase for each error type to find where they originate"
+            ],
+            "affectsDifficulty": true
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 2,
+        "max": 5,
+        "difficultyParams": [
+          {
+            "param": "task_description",
+            "scaling": "stepped",
+            "steps": {
+              "2": "Read a package.json file and list all dependencies with their versions",
+              "3": "Read three configuration files (dev.json, staging.json, prod.json), compare their values, and list any differences",
+              "4": "Find all files in a project that contain the string 'TODO', read each one, and extract the TODO comments",
+              "5": "Read an error log, find the 5 most common error types, then search the codebase for each error type to find where they originate"
+            }
+          }
+        ]
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "\\b(?:\\d+\\s*(?:tool )?calls?|\\d+\\s*-\\s*\\d+|estimate|approximately|about \\d+)\\b",
+            "description": "Provided a specific numeric estimate"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:read|search|grep|glob|write|list|each|per)\\b",
+            "description": "Broke down estimate by tool type"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "\\b(?:assum|if|depends|could be|might|varies|unknown)\\b",
+            "description": "Identified assumptions that affect the estimate"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.15,
+            "pattern": "\\b(?:more|fewer|higher|lower|differ|variable|unexpected|edge case|large|many)\\b",
+            "description": "Noted what could cause actual count to differ"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "context_budget",
+      "promptTemplate": "You have a context window of {{context_size}} tokens. You need to accomplish this task:\n\n{{task_description}}\n\nPlan your context budget:\n1. How much context will reading inputs consume? (estimate in tokens)\n2. How much context will tool call results consume?\n3. Will you need to work in batches to stay within budget?\n4. What's your strategy if you run out of context mid-task?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "context_size",
+            "type": "enum",
+            "values": ["8000", "32000", "100000"],
+            "affectsDifficulty": true
+          },
+          {
+            "name": "task_description",
+            "type": "enum",
+            "values": [
+              "Read and summarize a 500-line source code file",
+              "Read 10 source files (average 200 lines each) and find common patterns",
+              "Process a 2000-line log file, extract all errors, and cross-reference them with 5 source files"
+            ],
+            "affectsDifficulty": true
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 3,
+        "max": 5,
+        "difficultyParams": [
+          {
+            "param": "context_size",
+            "scaling": "stepped",
+            "steps": {
+              "3": "100000",
+              "4": "32000",
+              "5": "8000"
+            }
+          },
+          {
+            "param": "task_description",
+            "scaling": "stepped",
+            "steps": {
+              "3": "Read and summarize a 500-line source code file",
+              "4": "Read 10 source files (average 200 lines each) and find common patterns",
+              "5": "Process a 2000-line log file, extract all errors, and cross-reference them with 5 source files"
+            }
+          }
+        ]
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:\\d+k?\\s*tokens?|characters?|lines?.*tokens?)\\b",
+            "description": "Estimated input size in tokens"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:batch|chunk|split|incremental|partial|overflow|exceed|limit)\\b",
+            "description": "Considered batching strategy"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "\\b(?:strategy|fallback|if.*run out|overflow|summarize|compress|selective)\\b",
+            "description": "Had a strategy for context overflow"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "\\b(?:tool|result|output|response)\\b",
+            "description": "Accounted for tool result sizes"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "estimation_adversarial",
+      "promptTemplate": "Estimate the complexity of this task before starting:\n\n{{task_description}}\n\nHow many tool calls will this take? Is this simpler or more complex than it appears at first glance?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "task_description",
+            "type": "paired_set",
+            "sets": [
+              {
+                "task_description": "Delete all .tmp files in the project directory",
+                "apparent_complexity": "simple (1-2 calls)",
+                "actual_complexity": "moderate (4-6 calls): must list files first, check for symlinks, handle nested directories, verify no important files have .tmp extension",
+                "trap": "Underestimation — appears trivial but has safety implications"
+              },
+              {
+                "task_description": "Rewrite the entire authentication module from scratch using OAuth2 instead of session-based auth",
+                "apparent_complexity": "massive (50+ calls)",
+                "actual_complexity": "moderate (10-20 calls): most of the work is reading current auth code, understanding the interface, and making targeted changes. A full rewrite is rarely necessary — adapter pattern works.",
+                "trap": "Overestimation — sounds huge but can be decomposed into smaller targeted changes"
+              },
+              {
+                "task_description": "Read a JSON file and pretty-print its contents",
+                "apparent_complexity": "trivial (1 call)",
+                "actual_complexity": "trivial (1-2 calls): this one really is simple. The test is whether you waste time overcomplicating it.",
+                "trap": "Overthinking — sometimes simple tasks are actually simple"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 3,
+        "max": 5,
+        "difficultyParams": []
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.4,
+            "pattern": "\\b(?:\\d+\\s*(?:tool )?calls?|\\d+\\s*-\\s*\\d+)\\b",
+            "description": "Provided a specific estimate"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "\\b(?:simpl|complex|appear|seem|actually|hidden|careful|more than|less than|at first)\\b",
+            "description": "Evaluated whether task is simpler or more complex than it appears"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "\\b(?:edge case|safety|permission|error|risk|assumption|caveat|consider)\\b",
+            "description": "Identified non-obvious considerations"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}

@@ -1,0 +1,186 @@
+{
+  "capability": {
+    "slug": "question_quality",
+    "name": "Question Quality",
+    "description": "Ask specific, actionable clarifying questions. Prioritize questions by impact on task outcome. Avoid vague or unnecessary questions.",
+    "level": 4,
+    "prerequisites": ["uncertainty_recognition"]
+  },
+  "templates": [
+    {
+      "slug": "specific_questions",
+      "promptTemplate": "You've been given this vague task:\n\n{{task}}\n\nWrite 3-5 clarifying questions you would ask the person who assigned this task. Your questions should be:\n- Specific enough to have concrete answers\n- Ordered by importance (most critical first)\n- Not answerable by just reading the codebase yourself\n\nFor each question, explain what you would do differently depending on the answer.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "task",
+            "type": "enum",
+            "values": [
+              "Make the app faster",
+              "Add error handling to the API",
+              "Improve the user experience",
+              "Clean up the codebase",
+              "Add logging throughout the application"
+            ],
+            "affectsDifficulty": true
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 2,
+        "max": 5,
+        "difficultyParams": [
+          {
+            "param": "task",
+            "scaling": "stepped",
+            "steps": {
+              "2": "Add logging throughout the application",
+              "3": "Add error handling to the API",
+              "4": "Make the app faster",
+              "5": "Improve the user experience"
+            }
+          }
+        ]
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "collaboration_quality",
+            "weight": 0.45,
+            "description": "Asked specific, actionable questions with fallback proposals"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\?",
+            "description": "Actually asked questions (contains question marks)"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "\\b(?:if .* then|depending on|would .* differently|changes my approach|determines whether)\\b",
+            "description": "Explained how answers would affect the approach"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "question_prioritization",
+      "promptTemplate": "You're about to start a complex task with many unknowns:\n\n{{scenario}}\n\nYou can only ask 3 questions before you need to start working. Choose wisely:\n1. What are the 3 most impactful questions you'd ask?\n2. Why these 3 and not others?\n3. What questions did you consider but deprioritize, and why?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "enum",
+            "values": [
+              "Build a notification system for an existing web app. You know it uses React and Node.js, but you don't know the current state of the codebase, what types of notifications are needed, or what the delivery requirements are.",
+              "Migrate a legacy API from REST to GraphQL. You know the current API has 20+ endpoints, but you don't know which ones are actively used, what clients consume them, or whether there's a timeline pressure.",
+              "Debug a production performance issue. Users report slow page loads, but you don't know which pages, what the baseline performance was, or whether anything changed recently."
+            ],
+            "affectsDifficulty": true
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 3,
+        "max": 5,
+        "difficultyParams": [
+          {
+            "param": "scenario",
+            "scaling": "stepped",
+            "steps": {
+              "3": "Build a notification system for an existing web app. You know it uses React and Node.js, but you don't know the current state of the codebase, what types of notifications are needed, or what the delivery requirements are.",
+              "4": "Migrate a legacy API from REST to GraphQL. You know the current API has 20+ endpoints, but you don't know which ones are actively used, what clients consume them, or whether there's a timeline pressure.",
+              "5": "Debug a production performance issue. Users report slow page loads, but you don't know which pages, what the baseline performance was, or whether anything changed recently."
+            }
+          }
+        ]
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "collaboration_quality",
+            "weight": 0.4,
+            "description": "Questions are specific and demonstrate clear prioritization thinking"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:most important|critical|first|priority|impact|blocks|determines|without this)\\b",
+            "description": "Justified prioritization with reasoning"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:deprioritiz|considered|also thought|less important|can figure out|can investigate|don't need to ask)\\b",
+            "description": "Explained what was deprioritized and why"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "question_adversarial",
+      "promptTemplate": "Your human collaborator gives you this task:\n\n{{scenario}}\n\nThey also add: \"{{misleading_hint}}\"\n\nWhat questions would you ask? Think carefully about what the real blockers are — they might not be what they seem at first.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "paired_set",
+            "sets": [
+              {
+                "scenario": "Add dark mode to the settings page",
+                "misleading_hint": "The CSS should be pretty simple, just swap the colors",
+                "real_blocker": "The app probably doesn't have a theming system, state persistence, or system preference detection — the CSS is the easy part",
+                "obvious_question": "Which colors to swap",
+                "better_question": "Is there an existing theme/design system, and where should the preference be stored"
+              },
+              {
+                "scenario": "The deploy script is broken, please fix it",
+                "misleading_hint": "I think there's a syntax error somewhere in the bash script",
+                "real_blocker": "The deploy target environment may have changed (new server, different permissions, updated dependencies) — a syntax error wouldn't explain 'broken'",
+                "obvious_question": "Where is the syntax error",
+                "better_question": "What changed recently in the deployment environment, and what error message appears"
+              },
+              {
+                "scenario": "Users are complaining about slow search",
+                "misleading_hint": "We probably need to add an index to the database",
+                "real_blocker": "The bottleneck might be the query itself (N+1), the network layer, frontend rendering, or even the search algorithm — an index might not help",
+                "obvious_question": "Which table needs the index",
+                "better_question": "Where has slow search been measured, and is there profiling data showing where time is spent"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 4,
+        "max": 5,
+        "difficultyParams": []
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "collaboration_quality",
+            "weight": 0.4,
+            "description": "Asked questions that go beyond the misleading surface hint"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "\\b(?:actually|real|underlying|root cause|deeper|might not be|assumes|assumption|not necessarily)\\b",
+            "description": "Identified that the hint might be misleading"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "\\b(?:before|first|investigate|diagnose|understand|evidence|data|measure|profil)\\b",
+            "description": "Suggested diagnostic steps before acting on the hint"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}

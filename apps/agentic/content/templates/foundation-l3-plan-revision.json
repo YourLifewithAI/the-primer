@@ -1,0 +1,182 @@
+{
+  "capability": {
+    "slug": "plan_revision",
+    "name": "Plan Revision",
+    "description": "Adapt plans when steps fail, re-estimate resources after setbacks, and avoid sunk cost fallacies.",
+    "level": 3,
+    "prerequisites": ["task_decomposition"]
+  },
+  "templates": [
+    {
+      "slug": "plan_adaptation",
+      "promptTemplate": "You had the following plan to accomplish a task:\n\n{{original_plan}}\n\nHowever, {{failure_description}}\n\nRevise your plan:\n1. Explain what went wrong and why\n2. Identify which remaining steps are still valid\n3. Propose an updated plan that works around the failure\n4. Estimate how many additional tool calls the revised approach needs",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "original_plan",
+            "type": "paired_set",
+            "sets": [
+              {
+                "original_plan": "1. Read config.json to get database URL\n2. Query the database for user records\n3. Filter users by 'active' status\n4. Write results to output.csv",
+                "failure_description": "Step 1 failed: config.json does not exist. The error message says 'ENOENT: no such file or directory'.",
+                "expected_revision": "search for config files with alternative names or locations"
+              },
+              {
+                "original_plan": "1. Search codebase for all test files\n2. Run each test file\n3. Collect results\n4. Generate coverage report",
+                "failure_description": "Step 2 failed on the third test file: it requires a database connection that isn't available in this environment.",
+                "expected_revision": "skip or mock database-dependent tests, run remaining tests"
+              },
+              {
+                "original_plan": "1. Read the API documentation\n2. Make a GET request to /api/users\n3. Parse the JSON response\n4. Extract email addresses\n5. Write to contacts.txt",
+                "failure_description": "Step 2 failed: the API returned a 401 Unauthorized error. You don't have valid credentials.",
+                "expected_revision": "find credentials, use alternative data source, or report the blocker"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 2,
+        "max": 5,
+        "difficultyParams": []
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "plan_quality",
+            "weight": 0.35,
+            "description": "Revised plan has clear numbered steps"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "\\b(?:failed|error|wrong|instead|alternative|workaround|fallback|skip|different approach)\\b",
+            "description": "Acknowledged the failure and proposed a workaround"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:still valid|remaining|keep|reuse|original step|unchanged)\\b",
+            "description": "Identified which original steps remain valid"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "resource_reestimation",
+      "promptTemplate": "You estimated that this task would require {{original_estimate}} tool calls:\n\n{{task_description}}\n\nAfter completing the first {{completed_steps}} steps, you've already used {{calls_used}} tool calls and discovered that {{discovery}}.\n\nRe-estimate:\n1. How many more tool calls will you need?\n2. What changed from your original estimate?\n3. Should you continue with the current approach or try a more efficient one?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "task_description",
+            "type": "paired_set",
+            "sets": [
+              {
+                "task_description": "Find all JavaScript files that use deprecated jQuery methods and list which methods each file uses",
+                "original_estimate": "5",
+                "completed_steps": "2",
+                "calls_used": "4",
+                "discovery": "the project has 200+ JS files, not the 20 you assumed. Your current approach searches one file at a time."
+              },
+              {
+                "task_description": "Read a log file, extract error entries, and categorize them by error type",
+                "original_estimate": "4",
+                "completed_steps": "1",
+                "calls_used": "1",
+                "discovery": "the log file is 50,000 lines long. Reading it all at once may exceed context limits."
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 3,
+        "max": 5,
+        "difficultyParams": []
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.4,
+            "pattern": "\\d+",
+            "description": "Provided a numeric re-estimate"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:assumed|underestimated|overestimated|didn't expect|more than|fewer than|scale|efficient|batch)\\b",
+            "description": "Explained what changed from original estimate"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:continue|switch|different approach|optimize|batch|bulk|more efficient|grep instead|parallel)\\b",
+            "description": "Evaluated whether to continue or change approach"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "revision_adversarial",
+      "promptTemplate": "You've been working on this task for a while:\n\n{{scenario}}\n\nYou've already invested {{effort_spent}}. Now {{new_information}}.\n\nWhat should you do? Consider:\n- Is it worth continuing the current approach?\n- Are you falling into a sunk cost trap?\n- What would you do if you were starting fresh right now?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "paired_set",
+            "sets": [
+              {
+                "scenario": "Parsing a complex XML file by reading it line by line and using regex to extract values",
+                "effort_spent": "15 tool calls building up a custom parser",
+                "new_information": "you've discovered there's an XML parsing tool available that can do this in 2 calls",
+                "correct_decision": "abandon the custom parser and use the XML tool"
+              },
+              {
+                "scenario": "Manually searching through 50 files one at a time looking for a specific error pattern",
+                "effort_spent": "20 tool calls, having searched 12 files with no matches yet",
+                "new_information": "you realize you could use grep to search all files at once",
+                "correct_decision": "switch to grep — the 20 calls are sunk cost"
+              },
+              {
+                "scenario": "Writing a complex shell script to automate a deployment process",
+                "effort_spent": "10 tool calls building the script",
+                "new_information": "the script has a subtle bug that corrupts data if the network drops mid-transfer, and fixing it requires adding transaction logic that doubles the complexity",
+                "correct_decision": "acknowledge the risk, consider simpler alternatives, possibly rebuild with safer approach"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 3,
+        "max": 5,
+        "difficultyParams": []
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.4,
+            "pattern": "\\b(?:sunk cost|already invested|wasted|abandon|start over|switch|fresh|not worth continuing|cut losses)\\b",
+            "description": "Recognized sunk cost fallacy and considered abandoning current approach"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "\\b(?:starting fresh|if I were|from scratch|new approach|better way|more efficient|simpler)\\b",
+            "description": "Evaluated the situation as if starting fresh"
+          },
+          {
+            "type": "plan_quality",
+            "weight": 0.25,
+            "description": "Proposed a concrete revised plan"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}

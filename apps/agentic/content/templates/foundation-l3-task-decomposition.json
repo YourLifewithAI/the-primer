@@ -1,0 +1,182 @@
+{
+  "capability": {
+    "slug": "task_decomposition",
+    "name": "Task Decomposition",
+    "description": "Break complex goals into ordered steps, identify dependencies between steps, and select appropriate tools for each step.",
+    "level": 3,
+    "prerequisites": ["tool_selection", "sequential_chaining"]
+  },
+  "templates": [
+    {
+      "slug": "simple_decomposition",
+      "promptTemplate": "You need to accomplish the following goal:\n\n{{goal}}\n\nBreak this down into a step-by-step plan. For each step:\n1. Describe what needs to happen\n2. Which tool(s) you would use\n3. What the step depends on (which previous steps must complete first)\n4. What the expected output is\n\nProvide your plan as a numbered list.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "goal",
+            "type": "enum",
+            "values": [
+              "Find all TypeScript files in the project that import from a 'utils' module, then count how many unique utility functions are used across the codebase",
+              "Read a JSON configuration file, validate that all required fields are present, and generate a report listing any missing fields",
+              "Search the codebase for all TODO comments, group them by file, and produce a prioritized list based on which files have the most TODOs",
+              "Read a CSV data file, find all rows where the 'status' column is 'error', extract the error messages, and write a summary report",
+              "Find all API endpoint definitions in the codebase, extract their HTTP methods and paths, and generate an API documentation outline"
+            ],
+            "affectsDifficulty": true
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 2,
+        "max": 4,
+        "difficultyParams": [
+          {
+            "param": "goal",
+            "scaling": "stepped",
+            "steps": {
+              "2": "Find all TypeScript files in the project that import from a 'utils' module, then count how many unique utility functions are used across the codebase",
+              "3": "Search the codebase for all TODO comments, group them by file, and produce a prioritized list based on which files have the most TODOs",
+              "4": "Find all API endpoint definitions in the codebase, extract their HTTP methods and paths, and generate an API documentation outline"
+            }
+          }
+        ]
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "plan_quality",
+            "weight": 0.5,
+            "expected": "3-8",
+            "description": "Produced a structured plan with 3-8 ordered steps"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:read|search|grep|write|list|glob|find)\\b",
+            "description": "Referenced appropriate tools for the task"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "\\b(?:depend|before|after|then|first|once|output|result)\\b",
+            "description": "Identified dependencies between steps"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "dependency_analysis",
+      "promptTemplate": "A developer needs to accomplish this multi-step task:\n\n{{goal}}\n\nAnalyze the dependencies:\n1. List all the steps required\n2. For each step, identify which other steps it depends on\n3. Identify which steps can run in parallel (no mutual dependencies)\n4. Suggest an optimal execution order that minimizes total time\n\nBe explicit about why certain steps must be sequential.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "goal",
+            "type": "enum",
+            "values": [
+              "Set up a new feature branch: read the issue description, check the current branch, create a new branch, update the config file with feature flags, and run the test suite",
+              "Deploy a code change: run linting, run unit tests, build the project, run integration tests, deploy to staging, verify staging health, deploy to production",
+              "Refactor a module: read current implementation, identify all imports of the module, update the module API, update all callers, run tests, update documentation"
+            ],
+            "affectsDifficulty": true
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 3,
+        "max": 5,
+        "difficultyParams": [
+          {
+            "param": "goal",
+            "scaling": "stepped",
+            "steps": {
+              "3": "Set up a new feature branch: read the issue description, check the current branch, create a new branch, update the config file with feature flags, and run the test suite",
+              "4": "Deploy a code change: run linting, run unit tests, build the project, run integration tests, deploy to staging, verify staging health, deploy to production",
+              "5": "Refactor a module: read current implementation, identify all imports of the module, update the module API, update all callers, run tests, update documentation"
+            }
+          }
+        ]
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "plan_quality",
+            "weight": 0.4,
+            "expected": "4-10",
+            "description": "Decomposed task into 4-10 clear steps"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "\\b(?:parallel|concurrent|simultaneous|independent|sequential|depends? on|blocks?|before|after|wait)\\b",
+            "description": "Identified parallelizable vs sequential steps"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "\\b(?:optimal|order|minimize|fastest|efficient|critical path)\\b",
+            "description": "Suggested optimal execution order"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "decomposition_adversarial",
+      "promptTemplate": "You need to accomplish this goal:\n\n{{goal}}\n\nBreak it down into steps with tools and dependencies.\n\nImportant: Think carefully about hidden dependencies and edge cases. Not everything is as simple as it first appears.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "goal",
+            "type": "paired_set",
+            "sets": [
+              {
+                "goal": "Delete all files in the 'temp' directory that are older than 30 days",
+                "hidden_complexity": "Must check if temp directory exists first, handle permission errors, consider files in use, verify no symlinks point outside temp",
+                "min_steps": "4"
+              },
+              {
+                "goal": "Update the version number across the entire project",
+                "hidden_complexity": "Version exists in package.json, README, CHANGELOG, possibly lock files. Must update in correct order to avoid inconsistency. Lock file regeneration requires install step.",
+                "min_steps": "5"
+              },
+              {
+                "goal": "Search for and replace all occurrences of an old API endpoint with a new one",
+                "hidden_complexity": "Must handle URLs in strings, config files, tests, documentation, and environment variables. Some occurrences may be in generated files that shouldn't be edited. Must verify replacements don't break string interpolation.",
+                "min_steps": "5"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 3,
+        "max": 5,
+        "difficultyParams": []
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "plan_quality",
+            "weight": 0.35,
+            "expected": "{{min_steps}}-10",
+            "description": "Identified sufficient steps including hidden complexities"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "\\b(?:check|verify|validate|edge case|error|permission|exist|careful|risk|before|first|guard|safe)\\b",
+            "description": "Identified hidden dependencies or safety concerns"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:read|search|grep|glob|write|edit|list)\\b",
+            "description": "Selected appropriate tools for each step"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}

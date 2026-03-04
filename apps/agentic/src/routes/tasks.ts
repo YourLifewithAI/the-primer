@@ -20,6 +20,7 @@ import { eloUpdate, selectMostInformativeTask } from "../lib/elo.js";
 import { bktUpdate, type BKTParams } from "../lib/bkt-bridge.js";
 import { storeReflection, getRelevantReflections, formatReflectionsAsContext } from "../lib/error-memory.js";
 import { generateTask, type TaskTemplateInput } from "../lib/task-generator.js";
+import { updateTrust, actionClassFromLevel } from "../lib/trust.js";
 import type { AppEnv } from "../types.js";
 
 const MASTERY_THRESHOLD = 0.95;
@@ -355,6 +356,10 @@ taskRoutes.post("/:id/submit", authMiddleware, async (c) => {
     });
   }
 
+  // 6. Update trust state (per-action-class graduated autonomy)
+  const actionClass = actionClassFromLevel(task.capability.level);
+  const trustResult = await updateTrust(agent.id, actionClass, evalResult.correct);
+
   return c.json({
     attemptId: attempt.id,
     score: evalResult.score,
@@ -371,6 +376,12 @@ taskRoutes.post("/:id/submit", authMiddleware, async (c) => {
       before: masteryState.eloMu,
       after: eloResult.agent.mu,
       expected: eloResult.expectedScore,
+    },
+    trust: {
+      actionClass,
+      trustLevel: trustResult.trustLevel,
+      totalActions: trustResult.totalActions,
+      accuracy: Math.round(trustResult.accuracy * 1000) / 1000,
     },
     // Prompt for reflection if the agent didn't provide one
     ...((!evalResult.correct && !reflection) ? {
@@ -399,12 +410,14 @@ function estimateDifficulty(agentMu: number): number {
  */
 function inferErrorType(
   evalResult: { criteriaScores: Record<string, number> }
-): "TOOL_SELECTION" | "ARGUMENT_ERROR" | "INTERPRETATION" | "UNKNOWN" {
+): "TOOL_SELECTION" | "ARGUMENT_ERROR" | "INTERPRETATION" | "PLANNING" | "COLLABORATION" | "UNKNOWN" {
   const scores = evalResult.criteriaScores;
   for (const [key, score] of Object.entries(scores)) {
     if (score < 1.0) {
       if (key.startsWith("tool_selected")) return "TOOL_SELECTION";
       if (key.startsWith("argument_valid")) return "ARGUMENT_ERROR";
+      if (key.startsWith("plan_quality")) return "PLANNING";
+      if (key.startsWith("collaboration_quality")) return "COLLABORATION";
       if (key.startsWith("result_correct")) return "INTERPRETATION";
     }
   }

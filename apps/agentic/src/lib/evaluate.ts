@@ -1,13 +1,15 @@
 /**
  * Rubric-based evaluation engine for agent task responses.
  *
- * Supports 6 criterion types for tool-use evaluation:
+ * Supports 8 criterion types for tool-use evaluation:
  * - tool_selected: Did the agent choose the correct tool?
  * - argument_valid: Were the arguments correct?
  * - result_correct: Did the response contain the expected result?
  * - format_correct: Was the response in the expected format?
  * - error_handled: Did the agent handle errors appropriately?
  * - sequence_valid: Were tool calls in the correct order?
+ * - plan_quality: Did the agent produce a structured plan? (L3)
+ * - collaboration_quality: Did the agent appropriately collaborate? (L4)
  */
 
 export interface Criterion {
@@ -25,7 +27,9 @@ export type CriterionType =
   | "result_correct"
   | "format_correct"
   | "error_handled"
-  | "sequence_valid";
+  | "sequence_valid"
+  | "plan_quality"
+  | "collaboration_quality";
 
 export interface Rubric {
   criteria: Criterion[];
@@ -97,6 +101,10 @@ function evaluateCriterion(criterion: Criterion, response: AgentResponse): numbe
       return evaluateErrorHandled(criterion, response);
     case "sequence_valid":
       return evaluateSequenceValid(criterion, response);
+    case "plan_quality":
+      return evaluatePlanQuality(criterion, response);
+    case "collaboration_quality":
+      return evaluateCollaborationQuality(criterion, response);
     default:
       return 0;
   }
@@ -212,4 +220,97 @@ function evaluateSequenceValid(criterion: Criterion, response: AgentResponse): n
     }
   }
   return expectedIdx >= expected.length ? 1.0 : expectedIdx / expected.length;
+}
+
+/**
+ * Evaluate plan quality for L3 planning tasks.
+ *
+ * Checks for structured planning artifacts in the response:
+ * - Steps: numbered/bulleted items indicating a structured plan
+ * - Dependencies: language indicating ordering constraints
+ * - Tool references: mentions of specific tools for steps
+ * - Step count: optionally validated against expected range (e.g., "3-7")
+ *
+ * Scores partial credit: each sub-check contributes equally.
+ */
+function evaluatePlanQuality(criterion: Criterion, response: AgentResponse): number {
+  const text = response.text || "";
+  if (!text.trim()) return 0;
+
+  let checks = 0;
+  let passed = 0;
+
+  // Sub-check 1: Has numbered/bulleted steps
+  checks++;
+  const stepPatterns = /(?:^|\n)\s*(?:\d+[.)]\s|[-*]\s|step\s+\d)/im;
+  if (stepPatterns.test(text)) passed++;
+
+  // Sub-check 2: Has dependency/ordering language
+  checks++;
+  const depPattern = /\b(?:before|after|then|first|next|requires?|depends?\s+on|blocks?|precondition|prerequisite|parallel|sequential|once.*(?:complete|done|finish))\b/i;
+  if (depPattern.test(text)) passed++;
+
+  // Sub-check 3: References tools or actions
+  checks++;
+  const toolPattern = /\b(?:read|write|search|grep|execute|create|delete|edit|fetch|query|call|invoke|run|open|parse|list)\b/i;
+  if (toolPattern.test(text)) passed++;
+
+  // Sub-check 4: Step count in expected range (if specified via expected "min-max")
+  if (criterion.expected) {
+    checks++;
+    const rangeStr = Array.isArray(criterion.expected) ? criterion.expected[0] : criterion.expected;
+    const rangeMatch = String(rangeStr).match(/^(\d+)-(\d+)$/);
+    if (rangeMatch) {
+      const [, minStr, maxStr] = rangeMatch;
+      const min = parseInt(minStr, 10);
+      const max = parseInt(maxStr, 10);
+      // Count step-like lines
+      const stepLines = text.match(/(?:^|\n)\s*(?:\d+[.)]\s|[-*]\s)/gm);
+      const count = stepLines?.length ?? 0;
+      if (count >= min && count <= max) passed++;
+    }
+  }
+
+  return passed / checks;
+}
+
+/**
+ * Evaluate collaboration quality for L4 human collaboration tasks.
+ *
+ * Checks for appropriate collaboration artifacts in the response:
+ * - Questions: agent asks clarifying questions (has question marks)
+ * - Specificity: questions are concrete, not vague
+ * - Options: presents alternatives or trade-offs
+ * - Fallbacks: proposes default behavior if clarification unavailable
+ *
+ * Scores partial credit: each sub-check contributes equally.
+ */
+function evaluateCollaborationQuality(criterion: Criterion, response: AgentResponse): number {
+  const text = response.text || "";
+  if (!text.trim()) return 0;
+
+  let checks = 0;
+  let passed = 0;
+
+  // Sub-check 1: Asks questions (contains question marks in substantive sentences)
+  checks++;
+  const questions = text.match(/[^.!?\n]{10,}\?/g);
+  if (questions && questions.length > 0) passed++;
+
+  // Sub-check 2: Questions/statements are specific (not vague)
+  checks++;
+  const specificitySignals = /\b(?:specifically|which|what\s+(?:type|kind|format|version)|how\s+(?:many|much|often)|where\s+(?:exactly|specifically)|do\s+you\s+(?:want|prefer|need|expect)|should\s+(?:I|we|it)|for\s+example)\b/i;
+  if (specificitySignals.test(text)) passed++;
+
+  // Sub-check 3: Presents options or trade-offs
+  checks++;
+  const optionsPattern = /\b(?:option|approach|alternative|trade-?off|pros?\b.*\bcons?\b|advantage|disadvantage|choice|could\s+(?:either|also)|on\s+(?:the\s+)?one\s+hand|versus|vs\.?)\b/i;
+  if (optionsPattern.test(text)) passed++;
+
+  // Sub-check 4: Proposes fallback/default behavior
+  checks++;
+  const fallbackPattern = /\b(?:default|fallback|otherwise|if\s+(?:not|no)\s+(?:specified|provided|clarified)|assume|proceed\s+with|in\s+the\s+(?:absence|meantime)|unless\s+(?:you|otherwise))\b/i;
+  if (fallbackPattern.test(text)) passed++;
+
+  return passed / checks;
 }

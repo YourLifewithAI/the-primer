@@ -33,6 +33,7 @@ export type ErrorTypeTag =
   | "ARGUMENT_ERROR"
   | "INTERPRETATION"
   | "PLANNING"
+  | "COLLABORATION"
   | "MEMORY"
   | "SYSTEM"
   | "UNKNOWN";

@@ -1,0 +1,183 @@
+{
+  "capability": {
+    "slug": "options_presentation",
+    "name": "Options Presentation",
+    "description": "Present 2-3 approaches with trade-offs for each, make a recommendation with rationale, and identify hidden downsides.",
+    "level": 4,
+    "prerequisites": ["task_decomposition"]
+  },
+  "templates": [
+    {
+      "slug": "tradeoff_analysis",
+      "promptTemplate": "You're working on this task and have identified multiple approaches:\n\n{{scenario}}\n\nPresent 2-3 options to your human collaborator:\n- For each option, describe the approach, its pros, and its cons\n- Compare them on relevant dimensions (speed, reliability, complexity, maintainability)\n- Make a recommendation and explain your reasoning",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "enum",
+            "values": [
+              "You need to search for a pattern across 500 files in a large codebase. You could: use grep to search all files at once, read files one at a time and search manually, or build a search index first and query it.",
+              "You need to parse and extract data from a large XML file (10MB). You could: read the entire file at once, stream it in chunks, or convert it to JSON first and then parse.",
+              "A configuration value is needed from a remote service. You could: make an API call each time it's needed, cache it locally with a TTL, or read it from an environment variable.",
+              "You need to validate user input for a form with 15 fields. You could: validate all fields at once on submit, validate each field on blur, or use a schema validation library."
+            ],
+            "affectsDifficulty": true
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 2,
+        "max": 5,
+        "difficultyParams": [
+          {
+            "param": "scenario",
+            "scaling": "stepped",
+            "steps": {
+              "2": "You need to search for a pattern across 500 files in a large codebase. You could: use grep to search all files at once, read files one at a time and search manually, or build a search index first and query it.",
+              "3": "You need to parse and extract data from a large XML file (10MB). You could: read the entire file at once, stream it in chunks, or convert it to JSON first and then parse.",
+              "4": "A configuration value is needed from a remote service. You could: make an API call each time it's needed, cache it locally with a TTL, or read it from an environment variable.",
+              "5": "You need to validate user input for a form with 15 fields. You could: validate all fields at once on submit, validate each field on blur, or use a schema validation library."
+            }
+          }
+        ]
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "collaboration_quality",
+            "weight": 0.45,
+            "description": "Presented options with trade-offs and made a recommendation"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:pros?|cons?|advantage|disadvantage|trade-?off|faster|slower|simpler|complex|reliable|fragile|maintain)\\b",
+            "description": "Articulated specific trade-offs"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "\\b(?:recommend|suggest|prefer|best|optimal|given|because|considering)\\b",
+            "description": "Made a recommendation with reasoning"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "recommendation_with_rationale",
+      "promptTemplate": "Your human collaborator asks: \"{{question}}\"\n\nContext: {{context}}\n\nProvide your recommendation:\n1. State your recommended approach clearly\n2. Explain why you chose it over alternatives\n3. Acknowledge what you'd lose by not choosing an alternative\n4. Describe under what circumstances you'd change your recommendation",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "question",
+            "type": "paired_set",
+            "sets": [
+              {
+                "question": "Should we use TypeScript or JavaScript for this new module?",
+                "context": "The rest of the project is 80% TypeScript, but this module needs to ship by Friday and the team member writing it is more comfortable with JavaScript."
+              },
+              {
+                "question": "Should we add tests before or after the refactor?",
+                "context": "The module has zero test coverage. The refactor will change the public API. Deadline is in two weeks."
+              },
+              {
+                "question": "Should we use a third-party library or build this in-house?",
+                "context": "The feature is date parsing for international formats. The team has 2 developers. The project already has 5 external dependencies."
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 3,
+        "max": 5,
+        "difficultyParams": []
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "collaboration_quality",
+            "weight": 0.4,
+            "description": "Made a clear recommendation with trade-off awareness"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:recommend|suggest|would choose|go with|my advice)\\b",
+            "description": "Made a clear recommendation (not just listed options)"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.15,
+            "pattern": "\\b(?:lose|sacrifice|downside|trade-?off|cost|miss out|give up)\\b",
+            "description": "Acknowledged downsides of the recommendation"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.15,
+            "pattern": "\\b(?:if|unless|would change|reconsider|circumstances|depends|however|on the other hand)\\b",
+            "description": "Identified when the recommendation would change"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "options_adversarial",
+      "promptTemplate": "You're evaluating approaches for this task:\n\n{{scenario}}\n\nThe obvious best choice seems to be {{obvious_choice}}. But is it really? Consider hidden costs, edge cases, and second-order effects. Present your analysis.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "paired_set",
+            "sets": [
+              {
+                "scenario": "Adding caching to speed up repeated API calls. Options: in-memory cache, Redis, or filesystem cache.",
+                "obvious_choice": "Redis — it's the industry standard for caching",
+                "hidden_downside": "Redis adds infrastructure complexity, a new dependency to maintain, and a new failure mode. For a small app with a single server, in-memory caching is simpler and faster (no network hop)."
+              },
+              {
+                "scenario": "A database query runs in 5 seconds. Options: add an index, rewrite the query, or add a cache layer.",
+                "obvious_choice": "add an index — it's the standard fix for slow queries",
+                "hidden_downside": "The index might not help if the query is doing a full table scan due to a bad WHERE clause or excessive JOINs. Adding an index also slows writes and increases storage. The rewrite might reveal the query is fetching far more data than needed."
+              },
+              {
+                "scenario": "A function has 8 parameters. Options: use an options object, use a builder pattern, or break the function into smaller functions.",
+                "obvious_choice": "use an options object — it's the simplest refactor",
+                "hidden_downside": "An options object hides the fact that the function does too many things. Breaking it into smaller functions addresses the root cause (Single Responsibility), while the options object just makes the symptom prettier."
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 4,
+        "max": 5,
+        "difficultyParams": []
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.4,
+            "pattern": "\\b(?:hidden|however|but|actually|overlooked|second-order|not as simple|beneath the surface|root cause|real issue)\\b",
+            "description": "Identified hidden downsides of the obvious choice"
+          },
+          {
+            "type": "collaboration_quality",
+            "weight": 0.35,
+            "description": "Presented nuanced analysis with multiple perspectives"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "\\b(?:complex|maintain|failure|dependency|overhead|cost|scale|long-term|technical debt)\\b",
+            "description": "Considered long-term and operational costs"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}

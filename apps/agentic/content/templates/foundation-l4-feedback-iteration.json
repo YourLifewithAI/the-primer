@@ -1,0 +1,176 @@
+{
+  "capability": {
+    "slug": "feedback_iteration",
+    "name": "Feedback Iteration",
+    "description": "Incorporate human feedback into work products, interpret vague feedback into actionable changes, and flag contradictory guidance.",
+    "level": 4,
+    "prerequisites": ["options_presentation"]
+  },
+  "templates": [
+    {
+      "slug": "incorporate_feedback",
+      "promptTemplate": "You produced this initial output:\n\n{{initial_output}}\n\nYour human collaborator responded with this feedback:\n\n\"{{feedback}}\"\n\nRevise your output to incorporate the feedback:\n1. Show the revised version\n2. Explain what you changed and why\n3. Note any parts of the feedback you were uncertain about and how you interpreted them",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "initial_output",
+            "type": "paired_set",
+            "sets": [
+              {
+                "initial_output": "Here's a plan to add user authentication:\n1. Install passport.js\n2. Create a login route\n3. Add session middleware\n4. Create user registration\n5. Add protected route middleware",
+                "feedback": "This looks good but we need to support OAuth too, and the registration flow should validate email addresses. Also, can you think about what happens if the session store goes down?"
+              },
+              {
+                "initial_output": "I found 3 potential causes for the bug:\n1. Race condition in the async handler\n2. Missing null check on user.profile\n3. Stale cache after profile update\n\nI recommend fixing #2 first as it's the simplest.",
+                "feedback": "Good analysis. But I think the race condition is actually the root cause — we've seen this pattern before. Can you investigate that path more deeply? Also, for the null check, can you show me what the fix would actually look like?"
+              },
+              {
+                "initial_output": "API endpoint design:\nGET /api/users - list all users\nPOST /api/users - create user\nGET /api/users/:id - get user\nPUT /api/users/:id - update user\nDELETE /api/users/:id - delete user",
+                "feedback": "Good start but we need pagination on the list endpoint, soft delete instead of hard delete, and the response format should follow JSON:API spec. Also make sure to think about authorization — not everyone should be able to delete users."
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 2,
+        "max": 4,
+        "difficultyParams": []
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.4,
+            "pattern": "\\b(?:revised|updated|changed|added|modified|incorporated|addressed)\\b",
+            "description": "Produced a revised output that addresses the feedback"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:because|feedback|you (?:asked|mentioned|suggested|noted)|based on|in response to)\\b",
+            "description": "Connected changes to specific feedback points"
+          },
+          {
+            "type": "collaboration_quality",
+            "weight": 0.3,
+            "description": "Noted uncertainties in feedback interpretation"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "feedback_interpretation",
+      "promptTemplate": "Your collaborator gave you this vague feedback on your work:\n\n\"{{feedback}}\"\n\nContext of what you were working on: {{context}}\n\nInterpret this feedback:\n1. What do you think they're actually asking for? (be specific)\n2. What are 2-3 possible interpretations?\n3. Which interpretation do you think is most likely, and why?\n4. What would you do or ask to confirm your interpretation?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "feedback",
+            "type": "paired_set",
+            "sets": [
+              {
+                "feedback": "This doesn't feel right",
+                "context": "You wrote a utility function that parses dates from multiple formats",
+                "possible_interpretations": "Code style doesn't match project, function is too complex, function name is unclear, approach is wrong"
+              },
+              {
+                "feedback": "Can you make it more robust?",
+                "context": "You wrote an API endpoint that fetches user data",
+                "possible_interpretations": "Add error handling, add input validation, add retry logic, add rate limiting, handle edge cases"
+              },
+              {
+                "feedback": "I'm not sure about the naming",
+                "context": "You created three new TypeScript interfaces: UserData, UserPayload, and UserResponse",
+                "possible_interpretations": "Names are too similar, names don't follow project conventions, names don't accurately describe the types"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 3,
+        "max": 5,
+        "difficultyParams": []
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "collaboration_quality",
+            "weight": 0.45,
+            "description": "Interpreted vague feedback into concrete actionable items"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:could mean|might be|interpretation|possibly|one reading|another way|alternatively)\\b",
+            "description": "Offered multiple specific interpretations"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "\\b(?:most likely|I think|because|context|given that|typically|confirm|verify|ask)\\b",
+            "description": "Justified preferred interpretation and planned to verify"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "iteration_adversarial",
+      "promptTemplate": "You're in the middle of a task. Here's the history:\n\n{{history}}\n\nYour collaborator now says: \"{{contradictory_feedback}}\"\n\nThis seems to contradict their earlier guidance. How do you handle this?\n1. Point out the contradiction clearly but respectfully\n2. Ask which direction they'd like to go\n3. Propose a path forward that accommodates both if possible",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "history",
+            "type": "paired_set",
+            "sets": [
+              {
+                "history": "Round 1: They asked you to 'keep the API simple — minimal endpoints, RESTful design.'\nRound 2: You designed 5 clean REST endpoints.\nRound 3: They approved the design.",
+                "contradictory_feedback": "Actually, can we add GraphQL support too? And maybe WebSocket endpoints for real-time updates. Oh, and a batch API for bulk operations.",
+                "tension": "Simplicity vs feature creep"
+              },
+              {
+                "history": "Round 1: They said 'Don't worry about performance optimization right now, just make it work.'\nRound 2: You wrote a simple, readable implementation.\nRound 3: They approved.",
+                "contradictory_feedback": "This is way too slow. Why didn't you use caching? We need this to handle 10,000 requests per second.",
+                "tension": "Explicit earlier instruction vs new performance requirement"
+              },
+              {
+                "history": "Round 1: They asked for 'comprehensive error handling — catch everything.'\nRound 2: You added try-catch blocks around every operation with detailed error messages.\nRound 3: They reviewed it.",
+                "contradictory_feedback": "There's too much error handling code here. It's hard to read. Can you simplify it?",
+                "tension": "Comprehensive vs readable — they asked for both but they conflict"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 4,
+        "max": 5,
+        "difficultyParams": []
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "\\b(?:contradict|earlier|previous|before|you (?:said|asked|mentioned)|conflict|inconsistent|tension|changed)\\b",
+            "description": "Identified and named the contradiction"
+          },
+          {
+            "type": "collaboration_quality",
+            "weight": 0.35,
+            "description": "Handled the contradiction respectfully and constructively"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:both|accommodate|balance|middle ground|compromise|reconcile|which.*prefer|clarify.*direction|prioritize)\\b",
+            "description": "Proposed a way forward or asked for clarification"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}
