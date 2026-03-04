@@ -80,6 +80,7 @@ const CALIBRATION_BOOST: Record<number, number> = {
   2: 0.75, // L2: two more correct = mastered
   3: 0.65, // L3: ~2 more correct answers to master
   4: 0.55, // L4: ~3 more correct answers to master
+  5: 0.45, // L5: ~4 more correct answers to master (meta-skills need more proof)
 };
 
 /** Elo adjustment per correct calibration response. */
@@ -89,6 +90,7 @@ const ELO_BOOST_PER_LEVEL: Record<number, number> = {
   2: 75,  // Larger boost for L2
   3: 100, // L3: Planning
   4: 125, // L4: Human Collaboration
+  5: 150, // L5: Meta-Skills
 };
 
 /** Calibration difficulty level — moderate, discriminating. */

@@ -1,0 +1,132 @@
+{
+  "capability": {
+    "slug": "build_vs_leverage",
+    "name": "Build vs Leverage Judgment",
+    "description": "Evaluate existing solutions against building custom. Decide when to use, adapt, or build. Justify the decision with clear rationale.",
+    "level": 5,
+    "prerequisites": ["options_presentation", "search_strategy"]
+  },
+  "templates": [
+    {
+      "slug": "evaluate_existing",
+      "promptTemplate": "You need to solve this problem:\n\n{{problem}}\n\nHere are existing solutions available:\n{{options}}\n\nEvaluate each option and make a recommendation:\n1. For each solution: what it does well, what it doesn't cover, maintenance/reliability concerns\n2. Your recommendation: use as-is, adapt, or build custom\n3. Justify your choice with specific rationale\n4. What would change your mind?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "problem",
+            "type": "paired_set",
+            "sets": [
+              {
+                "problem": "Validate form inputs in a React application (email, phone, dates, custom patterns)",
+                "options": "A) Zod — TypeScript-first schema validation, 15K GitHub stars, actively maintained\nB) Yup — JS schema builder, 22K stars, mature but slower TypeScript support\nC) Custom regex validators — write your own for each field type",
+                "best_answer": "Probably Zod (TypeScript-first, active maintenance, covers all cases)"
+              },
+              {
+                "problem": "Send real-time notifications to users (in-app, email, push)",
+                "options": "A) Novu — open-source notification infrastructure, handles all channels\nB) Firebase Cloud Messaging — Google's push notification service, free tier\nC) Custom WebSocket server with nodemailer for email",
+                "best_answer": "Depends on scale and channels needed — no single right answer"
+              },
+              {
+                "problem": "Generate unique, URL-safe identifiers for database records",
+                "options": "A) uuid (v4) — universally unique, 36 chars, well-understood\nB) nanoid — shorter (21 chars default), URL-safe, faster\nC) cuid2 — collision-resistant, sortable, designed for distributed systems\nD) Auto-incrementing integer — simple, sequential, database-native",
+                "best_answer": "Depends on requirements (sortable? short? distributed?)"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 3,
+        "max": 5,
+        "difficultyParams": []
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:pros?|cons?|strength|weakness|covers?|lacks?|doesn't|limitation|maintained|active|abandoned)\\b",
+            "description": "Evaluated each option's strengths and weaknesses"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:recommend|use|choose|build|adapt|custom|as-is|leverage|existing)\\b",
+            "description": "Made a clear build/use/adapt recommendation"
+          },
+          {
+            "type": "collaboration_quality",
+            "weight": 0.25,
+            "description": "Justified the decision with specific rationale"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.15,
+            "pattern": "\\b(?:would change|if|depends|scale|requirements|team size|timeline|budget)\\b",
+            "description": "Identified conditions that would change the recommendation"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "build_vs_leverage_adversarial",
+      "promptTemplate": "Your team is debating what to do about this:\n\n{{scenario}}\n\nOne camp says: \"{{build_argument}}\"\nThe other says: \"{{leverage_argument}}\"\n\nWho's right? Or is the answer more nuanced? Make a decision and defend it.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "scenario",
+            "type": "paired_set",
+            "sets": [
+              {
+                "scenario": "The project needs a user authentication system",
+                "build_argument": "We should build it ourselves. Auth is core to our product and we need full control over the user experience and security model.",
+                "leverage_argument": "We should use Auth0 or Clerk. Authentication is a solved problem and rolling your own is a security risk.",
+                "nuance": "Both have valid points — depends on whether auth IS the product or just enables it"
+              },
+              {
+                "scenario": "The CLI tool needs a configuration file parser",
+                "build_argument": "Let's build a custom parser that handles our exact config format. It'll be 50 lines of code, no dependencies.",
+                "leverage_argument": "Let's use cosmiconfig — it handles JSON, YAML, TOML, and JS config files. Don't reinvent the wheel.",
+                "nuance": "50 lines is genuinely simple enough to build, unless you need multi-format support"
+              },
+              {
+                "scenario": "The API needs rate limiting",
+                "build_argument": "We should build it. Our rate limiting needs are unique — per-user, per-endpoint, with burst allowances and priority queues.",
+                "leverage_argument": "Use express-rate-limit or upstash/ratelimit. They're battle-tested and cover 90% of use cases.",
+                "nuance": "The 'unique needs' argument is often overblown, but if they genuinely need priority queues, off-the-shelf won't cut it"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 4,
+        "max": 5,
+        "difficultyParams": []
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "\\b(?:nuanc|both|valid|depends|context|however|true that|but also|right about|wrong about)\\b",
+            "description": "Engaged with both sides rather than dismissing one"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "\\b(?:decide|recommend|would|choose|go with|build|use|leverage|because|given)\\b",
+            "description": "Made a clear decision despite nuance"
+          },
+          {
+            "type": "collaboration_quality",
+            "weight": 0.3,
+            "description": "Defended the decision with specific reasoning"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}

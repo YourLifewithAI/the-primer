@@ -1,0 +1,127 @@
+{
+  "capability": {
+    "slug": "search_strategy",
+    "name": "Search Strategy",
+    "description": "Find the right tool, API, or documentation for a problem. Navigate large tool ecosystems efficiently. Know when to stop searching.",
+    "level": 5,
+    "prerequisites": ["task_decomposition", "uncertainty_recognition"]
+  },
+  "templates": [
+    {
+      "slug": "tool_ecosystem_navigation",
+      "promptTemplate": "You're working on a project and need to accomplish this:\n\n{{goal}}\n\nYou have access to a large tool ecosystem (think: npm with 2M+ packages, or MCP with 18,000+ servers). Describe your search strategy:\n1. What search terms would you use? In what order?\n2. How would you evaluate whether a tool is right for your needs?\n3. When would you stop searching and either pick a tool or build your own?\n4. What signals indicate a tool is well-maintained vs abandoned?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "goal",
+            "type": "enum",
+            "values": [
+              "Parse and validate email addresses in 15+ international formats",
+              "Generate PDF invoices from structured data with custom branding",
+              "Rate-limit API requests per user with sliding window algorithm",
+              "Convert between 30+ date/time formats including obscure calendar systems",
+              "Resize, crop, and compress images in batch while preserving EXIF metadata"
+            ],
+            "affectsDifficulty": true
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 3,
+        "max": 5,
+        "difficultyParams": [
+          {
+            "param": "goal",
+            "scaling": "stepped",
+            "steps": {
+              "3": "Resize, crop, and compress images in batch while preserving EXIF metadata",
+              "4": "Rate-limit API requests per user with sliding window algorithm",
+              "5": "Convert between 30+ date/time formats including obscure calendar systems"
+            }
+          }
+        ]
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:search|query|look for|find|browse|explore|npm|registry|github)\\b",
+            "description": "Described concrete search terms and strategy"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:evaluate|stars|download|maintained|updated|issues|documentation|test|coverage|license)\\b",
+            "description": "Has evaluation criteria for tool quality"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "\\b(?:stop|enough|diminish|build|custom|own|too long|time box)\\b",
+            "description": "Knows when to stop searching"
+          },
+          {
+            "type": "collaboration_quality",
+            "weight": 0.2,
+            "description": "Overall quality of reasoning and specificity"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "documentation_navigation",
+      "promptTemplate": "You need to figure out how to use an unfamiliar tool/API to accomplish:\n\n{{task}}\n\nThe documentation is {{doc_quality}}. Describe your approach:\n1. Where do you start reading?\n2. What do you look for first? (quickstart, API reference, examples?)\n3. How do you handle gaps in the documentation?\n4. At what point do you switch from reading docs to experimenting with code?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "task",
+            "type": "paired_set",
+            "sets": [
+              {
+                "task": "Authenticate users via OAuth2 using a library you've never used before",
+                "doc_quality": "comprehensive but poorly organized — 200+ pages, no clear getting-started guide"
+              },
+              {
+                "task": "Send transactional emails via a third-party API",
+                "doc_quality": "minimal — only auto-generated API reference with no examples or tutorials"
+              },
+              {
+                "task": "Set up a CI/CD pipeline using a tool the team chose but nobody has used yet",
+                "doc_quality": "excellent but version-specific — most examples are for v2 and you're using v4 with breaking changes"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 3,
+        "max": 5,
+        "difficultyParams": []
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "plan_quality",
+            "weight": 0.35,
+            "description": "Has a structured reading strategy"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "\\b(?:quickstart|example|tutorial|reference|source code|test|experiment|try|prototype)\\b",
+            "description": "Named specific documentation artifacts to look for"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:gap|missing|unclear|experiment|trial|error|test|hack|workaround|community|stack overflow|issue)\\b",
+            "description": "Has a strategy for when docs are insufficient"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}

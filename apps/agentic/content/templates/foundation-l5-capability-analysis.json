@@ -1,0 +1,127 @@
+{
+  "capability": {
+    "slug": "capability_analysis",
+    "name": "Capability Analysis",
+    "description": "Evaluate what a tool, API, or MCP server can do. Determine if it solves the problem or needs wrapping. Assess fitness for purpose.",
+    "level": 5,
+    "prerequisites": ["search_strategy", "uncertainty_recognition"]
+  },
+  "templates": [
+    {
+      "slug": "tool_evaluation",
+      "promptTemplate": "You've discovered a tool/service with these capabilities:\n\n{{tool_description}}\n\nYou need it for: {{use_case}}\n\nEvaluate:\n1. Does it solve your problem? (fully, partially, or not at all)\n2. What's covered vs what gaps remain?\n3. Would you need to wrap it (add a layer on top) or use it directly?\n4. What risks come with adopting it? (lock-in, maintenance, learning curve)",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "tool_description",
+            "type": "paired_set",
+            "sets": [
+              {
+                "tool_description": "MCP File System Server — provides: read_file, write_file, list_directory, search_files. Does NOT provide: file watching, permissions management, or symbolic link resolution.",
+                "use_case": "Building a code refactoring tool that needs to find files, read them, make changes, and verify nothing broke",
+                "gap_analysis": "Covers read/write/search but missing file watching (can't verify nothing broke in real-time) and may struggle with symlinks in monorepos"
+              },
+              {
+                "tool_description": "REST API for a weather service — provides: current conditions, 5-day forecast, historical data (last 30 days), alerts. Rate limit: 100 requests/day on free tier. No WebSocket support.",
+                "use_case": "Building a real-time weather dashboard that updates every 5 minutes for 50 cities",
+                "gap_analysis": "50 cities × 288 times/day = 14,400 requests, far exceeding 100/day. No WebSocket means polling. Fundamental mismatch."
+              },
+              {
+                "tool_description": "NPM package for markdown parsing — parses CommonMark + GFM extensions. Supports plugins. Written in JavaScript, no TypeScript types included. Last updated 6 months ago. 5K weekly downloads.",
+                "use_case": "Parsing user-generated markdown content in a TypeScript application with custom rendering rules",
+                "gap_analysis": "Functionally capable but TypeScript gap needs @types or wrapper. Plugin system covers custom rules. 6-month staleness is borderline. 5K downloads suggests niche."
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 3,
+        "max": 5,
+        "difficultyParams": []
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:covers?|provides?|supports?|handles?|does|can|includes?)\\b",
+            "description": "Identified what the tool covers"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:gap|missing|lacks?|doesn't|cannot|no support|limitation|won't)\\b",
+            "description": "Identified gaps and limitations"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "\\b(?:wrap|layer|adapt|extend|customize|workaround|bridge|directly)\\b",
+            "description": "Assessed whether wrapping is needed"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "\\b(?:risk|lock-in|maintain|depend|learn|cost|breaking|migrate|vendor)\\b",
+            "description": "Considered adoption risks"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "capability_gap_adversarial",
+      "promptTemplate": "A colleague recommends using this tool:\n\n{{tool_description}}\n\nThey say: \"{{endorsement}}\"\n\nYour task is: {{use_case}}\n\nDoes this tool actually solve your problem? Look carefully — your colleague might be overlooking something important.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "tool_description",
+            "type": "paired_set",
+            "sets": [
+              {
+                "tool_description": "A JavaScript library for 'blazing fast' CSV parsing. Benchmarks show it parses 1M rows in 200ms. Supports custom delimiters and quoted fields.",
+                "endorsement": "It's the fastest CSV parser out there! Perfect for our data pipeline.",
+                "use_case": "Processing CSV uploads from users who might paste data from Excel (which exports with BOM markers, mixed encodings, and inconsistent line endings)",
+                "hidden_gap": "Speed benchmarks are for clean data. Real-world CSV from Excel has encoding issues, BOM markers, and malformed rows that a speed-optimized parser might choke on."
+              },
+              {
+                "tool_description": "An MCP server for GitHub integration — provides: create_issue, list_issues, create_pr, merge_pr, get_file_contents, list_repos.",
+                "endorsement": "It has everything we need for our GitHub automation workflow!",
+                "use_case": "Automating code review: read PR diffs, analyze changed files, post review comments, and approve/request changes",
+                "hidden_gap": "Can list issues and create PRs, but can't read PR diffs, post review comments, or approve PRs. The 'everything we need' claim is wrong — key review actions are missing."
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 4,
+        "max": 5,
+        "difficultyParams": []
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.4,
+            "pattern": "\\b(?:doesn't|missing|can't|overlook|gap|actually|won't|but|however|not enough|incomplete)\\b",
+            "description": "Identified the capability gap the colleague missed"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:real.world|edge case|in practice|user|actual|production|assumption)\\b",
+            "description": "Distinguished benchmark/ideal from real-world usage"
+          },
+          {
+            "type": "collaboration_quality",
+            "weight": 0.3,
+            "description": "Constructive analysis rather than just criticism"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}

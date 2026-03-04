@@ -1,0 +1,139 @@
+{
+  "capability": {
+    "slug": "self_expansion",
+    "name": "Self-Expansion",
+    "description": "Build reusable tools, create MCP servers, and extend your own capabilities. Know when to automate a repeated task.",
+    "level": 5,
+    "prerequisites": ["task_decomposition", "options_presentation"]
+  },
+  "templates": [
+    {
+      "slug": "automation_recognition",
+      "promptTemplate": "You've been doing the following task repeatedly:\n\n{{repeated_task}}\n\nYou've done it {{times}} times in the last week, each time taking {{duration}}.\n\nShould you automate this? Consider:\n1. Is the ROI positive? (automation cost vs time saved)\n2. What form should the automation take? (script, tool, MCP server, or just a better workflow?)\n3. Design the automation — what inputs, outputs, and error handling does it need?\n4. What edge cases could break it?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "repeated_task",
+            "type": "paired_set",
+            "sets": [
+              {
+                "repeated_task": "Searching the codebase for a function name, reading the file it's in, finding all imports of that function, and listing them",
+                "times": "8",
+                "duration": "4 tool calls each time",
+                "good_automation": "A single tool/script that takes a function name and returns all files that import it"
+              },
+              {
+                "repeated_task": "Reading a JSON config file, checking if a specific key exists, and reporting its value",
+                "times": "3",
+                "duration": "2 tool calls each time",
+                "good_automation": "Probably not worth automating — only 3 times, 2 calls each is already efficient"
+              },
+              {
+                "repeated_task": "Formatting error logs: reading a log file, filtering for ERROR lines, extracting timestamp and message, writing to a clean summary file",
+                "times": "12",
+                "duration": "5 tool calls each time",
+                "good_automation": "A log parsing tool with configurable filters and output formats"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 3,
+        "max": 5,
+        "difficultyParams": []
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "\\b(?:ROI|worth|cost|save|time|investment|payoff|break even|amortize)\\b",
+            "description": "Evaluated automation ROI"
+          },
+          {
+            "type": "plan_quality",
+            "weight": 0.35,
+            "description": "Designed a concrete automation with inputs/outputs"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "\\b(?:edge case|error|fail|handle|catch|invalid|missing|empty)\\b",
+            "description": "Considered error handling and edge cases"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.15,
+            "pattern": "\\b(?:script|tool|MCP|server|function|workflow|reusable)\\b",
+            "description": "Chose an appropriate automation form"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "tool_design",
+      "promptTemplate": "Design a reusable tool (as if building an MCP server) that solves this problem:\n\n{{problem}}\n\nProvide:\n1. Tool name and description\n2. Input parameters (with types and descriptions)\n3. Output format\n4. Error cases and how they're handled\n5. Example usage showing 2-3 different invocations",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "problem",
+            "type": "enum",
+            "values": [
+              "Given a git diff, identify which test files need to be re-run based on import dependencies",
+              "Given a package.json, check all dependencies for known security vulnerabilities",
+              "Given a directory of source files, generate a dependency graph showing which files import from which",
+              "Given a database schema, generate TypeScript type definitions that stay in sync"
+            ],
+            "affectsDifficulty": true
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 3,
+        "max": 5,
+        "difficultyParams": [
+          {
+            "param": "problem",
+            "scaling": "stepped",
+            "steps": {
+              "3": "Given a package.json, check all dependencies for known security vulnerabilities",
+              "4": "Given a directory of source files, generate a dependency graph showing which files import from which",
+              "5": "Given a git diff, identify which test files need to be re-run based on import dependencies"
+            }
+          }
+        ]
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "\\b(?:param|input|argument|string|number|boolean|array|object|path|optional|required)\\b",
+            "description": "Defined clear input parameters with types"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "\\b(?:return|output|result|response|format|JSON|array|object|list)\\b",
+            "description": "Defined clear output format"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "\\b(?:error|invalid|not found|empty|timeout|permission|throw|catch|handle)\\b",
+            "description": "Addressed error cases"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "\\b(?:example|usage|invoke|call|like|such as|e\\.g)\\b",
+            "description": "Provided concrete usage examples"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}

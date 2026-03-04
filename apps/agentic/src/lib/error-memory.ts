@@ -1,14 +1,15 @@
 /**
- * Error Memory System — Reflexion Pattern (v1)
+ * Error Memory System — Reflexion + MNL Pattern (v2)
  *
  * After each failed task attempt, the agent generates a verbal lesson.
- * The system stores these reflections, detects patterns, and makes
- * relevant lessons available for future attempts.
+ * The system stores these reflections, detects patterns across capabilities,
+ * clusters them into abstract error patterns, and promotes recurring ones
+ * to hard constraints.
  *
- * Progression:
- * v1 (this): Reflexion pattern — verbal self-reflection per failure
- * v2 (Phase 5): MNL pattern — cluster failures into abstract patterns
- * v3 (Phase 7): AgentDebug pattern — root cause taxonomy tagging
+ * v1: Reflexion pattern — verbal self-reflection per failure
+ * v2 (this): MNL pattern — cross-capability clustering, auto-promotion,
+ *   pattern statistics for meta-skill training
+ * v3 (future): AgentDebug pattern — root cause taxonomy tagging
  *
  * Based on:
  * - Reflexion (Shinn 2023) — verbal reinforcement learning
@@ -67,7 +68,14 @@ export async function storeReflection(input: ReflectionInput): Promise<void> {
   const similar = existing.find((r) => isSimilar(r.content, input.content));
 
   if (similar) {
-    // Increment recurrence and update content if the new one is better
+    const newRecurrence = similar.recurrence + 1;
+    // v2: Auto-promote at recurrence >= 5 (no confirmations needed — if
+    // you've seen the same failure 5 times, it's a real pattern).
+    // Original threshold: recurrence >= 3 && confirmations >= 2.
+    const shouldPromote =
+      (newRecurrence >= 5) ||
+      (newRecurrence >= 3 && similar.confirmations >= 2);
+
     await db.reflection.update({
       where: { id: similar.id },
       data: {
@@ -76,24 +84,51 @@ export async function storeReflection(input: ReflectionInput): Promise<void> {
           ? input.content
           : similar.content,
         errorType: input.errorType ?? similar.errorType,
-        // Check if should promote to constraint
-        promotedToConstraint: (similar.recurrence + 1) >= 3 && similar.confirmations >= 2,
+        promotedToConstraint: shouldPromote,
       },
     });
   } else {
-    // New pattern
-    await db.reflection.create({
-      data: {
-        agentId: input.agentId,
-        taskAttemptId: input.taskAttemptId,
-        capabilitySlug: input.capabilitySlug,
-        content: input.content,
-        errorType: input.errorType ?? "UNKNOWN",
-        recurrence: 1,
-        confirmations: 0,
-        disconfirmations: 0,
-      },
-    });
+    // v2: Before creating a new reflection, check for cross-capability
+    // patterns — same error type across different capabilities is a
+    // stronger signal than capability-specific failures.
+    const crossCapMatch = existing.length === 0
+      ? await db.reflection.findFirst({
+          where: {
+            agentId: input.agentId,
+            errorType: input.errorType ?? "UNKNOWN",
+            NOT: { capabilitySlug: input.capabilitySlug },
+          },
+          orderBy: { recurrence: "desc" },
+        })
+      : null;
+
+    if (crossCapMatch && isSimilar(crossCapMatch.content, input.content, 0.35)) {
+      // Cross-capability pattern detected — increment the existing one
+      // and tag it as cross-cutting
+      const newRecurrence = crossCapMatch.recurrence + 1;
+      await db.reflection.update({
+        where: { id: crossCapMatch.id },
+        data: {
+          recurrence: { increment: 1 },
+          capabilitySlug: "_cross_capability",
+          promotedToConstraint: newRecurrence >= 4, // Lower threshold for cross-cap
+        },
+      });
+    } else {
+      // Genuinely new pattern
+      await db.reflection.create({
+        data: {
+          agentId: input.agentId,
+          taskAttemptId: input.taskAttemptId,
+          capabilitySlug: input.capabilitySlug,
+          content: input.content,
+          errorType: input.errorType ?? "UNKNOWN",
+          recurrence: 1,
+          confirmations: 0,
+          disconfirmations: 0,
+        },
+      });
+    }
   }
 }
 
@@ -112,10 +147,14 @@ export async function getRelevantReflections(
   capabilitySlug: string,
   limit: number = 5
 ): Promise<RelevantReflection[]> {
+  // v2: Pull both capability-specific and cross-capability reflections
   const reflections = await db.reflection.findMany({
     where: {
       agentId,
-      capabilitySlug,
+      OR: [
+        { capabilitySlug },
+        { capabilitySlug: "_cross_capability", promotedToConstraint: true },
+      ],
     },
     orderBy: [
       { promotedToConstraint: "desc" },
@@ -185,6 +224,50 @@ export function formatReflectionsAsContext(reflections: RelevantReflection[]): s
     "--- End lessons ---",
     "",
   ].join("\n");
+}
+
+// ─── v2: Pattern Clustering ──────────────────────────────────
+
+export interface ErrorPattern {
+  errorType: string;
+  count: number;
+  capabilities: string[];
+  topReflection: string;
+  isConstraint: boolean;
+}
+
+/**
+ * Cluster an agent's reflections into abstract error patterns.
+ *
+ * Groups by errorType, counts occurrences, lists affected capabilities.
+ * Used by L5 meta-skill tasks to help agents recognize their own patterns.
+ */
+export async function clusterReflections(
+  agentId: string,
+): Promise<ErrorPattern[]> {
+  const reflections = await db.reflection.findMany({
+    where: { agentId },
+    orderBy: { recurrence: "desc" },
+  });
+
+  // Group by errorType
+  const clusters = new Map<string, typeof reflections>();
+  for (const r of reflections) {
+    const key = r.errorType ?? "UNKNOWN";
+    const group = clusters.get(key) ?? [];
+    group.push(r);
+    clusters.set(key, group);
+  }
+
+  return Array.from(clusters.entries())
+    .map(([errorType, group]) => ({
+      errorType,
+      count: group.reduce((sum, r) => sum + r.recurrence, 0),
+      capabilities: [...new Set(group.map((r) => r.capabilitySlug))],
+      topReflection: group[0].content,
+      isConstraint: group.some((r) => r.promotedToConstraint),
+    }))
+    .sort((a, b) => b.count - a.count);
 }
 
 // ─── Similarity Detection ────────────────────────────────────

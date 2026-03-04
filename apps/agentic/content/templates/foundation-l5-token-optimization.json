@@ -1,0 +1,136 @@
+{
+  "capability": {
+    "slug": "token_optimization",
+    "name": "Token Optimization",
+    "description": "Accomplish goals with fewer tool calls and less context usage. Recognize when you're being inefficient and course-correct.",
+    "level": 5,
+    "prerequisites": ["resource_estimation", "plan_revision"]
+  },
+  "templates": [
+    {
+      "slug": "efficient_approach",
+      "promptTemplate": "You need to accomplish this goal:\n\n{{goal}}\n\nHere is an inefficient approach that uses {{inefficient_count}} tool calls:\n{{inefficient_plan}}\n\nDesign a more efficient approach. Your target: accomplish the same goal in {{target_count}} or fewer tool calls. Explain what you'd do differently and why it's more efficient.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "goal",
+            "type": "paired_set",
+            "sets": [
+              {
+                "goal": "Find which file in the project defines a function called 'processPayment'",
+                "inefficient_plan": "1. List all directories\n2. List files in src/\n3. List files in src/utils/\n4. List files in src/services/\n5. Read src/services/payment.ts\n6. Read src/services/billing.ts\n7. Read src/services/checkout.ts",
+                "inefficient_count": "7",
+                "target_count": "2"
+              },
+              {
+                "goal": "Count how many TypeScript files exist in the project",
+                "inefficient_plan": "1. List root directory\n2. List src/\n3. List src/components/\n4. List src/utils/\n5. List src/pages/\n6. Count .ts files in each listing manually",
+                "inefficient_count": "6",
+                "target_count": "1"
+              },
+              {
+                "goal": "Find all files that import from '@utils/logger' and check if they handle errors",
+                "inefficient_plan": "1. Search for '@utils/logger' in file 1\n2. Search for '@utils/logger' in file 2\n3. Search for '@utils/logger' in file 3\n... (repeat for each file)\n10. Read each matching file individually",
+                "inefficient_count": "10+",
+                "target_count": "3"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 3,
+        "max": 5,
+        "difficultyParams": []
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "plan_quality",
+            "weight": 0.4,
+            "description": "Produced a concrete efficient plan"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "\\b(?:grep|search|glob|batch|single|one call|instead of|combine|fewer)\\b",
+            "description": "Used efficient tools (search/glob vs manual listing)"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "\\b(?:efficient|redundant|unnecessary|wasted|overhead|avoid|skip|direct)\\b",
+            "description": "Explained why the original was inefficient"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "context_conservation",
+      "promptTemplate": "You're working in a constrained environment with a {{context_size}}-token context window. You need to:\n\n{{task}}\n\nThe naive approach would read all the data into context at once. Design an approach that stays within budget by being selective about what you read and when. Explain your strategy.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "context_size",
+            "type": "enum",
+            "values": ["4000", "8000", "16000"],
+            "affectsDifficulty": true
+          },
+          {
+            "name": "task",
+            "type": "enum",
+            "values": [
+              "Analyze 20 log files (each ~500 lines) to find the root cause of a recurring error",
+              "Review a 3000-line source file to identify all security vulnerabilities",
+              "Compare two large JSON configuration files (each ~1000 lines) and list differences"
+            ],
+            "affectsDifficulty": true
+          }
+        ]
+      },
+      "difficultyRange": {
+        "min": 3,
+        "max": 5,
+        "difficultyParams": [
+          {
+            "param": "context_size",
+            "scaling": "stepped",
+            "steps": { "3": "16000", "4": "8000", "5": "4000" }
+          },
+          {
+            "param": "task",
+            "scaling": "stepped",
+            "steps": {
+              "3": "Compare two large JSON configuration files (each ~1000 lines) and list differences",
+              "4": "Review a 3000-line source file to identify all security vulnerabilities",
+              "5": "Analyze 20 log files (each ~500 lines) to find the root cause of a recurring error"
+            }
+          }
+        ]
+      },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.4,
+            "pattern": "\\b(?:selective|partial|chunk|section|sample|skim|scan first|summary|targeted)\\b",
+            "description": "Strategy avoids reading everything at once"
+          },
+          {
+            "type": "plan_quality",
+            "weight": 0.35,
+            "description": "Has a structured approach with clear steps"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "\\b(?:token|context|budget|limit|overflow|window|capacity)\\b",
+            "description": "Explicitly considered context budget"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}
