@@ -1,0 +1,91 @@
+{
+  "capability": {
+    "slug": "error_handling",
+    "name": "Error Handling",
+    "description": "Recognize tool failures, diagnose the cause, and take corrective action.",
+    "level": 1,
+    "prerequisites": ["tool_selection"]
+  },
+  "templates": [
+    {
+      "slug": "file_not_found_recovery",
+      "promptTemplate": "Read the file '{{wrong_path}}'. If the file doesn't exist, search for a file with a similar name in the project and read the correct one.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "wrong_path",
+            "type": "paired_set",
+            "sets": [
+              { "wrong_path": "./config.json", "correct_path": "./src/config.json" },
+              { "wrong_path": "./settings.json", "correct_path": "./lib/settings.json" },
+              { "wrong_path": "./data/config.yaml", "correct_path": "./config/data/config.yaml" },
+              { "wrong_path": "./app.json", "correct_path": "./src/app.json" }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 2, "max": 4, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "error_handled",
+            "weight": 0.6,
+            "description": "Agent recovered from the initial file-not-found error"
+          },
+          {
+            "type": "tool_selected",
+            "weight": 0.2,
+            "expectedTemplate": "search",
+            "description": "Agent used search to find the correct file"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "config|settings|app|data",
+            "description": "Agent found and read a config-related file"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "permission_denied_recovery",
+      "promptTemplate": "Read the file '{{protected_path}}'. You may encounter a permission error. If so, try reading the public copy at '{{public_path}}' instead.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "protected_path",
+            "type": "paired_set",
+            "sets": [
+              { "protected_path": "/etc/shadow", "public_path": "/etc/passwd" },
+              { "protected_path": "./.env", "public_path": "./.env.example" },
+              { "protected_path": "./secrets/keys.json", "public_path": "./config/keys.example.json" }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 2, "max": 4, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "error_handled",
+            "weight": 0.5,
+            "description": "Agent handled the permission error"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "public|example|passwd|fallback|alternative",
+            "description": "Agent found and read the alternative file"
+          },
+          {
+            "type": "format_correct",
+            "weight": 0.2,
+            "description": "Response includes a tool call"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}
