@@ -234,7 +234,9 @@ export function AdaptiveLesson({
           problemId={currentProblem.dbId}
           problem={currentProblem.problem}
           onComplete={handleProblemComplete}
-          targetKc={targetKc ? { pMastery: targetKc.pMastery } : undefined}
+          kcName={targetKc?.id}
+          pMastery={targetKc?.pMastery}
+          totalKcAttempts={targetKc?.totalAttempts}
         />
       )}
     </div>

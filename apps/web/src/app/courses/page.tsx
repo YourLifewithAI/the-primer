@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { db } from "@/lib/db";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Courses",
+  description: "Browse available courses and start learning.",
+};
 
 export const dynamic = "force-dynamic";
 
@@ -21,8 +27,8 @@ export default async function CoursesPage() {
   });
 
   return (
-    <main className="min-h-screen px-4 py-6 md:px-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-2">Courses</h1>
+    <main className="min-h-screen px-4 py-6 md:px-8 max-w-4xl mx-auto" aria-labelledby="courses-title">
+      <h1 id="courses-title" className="text-3xl font-bold mb-2">Courses</h1>
       <p className="text-muted-foreground mb-8">
         Choose a course to begin learning.
       </p>

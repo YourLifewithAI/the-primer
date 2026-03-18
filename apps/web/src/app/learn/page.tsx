@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { ensureUser } from "@/lib/ensure-user";
@@ -7,6 +8,11 @@ import { db } from "@/lib/db";
 import { CheckChart } from "@/components/check-chart";
 import { StreakDisplay } from "@/components/streak-display";
 import { SessionTimer } from "@/components/session-timer";
+
+export const metadata: Metadata = {
+  title: "My Playlist",
+  description: "Your personalized adaptive learning playlist.",
+};
 
 export const dynamic = "force-dynamic";
 
@@ -24,9 +30,9 @@ export default async function LearnPage() {
 
   if (!enrollment) {
     return (
-      <main className="max-w-2xl mx-auto px-4 py-8">
+      <main className="max-w-2xl mx-auto px-4 py-8" aria-labelledby="learn-title">
         <div className="border border-border rounded-lg p-8 text-center">
-          <h2 className="text-xl font-semibold mb-2">No Course Enrolled</h2>
+          <h1 id="learn-title" className="text-xl font-semibold mb-2">No Course Enrolled</h1>
           <p className="text-muted-foreground mb-4">
             You need to be enrolled in a course to see your playlist.
           </p>
@@ -47,7 +53,7 @@ export default async function LearnPage() {
   ]);
 
   return (
-    <main className="max-w-2xl mx-auto px-4 py-8">
+    <main className="max-w-2xl mx-auto px-4 py-8" aria-label="Learning playlist">
       {/* Session header: streak + timer */}
       <div className="flex items-center justify-between mb-6">
         <StreakDisplay

@@ -44,9 +44,7 @@ export function MasteryBar({
               ? "bg-green-500"
               : pMastery > 0.5
                 ? "bg-blue-500"
-                : pMastery > 0.25
-                  ? "bg-amber-500"
-                  : "bg-red-400"
+                : "bg-amber-500"
           }`}
           style={{ width: `${percentage}%` }}
         />

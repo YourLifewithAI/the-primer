@@ -9,6 +9,7 @@
   --color-muted-foreground: #6b7280;
   --color-border: #e5e7eb;
   --color-ring: #2563eb;
+  --color-accent: #f3f4f6;
 }
 
 @layer base {
@@ -22,10 +23,70 @@
       --color-muted-foreground: #a1a1aa;
       --color-border: #27272a;
       --color-ring: #3b82f6;
+      --color-accent: #27272a;
     }
+  }
+
+  /* ── Visible focus indicators (WCAG 2.1 AA) ─────────────── */
+  *:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Remove outline on mouse click, keep for keyboard */
+  *:focus:not(:focus-visible) {
+    outline: none;
   }
 }
 
+/* ── Skip to content link ───────────────────────────────────── */
+.skip-to-content {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  background: var(--color-primary);
+  color: var(--color-primary-foreground);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: top 0.15s ease;
+}
+
+.skip-to-content:focus {
+  top: 0.75rem;
+}
+
+/* ── Screen-reader only ─────────────────────────────────────── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ── Reduced motion support ─────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Animations ─────────────────────────────────────────────── */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   10%, 50%, 90% { transform: translateX(-4px); }
@@ -43,6 +104,11 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
 .animate-shake {
   animation: shake 0.4s ease-in-out;
 }
@@ -55,11 +121,6 @@
   animation: fade-in 0.3s ease-out;
 }
 
-@keyframes slide-in-right {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-.animate-slide-in-right {
-  animation: slide-in-right 0.25s ease-out;
+.animate-skeleton {
+  animation: skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

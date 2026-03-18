@@ -16,6 +16,8 @@ interface CheckChartProps {
 }
 
 export function CheckChart({ playlist, stats, studentName, courseId }: CheckChartProps) {
+  const reviewItems = playlist.filter((i) => i.status === "review_due");
+  const hasReviews = reviewItems.length > 0;
   const progressPercent =
     stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
 
@@ -27,11 +29,13 @@ export function CheckChart({ playlist, stats, studentName, courseId }: CheckChar
           {studentName ? `${studentName}'s` : "My"} Playlist
         </h1>
         <p className="text-muted-foreground text-sm mt-1">
-          {stats.available > 0
-            ? `${stats.available} lessons ready to go`
-            : stats.completed === stats.total
-              ? "All lessons mastered!"
-              : "Keep going — more lessons unlock as you master skills"}
+          {hasReviews
+            ? `${reviewItems[0]?.reviewCount ?? 0} review${(reviewItems[0]?.reviewCount ?? 0) !== 1 ? "s" : ""} due`
+            : stats.available > 0
+              ? `${stats.available} lessons ready to go`
+              : stats.completed === stats.total
+                ? "All lessons mastered!"
+                : "Keep going — more lessons unlock as you master skills"}
         </p>
       </div>
 

@@ -1,19 +1,24 @@
 "use client";
 
 import { MathText } from "@primer/math-renderer";
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useMemo } from "react";
 import type { ProblemDefinition } from "@primer/shared/src/content-schema";
 import { checkAnswer as checkAnswerShared } from "@primer/shared";
-import { useTutorChat } from "@/hooks/use-tutor-chat";
-import { TutorPanel } from "./tutor-panel";
+import { TutorChat } from "./tutor-chat";
+import type { TutorContext } from "@/lib/tutor";
+import { announce } from "@/lib/a11y";
 
 interface ProblemViewerProps {
   /** The DB problem ID (for response tracking) */
   problemId: string;
   problem: ProblemDefinition;
   onComplete?: (results: StepResult[]) => void;
-  /** Mastery context for the AI tutor */
-  targetKc?: { pMastery: number };
+  /** KC name for the current problem's target skill (for tutor context) */
+  kcName?: string;
+  /** Student's mastery level for the target KC */
+  pMastery?: number;
+  /** Total attempts on this KC */
+  totalKcAttempts?: number;
 }
 
 interface StepResult {
@@ -23,7 +28,14 @@ interface StepResult {
   hintsUsed: number;
 }
 
-export function ProblemViewer({ problemId, problem, onComplete, targetKc }: ProblemViewerProps) {
+export function ProblemViewer({
+  problemId,
+  problem,
+  onComplete,
+  kcName,
+  pMastery,
+  totalKcAttempts,
+}: ProblemViewerProps) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [answer, setAnswer] = useState("");
   const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(
@@ -33,21 +45,28 @@ export function ProblemViewer({ problemId, problem, onComplete, targetKc }: Prob
   const [attempts, setAttempts] = useState(0);
   const [stepResults, setStepResults] = useState<StepResult[]>([]);
   const [completed, setCompleted] = useState(false);
-  const [tutorOpen, setTutorOpen] = useState(false);
+  const [wrongAttempts, setWrongAttempts] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const stepStartTime = useRef(Date.now());
 
   const currentStep = problem.steps[currentStepIndex];
   const isLastStep = currentStepIndex === problem.steps.length - 1;
 
-  const tutor = useTutorChat({
-    problemId,
-    problem: { title: problem.title, context: problem.context },
-    currentStep: currentStep ?? problem.steps[0],
-    hintsRevealed,
-    attempts,
-    pMastery: targetKc?.pMastery,
-  });
+  // Build tutor context for the AI chat
+  const tutorContext: TutorContext = useMemo(
+    () => ({
+      problemTitle: problem.title,
+      problemContext: problem.context,
+      stepPrompt: currentStep?.prompt ?? "",
+      wrongAttempts,
+      hintsRevealed,
+      totalHints: currentStep?.hints.length ?? 0,
+      kcName,
+      pMastery,
+      totalKcAttempts,
+    }),
+    [problem.title, problem.context, currentStep, wrongAttempts, hintsRevealed, kcName, pMastery, totalKcAttempts]
+  );
 
   const checkAnswer = useCallback(() => {
     // Read from DOM ref as fallback — controlled state can desync during hydration
@@ -85,6 +104,7 @@ export function ProblemViewer({ problemId, problem, onComplete, targetKc }: Prob
 
     if (correct) {
       setFeedback("correct");
+      announce("Correct! Well done.", "assertive");
       const result: StepResult = {
         stepId: currentStep.id,
         correct: true,
@@ -99,6 +119,7 @@ export function ProblemViewer({ problemId, problem, onComplete, targetKc }: Prob
       setTimeout(() => {
         if (isLastStep) {
           setCompleted(true);
+          announce("Problem complete!", "assertive");
           onComplete?.(newResults);
         } else {
           setCurrentStepIndex((i) => i + 1);
@@ -107,13 +128,14 @@ export function ProblemViewer({ problemId, problem, onComplete, targetKc }: Prob
           setFeedback(null);
           setHintsRevealed(0);
           setAttempts(0);
-          setTutorOpen(false);
-          tutor.reset();
+          setWrongAttempts([]);
           stepStartTime.current = Date.now();
         }
       }, 1200);
     } else {
       setFeedback("incorrect");
+      announce("Incorrect. Try again or use a hint.", "assertive");
+      setWrongAttempts((prev) => [...prev, inputValue]);
       // Clear incorrect feedback after a moment
       setTimeout(() => setFeedback(null), 2000);
     }
@@ -127,7 +149,6 @@ export function ProblemViewer({ problemId, problem, onComplete, targetKc }: Prob
     isLastStep,
     stepResults,
     onComplete,
-    tutor,
   ]);
 
   const revealHint = useCallback(() => {
@@ -166,8 +187,7 @@ export function ProblemViewer({ problemId, problem, onComplete, targetKc }: Prob
   if (!currentStep) return null;
 
   return (
-    <div className={`border border-border rounded-lg overflow-hidden ${tutorOpen ? "flex flex-col sm:flex-row" : ""}`}>
-      <div className={`p-4 sm:p-6 space-y-4 ${tutorOpen ? "flex-1 min-w-0" : ""}`}>
+    <div className="border border-border rounded-lg p-4 sm:p-6 space-y-4">
       {/* Problem title and context */}
       <div>
         <h3 className="font-semibold text-lg">{problem.title}</h3>
@@ -212,6 +232,7 @@ export function ProblemViewer({ problemId, problem, onComplete, targetKc }: Prob
             onChange={(e) => setAnswer(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && checkAnswer()}
             placeholder="Type your answer..."
+            aria-label={`Answer for step ${currentStepIndex + 1} of ${problem.steps.length}`}
             className={`flex-1 px-4 py-2 min-h-[44px] text-base border rounded-lg bg-background text-foreground outline-none focus:ring-2 transition-colors ${
               feedback === "correct"
                 ? "border-green-500 focus:ring-green-500/30"
@@ -232,8 +253,8 @@ export function ProblemViewer({ problemId, problem, onComplete, targetKc }: Prob
 
         {/* Feedback */}
         {feedback === "correct" && (
-          <div className="flex items-center gap-2 text-green-600 font-medium animate-pop">
-            <span>✓</span> Correct!
+          <div className="flex items-center gap-2 text-green-600 font-medium animate-pop" role="status">
+            <span aria-hidden="true">✓</span> Correct!
             {currentStep.explanation && (
               <span className="text-sm text-muted-foreground ml-2">
                 <MathText content={currentStep.explanation} />
@@ -242,7 +263,7 @@ export function ProblemViewer({ problemId, problem, onComplete, targetKc }: Prob
           </div>
         )}
         {feedback === "incorrect" && (
-          <div className="text-red-500 text-sm font-medium animate-shake">
+          <div className="text-red-500 text-sm font-medium animate-shake" role="alert">
             Not quite. Try again, or use a hint.
           </div>
         )}
@@ -260,38 +281,34 @@ export function ProblemViewer({ problemId, problem, onComplete, targetKc }: Prob
               <MathText content={hint.content} />
             </div>
           ))}
-          <div className="flex flex-wrap gap-2 items-center">
-            {hintsRevealed < currentStep.hints.length &&
-              feedback !== "correct" && (
-                <button
-                  onClick={revealHint}
-                  className="text-sm text-amber-600 hover:text-amber-500 transition-colors min-h-[44px] px-2"
-                >
-                  💡 Show hint ({hintsRevealed}/{currentStep.hints.length})
-                </button>
-              )}
-            {feedback !== "correct" && !tutorOpen && (
+          {hintsRevealed < currentStep.hints.length &&
+            feedback !== "correct" && (
               <button
-                onClick={() => setTutorOpen(true)}
-                className="text-sm text-blue-600 hover:text-blue-500 transition-colors min-h-[44px] px-2"
+                onClick={revealHint}
+                className="text-sm text-amber-600 hover:text-amber-500 transition-colors min-h-[44px] px-2"
               >
-                Ask for help
+                💡 Show hint ({hintsRevealed}/{currentStep.hints.length})
               </button>
             )}
-          </div>
         </div>
+
+        {/* AI Tutor Chat — shows after first wrong attempt or hint */}
+        {(wrongAttempts.length > 0 || hintsRevealed > 0) &&
+          feedback !== "correct" && (
+            <TutorChat
+              problemId={problemId}
+              context={tutorContext}
+              onOpen={() => {
+                // Fire engagement event (fire-and-forget)
+                fetch("/api/engagement", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ eventType: "TUTOR_OPENED" }),
+                }).catch(() => {});
+              }}
+            />
+          )}
       </div>
-      </div>
-      {tutorOpen && (
-        <TutorPanel
-          messages={tutor.messages}
-          turnsUsed={tutor.turnsUsed}
-          isStreaming={tutor.isStreaming}
-          turnLimitReached={tutor.turnLimitReached}
-          onSend={tutor.sendMessage}
-          onClose={() => setTutorOpen(false)}
-        />
-      )}
     </div>
   );
 }

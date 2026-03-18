@@ -33,6 +33,8 @@ model User {
   responses      ProblemResponse[]
   fsrsCards      FsrsCardState[]
   tutorSessions  TutorSession[]
+  classroomMemberships ClassroomMembership[]
+  notifications        Notification[]
 }
 
 model StudentProfile {
@@ -50,6 +52,25 @@ model ParentProfile {
   userId   String   @unique
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   childIds String[] // User.id references
+
+  notificationPreferences ParentNotificationPreference?
+}
+
+enum NotificationFrequency {
+  DAILY
+  WEEKLY
+  NEVER
+}
+
+model ParentNotificationPreference {
+  id              String                @id @default(cuid())
+  parentProfileId String                @unique
+  parentProfile   ParentProfile         @relation(fields: [parentProfileId], references: [id], onDelete: Cascade)
+  emailFrequency  NotificationFrequency @default(WEEKLY)
+  milestoneAlerts Boolean               @default(true) // KC mastered, lesson completed, streak milestones
+  struggleAlerts  Boolean               @default(true) // Stuck on a KC for multiple sessions
+  weeklyReport    Boolean               @default(true) // Weekly summary email
+  updatedAt       DateTime              @updatedAt
 }
 
 model GuideProfile {
@@ -57,6 +78,56 @@ model GuideProfile {
   userId String  @unique
   user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   bio    String?
+
+  classrooms      Classroom[]
+  authoredCourses Course[]
+  authoredLessons Lesson[]
+}
+
+// ─── Classrooms ─────────────────────────────────────────────
+
+model Classroom {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  courseId     String?
+  course      Course?  @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  guideId     String
+  guide       GuideProfile @relation(fields: [guideId], references: [id], onDelete: Cascade)
+  joinCode    String   @unique @default(cuid()) // Students use this to join
+  archived    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members     ClassroomMembership[]
+  assignments Assignment[]
+}
+
+model ClassroomMembership {
+  id          String    @id @default(cuid())
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  studentId   String
+  student     User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  joinedAt    DateTime  @default(now())
+
+  @@unique([classroomId, studentId])
+  @@index([classroomId])
+  @@index([studentId])
+}
+
+model Assignment {
+  id          String    @id @default(cuid())
+  classroomId String
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  lessonId    String?   // Optional: assign a specific lesson
+  lesson      Lesson?   @relation(fields: [lessonId], references: [id], onDelete: SetNull)
+  kcIds       String[]  // KCs to focus on (if not lesson-based)
+  dueDate     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 // ─── Curriculum Structure ────────────────────────────────────
@@ -68,6 +139,12 @@ enum Subject {
   SOCIAL_STUDIES
 }
 
+enum LessonStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
 model Course {
   id          String   @id @default(cuid())
   title       String
@@ -75,11 +152,15 @@ model Course {
   subject     Subject
   gradeLevel  Int[]
   published   Boolean  @default(false)
+  isShared    Boolean  @default(false)
+  authorId    String?
+  author      GuideProfile? @relation(fields: [authorId], references: [id], onDelete: SetNull)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   modules     Module[]
   enrollments Enrollment[]
+  classrooms  Classroom[]
 }
 
 model Module {
@@ -96,15 +177,20 @@ model Module {
 }
 
 model Lesson {
-  id         String   @id @default(cuid())
+  id         String       @id @default(cuid())
   moduleId   String
-  module     Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  module     Module       @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   title      String
-  content    String?  // Markdown with KaTeX
+  content    String?      // Markdown with KaTeX
   orderIndex Int
-  createdAt  DateTime @default(now())
+  status     LessonStatus @default(PUBLISHED)
+  authorId   String?
+  author     GuideProfile? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt @default(now())
 
-  problems Problem[]
+  problems    Problem[]
+  assignments Assignment[]
 
   @@unique([moduleId, orderIndex])
 }
@@ -118,6 +204,7 @@ model Enrollment {
   enrolledAt DateTime @default(now())
 
   @@unique([studentId, courseId])
+  @@index([studentId])
 }
 
 // ─── Knowledge Components ────────────────────────────────────
@@ -193,6 +280,7 @@ model StudentMasteryState {
   updatedAt     DateTime  @updatedAt
 
   @@unique([studentId, kcId])
+  @@index([studentId])
 }
 
 model ProblemResponse {
@@ -208,6 +296,9 @@ model ProblemResponse {
   hintsUsed     Int      @default(0)
   attemptNumber Int
   createdAt     DateTime @default(now())
+
+  @@index([studentId, createdAt])
+  @@index([problemId])
 }
 
 // ─── Spaced Repetition (FSRS) ────────────────────────────────
@@ -221,13 +312,16 @@ model FsrsCardState {
   state        Int       @default(0) // 0=New, 1=Learning, 2=Review, 3=Relearning
   stability    Float     @default(0)
   difficulty   Float     @default(0)
-  reps         Int       @default(0)
-  lapses       Int       @default(0)
-  dueDate      DateTime
-  lastReviewAt DateTime?
-  updatedAt    DateTime  @updatedAt
+  reps           Int       @default(0)
+  lapses         Int       @default(0)
+  scheduledDays  Int       @default(0)
+  learningSteps  Int       @default(0)
+  dueDate        DateTime
+  lastReviewAt   DateTime?
+  updatedAt      DateTime  @updatedAt
 
   @@unique([studentId, kcId])
+  @@index([studentId, dueDate])
 }
 
 // ─── AI Tutor Sessions ───────────────────────────────────────
@@ -243,6 +337,8 @@ model TutorSession {
   outputTokens  Int      @default(0)
   startedAt     DateTime @default(now())
   endedAt       DateTime?
+
+  @@index([studentId, startedAt])
 }
 
 // ─── Engagement Tracking ─────────────────────────────────────
@@ -282,6 +378,31 @@ model EngagementAggregate {
   tutorSessions   Int      @default(0)
 
   @@unique([studentId, date])
+}
+
+// ─── Notifications ──────────────────────────────────────────
+
+enum NotificationType {
+  MILESTONE        // Student mastered a KC
+  STRUGGLE_ALERT   // Student struggling with a KC
+  ASSIGNMENT_DUE   // New assignment created
+  REVIEW_REMINDER  // FSRS cards due for review
+  WEEKLY_REPORT    // Weekly progress summary
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String           // Recipient
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      NotificationType
+  title     String
+  body      String
+  link      String?          // URL to navigate to on click
+  read      Boolean          @default(false)
+  metadata  Json?            // Flexible: studentId, kcId, classroomId, etc.
+  createdAt DateTime         @default(now())
+
+  @@index([userId, read, createdAt])
 }
 
 // ─── Audit Trail (FERPA) ─────────────────────────────────────

@@ -9,7 +9,18 @@ interface PlaylistItemCardProps {
 }
 
 export function PlaylistItemCard({ item, courseId }: PlaylistItemCardProps) {
-  const statusConfig = {
+  const statusConfig: Record<
+    string,
+    {
+      border: string;
+      bg: string;
+      icon: string;
+      iconChar: string;
+      label: string;
+      labelColor: string;
+      clickable: boolean;
+    }
+  > = {
     completed: {
       border: "border-green-500/30",
       bg: "bg-green-500/5",
@@ -46,6 +57,15 @@ export function PlaylistItemCard({ item, courseId }: PlaylistItemCardProps) {
       labelColor: "text-muted-foreground/60",
       clickable: false,
     },
+    review_due: {
+      border: "border-blue-500/30",
+      bg: "bg-blue-500/5",
+      icon: "text-blue-500",
+      iconChar: "\uD83D\uDD04",
+      label: "Review Due",
+      labelColor: "text-blue-600 dark:text-blue-400",
+      clickable: true,
+    },
   };
 
   const config = statusConfig[item.status];
@@ -81,6 +101,11 @@ export function PlaylistItemCard({ item, courseId }: PlaylistItemCardProps) {
               />
             </div>
           )}
+          {item.status === "review_due" && item.retrievability !== undefined && (
+            <span className="text-xs text-muted-foreground">
+              {Math.round(item.retrievability * 100)}% recall
+            </span>
+          )}
           {item.estimatedMinutes > 0 && item.status !== "completed" && (
             <span className="text-xs text-muted-foreground">
               ~{item.estimatedMinutes} min
@@ -108,8 +133,10 @@ export function PlaylistItemCard({ item, courseId }: PlaylistItemCardProps) {
   );
 
   if (config.clickable) {
+    const href =
+      item.type === "review" ? "/review" : `/courses/${courseId}/${item.id}`;
     return (
-      <Link href={`/courses/${courseId}/${item.id}`} className="block">
+      <Link href={href} className="block">
         {content}
       </Link>
     );

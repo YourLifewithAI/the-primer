@@ -2,7 +2,10 @@ import { db } from "@/lib/db";
 import {
   MASTERY_THRESHOLD,
   estimateToMastery,
+  getRetrievability,
+  isDue,
   type PlaylistItem,
+  type FsrsCardData,
 } from "@primer/shared";
 
 interface LessonWithKCs {
@@ -177,8 +180,73 @@ export async function generatePlaylist(
     });
   }
 
-  // 4. Sort: in_progress first, then available (lowest mastery first), then locked, completed last
-  const statusOrder = { in_progress: 0, available: 1, locked: 2, completed: 3 };
+  // 3b. Check for due FSRS review cards
+  const fsrsCards = await db.fsrsCardState.findMany({
+    where: {
+      studentId,
+      kcId: { in: allKcIds },
+    },
+    include: {
+      kc: { select: { id: true, name: true } },
+    },
+  });
+
+  const now = new Date();
+  const dueCards = fsrsCards.filter((card) => {
+    const cardData: FsrsCardData = {
+      state: card.state,
+      stability: card.stability,
+      difficulty: card.difficulty,
+      reps: card.reps,
+      lapses: card.lapses,
+      dueDate: card.dueDate,
+      lastReviewAt: card.lastReviewAt,
+      scheduledDays: card.scheduledDays,
+      learningSteps: card.learningSteps,
+    };
+    return isDue(cardData, now);
+  });
+
+  if (dueCards.length > 0) {
+    // Calculate average retrievability across due cards
+    const avgRetrievability =
+      dueCards.reduce((sum, card) => {
+        const cardData: FsrsCardData = {
+          state: card.state,
+          stability: card.stability,
+          difficulty: card.difficulty,
+          reps: card.reps,
+          lapses: card.lapses,
+          dueDate: card.dueDate,
+          lastReviewAt: card.lastReviewAt,
+          scheduledDays: 0,
+          learningSteps: 0,
+        };
+        return sum + getRetrievability(cardData, now);
+      }, 0) / dueCards.length;
+
+    // Add a single "review" playlist item that links to the review page
+    playlistItems.push({
+      id: "review-session",
+      type: "review",
+      title: `Review ${dueCards.length} Mastered Skill${dueCards.length !== 1 ? "s" : ""}`,
+      kcIds: dueCards.map((c) => c.kcId),
+      estimatedMinutes: Math.max(2, Math.round(dueCards.length * 1.5)),
+      status: "review_due",
+      masteryRequired: 1,
+      reviewCount: dueCards.length,
+      retrievability: avgRetrievability,
+    });
+  }
+
+  // 4. Sort: review_due first, then in_progress, available, locked, completed last
+  const statusOrder: Record<PlaylistItem["status"], number> = {
+    review_due: -1,
+    in_progress: 0,
+    available: 1,
+    locked: 2,
+    completed: 3,
+  };
   playlistItems.sort((a, b) => {
     const statusDiff = statusOrder[a.status] - statusOrder[b.status];
     if (statusDiff !== 0) return statusDiff;

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { MASTERY_THRESHOLD } from "@primer/shared";
@@ -5,7 +6,13 @@ import Link from "next/link";
 import { MasteryBar } from "@/components/mastery-bar";
 import { ensureUser } from "@/lib/ensure-user";
 import { getStreak } from "@/lib/streaks";
+import { getReviewStats } from "@/lib/fsrs-service";
 import { db } from "@/lib/db";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description: "Track your learning progress, mastery, and recent activity.",
+};
 
 export const dynamic = "force-dynamic";
 
@@ -59,7 +66,15 @@ export default async function DashboardPage() {
     },
   });
 
-  const streak = await getStreak(baseUser.id);
+  // Get the student's enrolled course for review stats
+  const enrollment = await db.enrollment.findFirst({
+    where: { studentId: baseUser.id },
+  });
+
+  const [streak, reviewStats] = await Promise.all([
+    getStreak(baseUser.id),
+    getReviewStats(baseUser.id, enrollment?.courseId),
+  ]);
 
   // Build mastery summary
   const masteryStates = user.masteryStates;
@@ -101,11 +116,11 @@ export default async function DashboardPage() {
   ).length;
 
   return (
-    <main className="min-h-screen px-4 py-6 md:px-8 max-w-4xl mx-auto">
+    <main className="min-h-screen px-4 py-6 md:px-8 max-w-4xl mx-auto" aria-labelledby="dashboard-title">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold">My Progress</h1>
+          <h1 id="dashboard-title" className="text-2xl font-bold">My Progress</h1>
           <p className="text-muted-foreground mt-1">
             {user.name ?? "Student"} · Mastery Dashboard
           </p>
@@ -148,6 +163,45 @@ export default async function DashboardPage() {
           detail={`${todayCorrect} correct`}
         />
       </div>
+
+      {/* Spaced Repetition */}
+      {reviewStats.totalCards > 0 && (
+        <section className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">Spaced Repetition</h2>
+            {reviewStats.dueNow > 0 && (
+              <Link
+                href="/review"
+                className="text-sm px-3 py-1 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition-colors"
+              >
+                Review {reviewStats.dueNow} card{reviewStats.dueNow !== 1 ? "s" : ""}
+              </Link>
+            )}
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <StatCard
+              label="Cards in Review"
+              value={`${reviewStats.totalCards}`}
+              detail={`${reviewStats.dueNow} due now`}
+            />
+            <StatCard
+              label="Due Today"
+              value={`${reviewStats.dueToday}`}
+              detail={reviewStats.dueNow > 0 ? "Start reviewing!" : "All caught up"}
+            />
+            <StatCard
+              label="Avg Recall"
+              value={`${Math.round(reviewStats.averageRetrievability * 100)}%`}
+              detail={`${Math.round(reviewStats.averageStability)}d avg stability`}
+            />
+            <StatCard
+              label="Lapses"
+              value={`${reviewStats.totalLapses}`}
+              detail="Times forgotten"
+            />
+          </div>
+        </section>
+      )}
 
       {/* Mastery by KC */}
       <section className="mb-8">
@@ -199,6 +253,7 @@ export default async function DashboardPage() {
                     className={
                       r.correct ? "text-green-500" : "text-red-400"
                     }
+                    aria-label={r.correct ? "Correct" : "Incorrect"}
                   >
                     {r.correct ? "✓" : "✗"}
                   </span>
