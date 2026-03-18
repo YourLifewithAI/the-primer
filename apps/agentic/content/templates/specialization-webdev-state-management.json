@@ -1,0 +1,128 @@
+{
+  "capability": {
+    "slug": "state_management",
+    "name": "State Management",
+    "description": "Choose appropriate state management patterns for given scenarios. Distinguish local vs. shared vs. server state. Select the right tool (useState, context, Zustand, server cache, URL state) for each category of state. Avoid both under-engineering and over-engineering.",
+    "level": 11,
+    "prerequisites": ["component_architecture"],
+    "branch": "webdev"
+  },
+  "templates": [
+    {
+      "slug": "choose_state_management",
+      "promptTemplate": "You're building: {{application}}\n\nHere are the different kinds of state in play:\n{{state_categories}}\n\nFor each category of state:\n1. Where should it live? (component local, lifted to parent, context, external store, URL, server cache)\n2. What tool/pattern would you use? Be specific (not just 'a state manager').\n3. Why that choice over the alternatives?\n4. What would be the sign that you chose wrong — what symptom would tell you to reconsider?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "application",
+            "type": "paired_set",
+            "sets": [
+              {
+                "application": "a project management app (like a simplified Jira)",
+                "state_categories": "1. Current user session/auth\n2. List of projects and their boards\n3. Currently selected project and board filters\n4. Board column order (user can drag to rearrange)\n5. Modal open/close state (create task, edit task)\n6. Form state for task creation (title, description, assignee, etc.)\n7. Real-time updates when other users modify the board",
+                "state_placement": "auth.*context|global|server.*cache|URL|local|form.*local|real-time.*subscribe|socket|SSE",
+                "tool_choices": "context|React.*Query|SWR|tanstack|URL.*param|useState|useReducer|Zustand|socket|optimistic",
+                "reasoning": "server.*state|cache|stale|refetch|URL.*sharable|bookmark|local.*scope|lift.*only.*when|don't.*over-global",
+                "wrong_choice_signs": "prop.*drill|re-render|stale.*data|sync|out.*of.*sync|duplicate|two.*source|refresh|global.*everything"
+              },
+              {
+                "application": "an e-commerce product catalog with search, filters, and a shopping cart",
+                "state_categories": "1. Product catalog data (fetched from API, paginated)\n2. Active search query and filters (category, price range, sort)\n3. Shopping cart contents\n4. Product detail view (selected product)\n5. Recently viewed products\n6. Checkout form state",
+                "state_placement": "server.*cache|URL.*param|persist|localStorage|local|session|cart.*global|form.*local",
+                "tool_choices": "React.*Query|SWR|tanstack|URL|searchParam|localStorage|Zustand|persist|useState|context",
+                "reasoning": "URL.*share|bookmark|filter.*URL|cart.*persist|page.*refresh|server.*state|not.*local|cache.*invalid",
+                "wrong_choice_signs": "lost.*on.*refresh|can't.*share.*URL|stale.*price|cart.*disappear|slow.*re-render|over-fetch|duplicate"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{state_placement}}",
+            "description": "Placed each type of state at the right level (local vs. shared vs. server vs. URL)"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{tool_choices}}",
+            "description": "Chose appropriate specific tools for each state category"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{reasoning}}",
+            "description": "Justified choices with concrete reasoning"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{wrong_choice_signs}}",
+            "description": "Identified symptoms of choosing the wrong approach"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "state_management_adversarial_over_engineering",
+      "promptTemplate": "A developer proposes the following state management setup for {{application}}:\n\n{{proposed_setup}}\n\nThe app currently has {{user_count}} users and {{dev_count}} developers.\n\nIs this state management approach appropriate, over-engineered, or under-engineered? Be specific about what's right, what's overkill, and what's missing.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "application",
+            "type": "paired_set",
+            "sets": [
+              {
+                "application": "an internal admin dashboard for a startup",
+                "proposed_setup": "Redux Toolkit with RTK Query for all data fetching, Redux Saga for side effects, normalized entity adapters for every data type, a hand-rolled middleware for logging, and Reselect for every derived value. Full test coverage of reducers and selectors.",
+                "user_count": "5 internal users",
+                "dev_count": "2 frontend developers",
+                "assessment": "over-engineer|overkill|too.*complex|unnecessary|5.*user|startup|YAGNI|simpler|premature",
+                "right_parts": "RTK.*Query|data.*fetch|cache|type.*safe|some.*structure",
+                "what_instead": "React.*Query|tanstack|useState|simple|context|minimal|start.*simple|add.*when.*needed|grow"
+              },
+              {
+                "application": "a real-time trading dashboard showing live market data",
+                "proposed_setup": "useState for everything. Each widget fetches its own data with useEffect + fetch. No shared state — components are 'independent'. Data refreshes on a 5-second interval with setInterval in each component.",
+                "user_count": "500 active traders",
+                "dev_count": "6 frontend developers",
+                "assessment": "under-engineer|insufficient|problem|race.*condition|inconsistent|stale|duplicate.*fetch|waterfall|memory.*leak",
+                "right_parts": "independent.*concept|component.*isolation|simple.*mental.*model",
+                "what_instead": "shared.*connection|WebSocket|SSE|central.*data|subscribe|single.*source|cache|consistent|real-time"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 4, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "{{assessment}}",
+            "description": "Correctly assessed whether the approach is over or under-engineered"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{right_parts}}",
+            "description": "Identified what (if anything) is appropriate in the proposal"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "{{what_instead}}",
+            "description": "Proposed a more appropriate approach for the actual scale"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}

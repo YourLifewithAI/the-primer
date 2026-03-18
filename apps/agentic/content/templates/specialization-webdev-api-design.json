@@ -1,0 +1,132 @@
+{
+  "capability": {
+    "slug": "api_design",
+    "name": "API Design",
+    "description": "Design RESTful or GraphQL APIs for given requirements. Define resource models, endpoint structure, error responses, pagination, authentication, and versioning. The contract that determines whether a system is pleasant or painful to integrate with.",
+    "level": 10,
+    "prerequisites": ["task_decomposition"],
+    "branch": "webdev"
+  },
+  "templates": [
+    {
+      "slug": "design_rest_api",
+      "promptTemplate": "Design a REST API for: {{domain}}\n\nKey requirements:\n{{requirements}}\n\nProvide:\n1. Resource model — what are the resources and their relationships?\n2. Endpoint list — method, path, brief description, request/response shape\n3. Error handling strategy — what errors can occur and how are they represented?\n4. Pagination approach — how do you handle lists?\n5. Authentication/authorization — how do you secure it?\n\nFocus on the design decisions and trade-offs, not just listing endpoints.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "domain",
+            "type": "paired_set",
+            "sets": [
+              {
+                "domain": "a task management system (like Todoist)",
+                "requirements": "- Users can create projects and tasks within projects\n- Tasks have title, description, due date, priority, and assignee\n- Tasks can have subtasks (one level deep)\n- Tasks can be tagged with labels\n- Support bulk operations (move multiple tasks, bulk assign)\n- Filter tasks by status, assignee, label, due date range",
+                "resource_model": "project|task|subtask|label|user|assignment|nested|relationship|belongs.*to",
+                "endpoint_design": "POST|GET|PATCH|DELETE|/project|/task|nested.*resource|filter|query.*param|bulk",
+                "error_handling": "4[0-9]{2}|error.*code|message|validation|not.*found|forbidden|conflict|structured",
+                "pagination": "cursor|offset|limit|page|next|total|link|continuation"
+              },
+              {
+                "domain": "a content management API for a blog platform",
+                "requirements": "- Authors can create and edit posts (draft, published, archived states)\n- Posts support rich text, images, and embeds\n- Comments with threading (replies to comments)\n- Tags and categories for organization\n- Content scheduling (publish at a future date)\n- Webhook notifications for content events\n- API versioning for backward compatibility",
+                "resource_model": "post|comment|author|tag|category|media|webhook|state.*machine|draft|publish",
+                "endpoint_design": "POST|GET|PATCH|/post|/comment|version|v1|state.*transition|publish|schedule|upload",
+                "error_handling": "validation|state.*transition|not.*found|unauthorized|rate.*limit|structured|error.*code",
+                "pagination": "cursor|offset|limit|page|created.*at|sort|order|total"
+              },
+              {
+                "domain": "an event booking and ticketing API",
+                "requirements": "- Organizers create events with multiple ticket types\n- Attendees browse events and purchase tickets\n- Support seat selection for venue-based events\n- Waitlist when events sell out\n- Promo codes for discounts\n- Check-in at the door via QR code\n- Refund policy (full refund up to 24h before event)",
+                "resource_model": "event|ticket|attendee|organizer|seat|waitlist|promo|order|booking|refund",
+                "endpoint_design": "POST|GET|/event|/ticket|/booking|/order|reserve|purchase|checkin|refund|idempoten",
+                "error_handling": "sold.*out|conflict|race.*condition|idempoten|payment.*fail|invalid.*promo|expired|capacity",
+                "pagination": "cursor|offset|limit|page|date.*range|filter|upcoming|past"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{resource_model}}",
+            "description": "Defined a clear resource model with appropriate relationships"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{endpoint_design}}",
+            "description": "Designed appropriate endpoints with correct HTTP methods and paths"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{error_handling}}",
+            "description": "Defined structured error handling with appropriate status codes"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "{{pagination}}",
+            "description": "Included a pagination strategy"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "api_design_adversarial_rpc_disguised",
+      "promptTemplate": "A developer designed this API for {{domain}}:\n\n{{api_design}}\n\nCritique this API design. What REST principles does it violate? What problems will consumers of this API face? How would you redesign it?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "domain",
+            "type": "paired_set",
+            "sets": [
+              {
+                "domain": "a user management system",
+                "api_design": "POST /api/getUser { \"userId\": \"123\" }\nPOST /api/createUser { \"name\": \"Alice\" }\nPOST /api/updateUserName { \"userId\": \"123\", \"newName\": \"Bob\" }\nPOST /api/updateUserEmail { \"userId\": \"123\", \"newEmail\": \"bob@test.com\" }\nPOST /api/deleteUser { \"userId\": \"123\" }\nPOST /api/listUsers { \"page\": 1 }\nPOST /api/searchUsers { \"query\": \"alice\" }",
+                "violations": "all.*POST|RPC.*style|not.*REST|verb.*in.*URL|no.*GET|no.*resource|no.*HTTP.*method|action.*name",
+                "consumer_problems": "cache|browser.*cache|idempoten|bookmark|link|CDN|retry|safe|GET.*idempotent|PUT.*idempotent|DELETE",
+                "redesign": "GET.*/user|POST.*/user|PATCH|PUT.*/user.*123|DELETE.*/user.*123|query.*param|resource.*based|noun"
+              },
+              {
+                "domain": "a file storage service",
+                "api_design": "POST /api/files/upload { multipart }\nGET /api/files/download?fileId=abc\nGET /api/files/list?folderId=xyz\nPOST /api/files/move { \"fileId\": \"abc\", \"targetFolder\": \"xyz\" }\nPOST /api/files/copy { \"fileId\": \"abc\" }\nDELETE /api/files/delete?fileId=abc\nPOST /api/files/share { \"fileId\": \"abc\", \"userId\": \"123\" }\nGET /api/files/getMetadata?fileId=abc",
+                "violations": "verb.*in.*URL|delete.*in.*path|download.*in.*path|redundant|inconsistent|mixed.*pattern|getMetadata",
+                "consumer_problems": "inconsisten|some.*query.*some.*body|no.*standard|hard.*to.*predict|nested.*resource|share.*model|fileId.*everywhere",
+                "redesign": "GET.*/file|POST.*/file|PATCH.*/file.*abc|DELETE.*/file.*abc|/file.*abc.*content|/file.*abc.*share|nested.*resource|consistent"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{violations}}",
+            "description": "Identified specific REST principle violations"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "{{consumer_problems}}",
+            "description": "Explained concrete problems API consumers will face"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "{{redesign}}",
+            "description": "Proposed a proper resource-oriented redesign"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "capability": {
+    "slug": "literature_review",
+    "name": "Systematic Literature Review",
+    "description": "Plan and execute systematic searches across sources. Define inclusion/exclusion criteria, organize findings by theme, identify the state of knowledge on a topic. The structured methodology that makes research reproducible.",
+    "level": 11,
+    "prerequisites": ["source_evaluation"],
+    "branch": "research"
+  },
+  "templates": [
+    {
+      "slug": "plan_literature_review",
+      "promptTemplate": "You need to conduct a literature review on: {{topic}}\n\nThe goal is: {{goal}}\n\nDesign your review methodology:\n1. What search terms and queries would you use? List at least 5 specific searches.\n2. Where would you search? (Be specific — which databases, sites, communities.)\n3. What are your inclusion criteria? What makes a source relevant enough to include?\n4. What are your exclusion criteria? What would you filter out and why?\n5. How will you organize your findings? Propose a categorization scheme.\n6. How will you know when you've searched enough?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "topic",
+            "type": "paired_set",
+            "sets": [
+              {
+                "topic": "current approaches to LLM evaluation and benchmarking",
+                "goal": "Understand which evaluation methods are considered most reliable in 2025, what their limitations are, and where the field disagrees.",
+                "search_terms": "benchmark|eval|MMLU|HumanEval|leaderboard|contamination|overfit|metric|comparison|assessment",
+                "search_locations": "arXiv|Semantic.*Scholar|conference|paper|LMSYS|HuggingFace|GitHub|survey|industry.*blog",
+                "inclusion_criteria": "2024|2025|recent|peer.*review|methodology|empirical|reproducib|comparison|systematic",
+                "exclusion_criteria": "market|hype|promotional|vendor|outdated|opinion.*only|no.*data|no.*methodology",
+                "organization": "theme|categor|taxonomy|method.*type|capability|limitation|reliability|chronolog",
+                "saturation": "repeat|diminish|same.*finding|no.*new|converge|saturat|overlap|cited.*before|circular"
+              },
+              {
+                "topic": "strategies for migrating monolithic applications to microservices",
+                "goal": "Identify proven migration patterns, common failure modes, and decision criteria for when migration is worth the cost.",
+                "search_terms": "monolith|microservice|migration|strangler|decompos|refactor|bounded.*context|legacy|moderniz",
+                "search_locations": "conference|case.*study|engineer.*blog|ACM|IEEE|InfoQ|Martin.*Fowler|ThoughtWorks|post-mortem",
+                "inclusion_criteria": "case.*study|empirical|production|real.*system|measur|outcome|retrospective|data|specific.*system",
+                "exclusion_criteria": "tutorial|how-to|theoretical.*only|no.*evidence|small.*scale|greenfield|hello.*world|toy",
+                "organization": "pattern|strategy|team.*size|success.*factor|failure.*mode|decision.*framework|phase|criteria",
+                "saturation": "same.*pattern|repeat|cited.*everywhere|canonical|no.*new.*strategy|diminish|converge"
+              },
+              {
+                "topic": "accessibility testing automation for web applications",
+                "goal": "Find which automated tools catch which categories of accessibility issues, what their false positive rates are, and what still requires manual testing.",
+                "search_terms": "accessibility|a11y|automat|axe|Lighthouse|WCAG|screen.*reader|false.*positive|coverage|audit",
+                "search_locations": "W3C|WebAIM|Deque|academic.*paper|conference|GOV.UK|accessibility.*blog|npm|GitHub",
+                "inclusion_criteria": "empirical|comparison|coverage.*rate|false.*positive|specific.*tool|WCAG.*version|measur|quantit",
+                "exclusion_criteria": "tutorial|getting.*started|single.*tool|promotional|no.*comparison|qualitative.*only|outdated.*WCAG",
+                "organization": "tool|WCAG.*criterion|category|automat.*vs.*manual|coverage|reliability|false.*positive",
+                "saturation": "same.*tool|same.*gap|manual.*testing.*always|repeat|known.*limitation|overlap|diminish"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "{{search_terms}}",
+            "description": "Proposed relevant, specific search terms"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.15,
+            "pattern": "{{search_locations}}",
+            "description": "Identified appropriate search venues for this topic"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "{{inclusion_criteria}}",
+            "description": "Defined inclusion criteria that filter for quality and relevance"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.15,
+            "pattern": "{{exclusion_criteria}}",
+            "description": "Defined exclusion criteria that remove noise"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.15,
+            "pattern": "{{organization}}",
+            "description": "Proposed a meaningful categorization scheme"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.15,
+            "pattern": "{{saturation}}",
+            "description": "Defined a stopping condition (saturation, diminishing returns)"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}

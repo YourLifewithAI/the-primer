@@ -1,0 +1,132 @@
+{
+  "capability": {
+    "slug": "hypothesis_formation",
+    "name": "Hypothesis Formation",
+    "description": "Generate testable hypotheses from observations. Distinguish correlation from causation, identify confounding variables, propose experiments that could falsify the hypothesis. The skill that turns data into understanding.",
+    "level": 12,
+    "prerequisites": ["research_synthesis", "literature_review"],
+    "branch": "research"
+  },
+  "templates": [
+    {
+      "slug": "form_hypothesis_from_observation",
+      "promptTemplate": "You've observed the following pattern:\n\n{{observation}}\n\nContext: {{context}}\n\n1. Generate 2-3 testable hypotheses that could explain this observation.\n2. For each hypothesis, describe:\n   - What specific prediction it makes\n   - How you would test it (what data would you collect?)\n   - What result would falsify it\n   - What confounding variables could produce the same observation even if this hypothesis is wrong\n3. Which hypothesis do you think is most likely, and why?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "observation",
+            "type": "paired_set",
+            "sets": [
+              {
+                "observation": "Pull requests reviewed by more than 3 people take 2.5x longer to merge than PRs reviewed by 1-2 people, even controlling for PR size.",
+                "context": "A team of 15 developers working on a monorepo. Code review is required before merge. Data from 6 months of GitHub PR analytics.",
+                "hypothesis_quality": "diffusion.*responsib|bystander|conflict|too.*many.*cook|coordination|unclear.*owner|comment.*thread|design.*disagreement",
+                "testability": "experiment|A/B|compare|assign|random|control|measur|track|data|metric|predict",
+                "falsification": "falsif|disprove|if.*not|would.*expect|rule.*out|counter|evidence.*against|wrong.*if",
+                "confounders": "complex|risky|controversial|senior|junior|critical.*path|size|scope|type.*of.*change"
+              },
+              {
+                "observation": "Agents that receive error reflections before retrying a task improve their score by 35% on average, but 20% of agents show no improvement or get worse.",
+                "context": "Data from the Agentic Primer's error memory system. 500 task attempts across 12 agents. Reflections are 100-200 token self-generated lessons stored from previous failures.",
+                "hypothesis_quality": "reflection.*quality|generic|specific|actionable|overfit|wrong.*lesson|mislead|model.*class|capability",
+                "testability": "content.*analysis|categorize|quality.*score|correlat|compare.*groups|specific.*vs.*generic|A/B|metric",
+                "falsification": "if.*quality|if.*all.*improve|no.*correlation|random|same.*rate|baseline",
+                "confounders": "model.*class|task.*difficulty|ceiling|floor|attempt.*count|familiarity|random.*variance|small.*sample"
+              },
+              {
+                "observation": "After adding TypeScript to a JavaScript project, the initial velocity drops by 30% for 2 weeks, then exceeds the previous velocity by 15% for the next 3 months.",
+                "context": "A SaaS startup with 8 developers. They migrated incrementally over 4 weeks. Velocity measured in story points per sprint.",
+                "hypothesis_quality": "learning.*curve|type.*catch.*bug|confidence|refactor|compile.*check|documenta|cognitive.*load|IDE.*support",
+                "testability": "bug.*rate|before.*after|error.*type|deploy.*frequency|incident|survey|developer.*confidence|measur",
+                "falsification": "if.*no.*bug.*reduction|same.*error.*rate|plateau|regression|velocity.*drop.*permanent",
+                "confounders": "Hawthorne|team.*morale|novelty|other.*change|hiring|season|scope.*change|story.*point.*inflation"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{hypothesis_quality}}",
+            "description": "Generated specific, plausible hypotheses (not just restating the observation)"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{testability}}",
+            "description": "Proposed concrete ways to test each hypothesis"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "{{falsification}}",
+            "description": "Described what would falsify each hypothesis"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{confounders}}",
+            "description": "Identified confounding variables that could produce the same observation"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "hypothesis_adversarial_correlation_causation",
+      "promptTemplate": "A team presents you with the following finding and their conclusion:\n\nFinding: {{finding}}\nTheir conclusion: {{conclusion}}\n\nCritique their reasoning. Is their causal claim justified? What alternative explanations exist? What would it take to establish causation here?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "finding",
+            "type": "paired_set",
+            "sets": [
+              {
+                "finding": "Teams that use pair programming have 40% fewer production bugs than teams that don't.",
+                "conclusion": "Pair programming prevents bugs. We should mandate pair programming for all development work.",
+                "causal_flaw": "correlation|not.*caus|select|self-select|confound|other.*factor|team.*culture|may.*not",
+                "alternative_explanations": "team.*culture|senior|experience|careful|code.*review|testing|invest|discipline|quality.*focused",
+                "establish_causation": "random|controlled|experiment|A/B|assign|before.*after|same.*team|same.*project|isolate|variable"
+              },
+              {
+                "finding": "Developers who use AI coding assistants complete tasks 55% faster and their code has equivalent test pass rates.",
+                "conclusion": "AI assistants make developers more productive with no quality cost. Every developer should use them.",
+                "causal_flaw": "selection.*bias|early.*adopt|skilled|correlat|not.*caus|equivalent.*test.*not.*equivalent.*quality|test.*coverage|hidden.*cost",
+                "alternative_explanations": "early.*adopt|more.*skilled|easier.*task|test.*pass.*not.*quality|maintenance|readab|technical.*debt|long-term",
+                "establish_causation": "random.*assign|controlled|same.*developer|same.*task|before.*after|long.*term|longitudinal|maintenance.*cost|code.*review"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 4, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "{{causal_flaw}}",
+            "description": "Identified that correlation doesn't establish causation"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "{{alternative_explanations}}",
+            "description": "Generated plausible alternative explanations"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{establish_causation}}",
+            "description": "Described what would be needed to establish actual causation"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}

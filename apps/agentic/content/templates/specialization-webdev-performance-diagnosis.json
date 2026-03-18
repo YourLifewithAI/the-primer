@@ -1,0 +1,137 @@
+{
+  "capability": {
+    "slug": "performance_diagnosis",
+    "name": "Performance Diagnosis",
+    "description": "Identify and fix performance bottlenecks from descriptions, metrics, and code patterns. Distinguish between network, rendering, memory, and algorithmic performance issues. Know which tool to reach for and which metric matters.",
+    "level": 11,
+    "prerequisites": ["component_architecture", "api_design"],
+    "branch": "webdev"
+  },
+  "templates": [
+    {
+      "slug": "diagnose_performance_issue",
+      "promptTemplate": "A user reports: {{symptom}}\n\nHere's what you know:\n{{context}}\n\nMetrics:\n{{metrics}}\n\n1. What is the most likely bottleneck? Explain your reasoning.\n2. What additional information would you gather to confirm?\n3. Propose a fix. Be specific — not 'optimize the code' but exactly what you'd change.\n4. How would you verify the fix worked? What metric should improve and by how much?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "symptom",
+            "type": "paired_set",
+            "sets": [
+              {
+                "symptom": "The page takes 8 seconds to become interactive after loading. The HTML appears quickly but nothing is clickable for several seconds.",
+                "context": "A React SPA with 45 npm dependencies. No code splitting. The main bundle is 2.3MB gzipped. The page has 12 components that all render on initial load.",
+                "metrics": "- TTFB: 180ms\n- FCP: 900ms\n- LCP: 1.2s\n- TTI: 8.1s\n- Total JS: 2.3MB gzipped (~7MB parsed)\n- Main thread blocking time: 6.2s",
+                "bottleneck": "JavaScript|bundle.*size|parse|execut|main.*thread|block|2.3MB|7MB|too.*much.*JS|hydrat",
+                "investigation": "bundle.*analyz|webpack|source.*map|tree.*shak|import|dynamic|lazy|lighthouse|coverage",
+                "fix": "code.*split|lazy.*load|dynamic.*import|tree.*shak|remove.*unused|route.*split|chunk|defer|async",
+                "verification": "TTI|Time.*to.*Interactive|blocking.*time|bundle.*size|parse.*time|under.*[234].*sec|lighthouse"
+              },
+              {
+                "symptom": "Scrolling through a list of 500 items is janky — frames drop to 10-15fps and the UI stutters visibly.",
+                "context": "A React app rendering a list of cards. Each card has an image, text, and a 'like' button. No virtualization. Each card has its own useEffect that sets up an IntersectionObserver. The parent list re-renders on every scroll event to update a scroll position indicator.",
+                "metrics": "- 500 DOM nodes for list items\n- 500 IntersectionObserver instances\n- scroll event fires ~60 times/sec\n- Each scroll event triggers parent re-render\n- React DevTools shows 500 component re-renders per scroll",
+                "bottleneck": "re-render|500.*component|scroll.*event|IntersectionObserver|too.*many|virtual|DOM|unnecessary.*render",
+                "investigation": "React.*DevTools|profiler|flame.*chart|highlight.*update|Performance.*tab|Chrome.*DevTools|why.*did.*you.*render",
+                "fix": "virtualiz|react-window|react-virtual|tanstack-virtual|single.*IntersectionObserver|throttle|debounce|memo|useMemo|useCallback|scroll.*handler",
+                "verification": "fps|frame.*rate|60fps|smooth|jank|re-render.*count|DOM.*node.*count|profiler|Lighthouse.*performance"
+              },
+              {
+                "symptom": "The dashboard API endpoint takes 4.5 seconds to respond. It was 200ms a month ago.",
+                "context": "A Node.js/Express API. The dashboard endpoint aggregates data from 3 database queries. One month ago a new 'activity feed' feature was added that queries a large table. The table has 2M rows and grows by 50k/day.",
+                "metrics": "- Overall response: 4.5s\n- Query 1 (projects): 45ms\n- Query 2 (tasks): 120ms\n- Query 3 (activity feed): 4.2s\n- Activity table: 2M rows, no index on created_at or user_id\n- EXPLAIN shows sequential scan on activity table",
+                "bottleneck": "activity.*query|sequential.*scan|no.*index|4.2s|missing.*index|full.*table.*scan|2M.*row|unindex",
+                "investigation": "EXPLAIN|EXPLAIN.*ANALYZE|index|sequential.*scan|query.*plan|pg_stat|slow.*query|log",
+                "fix": "CREATE.*INDEX|index.*on.*created_at|index.*on.*user_id|composite.*index|LIMIT|pagination|partial.*index|covering",
+                "verification": "response.*time|query.*time|under.*[12]00ms|index.*scan|EXPLAIN.*ANALYZE|p95|p99|latency"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{bottleneck}}",
+            "description": "Correctly identified the primary bottleneck"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "{{investigation}}",
+            "description": "Proposed relevant investigation steps with specific tools"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{fix}}",
+            "description": "Proposed a specific, actionable fix"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "{{verification}}",
+            "description": "Defined how to verify the fix with specific metrics"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "performance_adversarial_premature_optimization",
+      "promptTemplate": "A developer asks you to optimize: {{optimization_target}}\n\nContext: {{context}}\n\nCurrent performance: {{current_performance}}\n\nShould you optimize this? Evaluate:\n1. Is this actually a problem? Does it matter for the user experience or business?\n2. What's the cost of optimization (complexity, maintainability, development time)?\n3. If you should optimize, what specifically? If not, what should the developer focus on instead?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "optimization_target",
+            "type": "paired_set",
+            "sets": [
+              {
+                "optimization_target": "Re-rendering of a settings page component that takes 3ms to render",
+                "context": "An internal admin tool used by 5 people. The settings page is visited maybe twice a day per user. The developer wants to add React.memo to every component and useMemo to every derived value.",
+                "current_performance": "Render time: 3ms. Page load: 200ms. No user complaints.",
+                "should_optimize": "no|premature|unnecessary|not.*problem|3ms|imperceptib|don't|waste|overkill|YAGNI",
+                "cost_analysis": "complex|readab|maintenance|debug|harder|cognitive.*load|memo.*everywhere|bugs|stale",
+                "redirect": "user-facing|slow.*page|actual.*bottleneck|measure.*first|profiler|real.*problem|feature|ship"
+              },
+              {
+                "optimization_target": "A product listing page that takes 6 seconds to load on mobile devices with 3G connections",
+                "context": "An e-commerce site. 60% of traffic is mobile. Conversion rate on mobile is 1.2% vs 3.8% on desktop. The page loads 4MB of images and 1.5MB of JS before showing any products.",
+                "current_performance": "LCP: 6.1s on 3G, 1.8s on fast connection. Bounce rate on mobile: 62%. Revenue impact estimated at $40k/month.",
+                "should_optimize": "yes|critical|business.*impact|revenue|conversion|mobile|60%.*traffic|$40k|bounce.*rate|must",
+                "cost_analysis": "worth.*investment|ROI|revenue|conversion|justify|business.*case|clear.*impact|measurable",
+                "redirect": "image.*optimiz|lazy.*load|code.*split|responsive.*image|WebP|AVIF|critical.*CSS|above.*fold|skeleton"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 4, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "{{should_optimize}}",
+            "description": "Correctly assessed whether optimization is warranted"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{cost_analysis}}",
+            "description": "Analyzed the cost of optimization vs. benefit"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "{{redirect}}",
+            "description": "Redirected attention appropriately (to actual problems or specific optimizations)"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}

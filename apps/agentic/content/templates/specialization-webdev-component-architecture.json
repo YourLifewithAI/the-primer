@@ -1,0 +1,136 @@
+{
+  "capability": {
+    "slug": "component_architecture",
+    "name": "Component Architecture",
+    "description": "Design component hierarchies for given requirements. Decide responsibility boundaries, data flow direction, composition patterns, and where state lives. The structural skill that determines whether a UI is maintainable.",
+    "level": 10,
+    "prerequisites": ["task_decomposition"],
+    "branch": "webdev"
+  },
+  "templates": [
+    {
+      "slug": "design_component_hierarchy",
+      "promptTemplate": "Design a component architecture for: {{feature}}\n\nRequirements:\n{{requirements}}\n\n1. List the components you'd create, with a brief responsibility description for each.\n2. Draw the component tree (parent-child relationships). Use indentation to show hierarchy.\n3. For each component, state: what props it receives, what state it owns (if any), and what events it emits.\n4. Explain your key design decisions — why did you split things this way?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "feature",
+            "type": "paired_set",
+            "sets": [
+              {
+                "feature": "A settings page with multiple sections (Profile, Notifications, Security), each containing form fields that can be saved independently",
+                "requirements": "- Each section saves independently (not one big form)\n- Show unsaved changes indicator per section\n- Validate fields on blur and on save\n- Some fields depend on others (e.g., notification channel depends on notification enabled)\n- Support keyboard navigation between sections",
+                "component_split": "SettingsPage|Section|Form|Field|save.*indicator|unsaved|ProfileSection|NotificationSection|SecuritySection",
+                "data_flow": "props.*down|event.*up|callback|onSave|onChange|controlled|uncontrolled|form.*state",
+                "state_placement": "section.*own.*state|not.*global|local.*form|dirty.*tracking|per.*section|independent",
+                "design_rationale": "independent.*save|single.*responsib|reuse|composition|separation|isolat|maintainab"
+              },
+              {
+                "feature": "A real-time collaborative document editor with a toolbar, document area, presence indicators (who's viewing), and a comments sidebar",
+                "requirements": "- Multiple users can edit simultaneously\n- Toolbar reflects current selection's formatting\n- Presence indicators show cursor positions of other users\n- Comments are anchored to specific text ranges\n- Mobile responsive (toolbar collapses)",
+                "component_split": "Editor|Toolbar|DocumentArea|Presence|Comment|Sidebar|Cursor|Selection|FormatButton",
+                "data_flow": "shared.*state|context|provider|real-time|subscribe|event|callback|selection.*state",
+                "state_placement": "document.*state.*shared|selection.*local|presence.*global|comment.*separate|toolbar.*derive",
+                "design_rationale": "real-time|collaborat|derived.*state|separation|toolbar.*react.*to.*selection|comment.*anchor|responsive"
+              },
+              {
+                "feature": "A multi-step checkout flow: Cart Review, Shipping Address, Payment Method, Order Confirmation",
+                "requirements": "- Users can go back to previous steps without losing data\n- Validate each step before allowing progression\n- Show a progress indicator\n- Payment step integrates with Stripe Elements\n- Order summary sidebar visible on all steps",
+                "component_split": "Checkout|Step|Cart|Shipping|Payment|Confirm|Progress|OrderSummary|StepNav",
+                "data_flow": "shared.*checkout.*state|lift.*state|context|provider|step.*validation|onNext|onBack",
+                "state_placement": "checkout.*level|shared|persist|not.*per.*step|top.*level|context|accumulated",
+                "design_rationale": "persist.*across.*step|wizard|shared.*state|validation.*per.*step|progress|back.*forward"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{component_split}}",
+            "description": "Identified the right component boundaries"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{data_flow}}",
+            "description": "Described clear data flow between components"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{state_placement}}",
+            "description": "Placed state at the appropriate level"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{design_rationale}}",
+            "description": "Justified design decisions with clear reasoning"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "component_architecture_adversarial_god_component",
+      "promptTemplate": "A developer shows you their component design for {{feature}}:\n\n{{current_design}}\n\nThe main component is {{line_count}} lines long and handles: {{responsibilities}}\n\nThey say: 'It works fine. Splitting it up would just add complexity with no benefit.'\n\nCritique this design:\n1. What specific problems will emerge as this code grows?\n2. Where would you draw the component boundaries? Why there specifically?\n3. How would you convince this developer that splitting is worth it? Use concrete examples, not abstract principles.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "feature",
+            "type": "paired_set",
+            "sets": [
+              {
+                "feature": "a dashboard page",
+                "current_design": "One <Dashboard> component that fetches data from 4 APIs, manages 8 pieces of state, renders charts, tables, filters, and a sidebar nav. All in one file.",
+                "line_count": "850",
+                "responsibilities": "data fetching, state management, filtering logic, chart rendering, table rendering, sidebar navigation, error handling, loading states",
+                "problems": "re-render|performance|test|debug|merge.*conflict|two.*developer|understand|cognitive|change.*one.*break|coupled",
+                "boundaries": "data.*fetch|chart|table|filter|sidebar|container.*present|hook|custom.*hook|separate.*concern",
+                "convincing": "specific.*example|re-render.*all|can't.*test|merge.*conflict|onboard|new.*developer|change.*filter.*break.*chart"
+              },
+              {
+                "feature": "a user profile form",
+                "current_design": "One <ProfileForm> component with inline validation for 12 fields, avatar upload with crop/resize, address autocomplete, phone verification flow, and save/cancel logic.",
+                "line_count": "620",
+                "responsibilities": "form state for 12 fields, validation for each field, avatar upload/crop/resize, address autocomplete API calls, phone verification SMS flow, save/cancel/dirty tracking",
+                "problems": "test|debug|reuse|avatar.*crop|phone.*verif|unrelated|change.*avatar.*break.*form|cognitive|maintain",
+                "boundaries": "AvatarUpload|AddressField|PhoneVerif|form.*hook|field.*group|validation|separate.*flow",
+                "convincing": "avatar.*independent|phone.*flow.*reuse|test.*validation|debug.*upload|change.*address.*API|specific.*scenario"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 4, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{problems}}",
+            "description": "Identified concrete problems that will emerge (not just 'it's bad practice')"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "{{boundaries}}",
+            "description": "Proposed specific component boundaries with clear rationale"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "{{convincing}}",
+            "description": "Used concrete examples to make the case (not abstract principles)"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}
