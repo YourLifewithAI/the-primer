@@ -1,0 +1,135 @@
+{
+  "capability": {
+    "slug": "error_pattern_clustering",
+    "name": "Error Pattern Clustering",
+    "description": "Recognize patterns across multiple errors, cluster them by root cause, and propose systematic fixes rather than one-off patches. The difference between fixing a bug and fixing the class of bugs.",
+    "level": 5,
+    "prerequisites": ["plan_critique"]
+  },
+  "templates": [
+    {
+      "slug": "cluster_error_log",
+      "promptTemplate": "You are reviewing an error log from a production system. Multiple errors have occurred over the past week.\n\nError log:\n{{error_log}}\n\nAnalyze these errors:\n1. Group them into clusters by root cause (not by error message — messages can differ for the same cause)\n2. For each cluster, identify the underlying pattern\n3. Propose a systematic fix for each cluster that prevents the entire class of errors, not just the individual instances\n4. Prioritize which cluster to fix first and explain why",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "error_log",
+            "type": "paired_set",
+            "sets": [
+              {
+                "error_log": "1. TypeError: Cannot read property 'name' of undefined (UserProfile.tsx:42)\n2. 500 Internal Server Error: 'NoneType' has no attribute 'email' (api/users.py:87)\n3. TypeError: Cannot read property 'avatar' of null (UserProfile.tsx:55)\n4. ECONNREFUSED 127.0.0.1:5432 (db/connection.ts:12)\n5. Error: connect ETIMEDOUT 10.0.0.5:5432 (db/connection.ts:12)\n6. TypeError: Cannot read property 'settings' of undefined (UserProfile.tsx:71)\n7. ECONNRESET peer reset connection (db/connection.ts:34)\n8. 500: 'NoneType' has no attribute 'preferences' (api/users.py:103)",
+                "cluster_count": "2|3|two|three",
+                "null_cluster": "null|undefined|NoneType|optional.*chain|null.*check|guard|validat|defensive",
+                "db_cluster": "connect|database|postgres|pool|retry|timeout|circuit.*break|reconnect",
+                "systematic_fix": "optional.*chain|null.*guard|validat|connection.*pool|retry.*logic|circuit.*break|middleware|wrapper|generic|class.*of|pattern",
+                "prioritization": "database|connect|user.*impact|frequency|cascad|downstream|severity"
+              },
+              {
+                "error_log": "1. 429 Too Many Requests from Stripe API (payments/charge.ts:23)\n2. 429 Rate limit exceeded from SendGrid (email/send.ts:45)\n3. Error: Request failed with status 429 from GitHub API (sync/repos.ts:67)\n4. ENOMEM: JavaScript heap out of memory (reports/generate.ts:12)\n5. Error: Worker terminated due to memory limit (reports/generate.ts:89)\n6. 429 Too Many Requests from Stripe API (payments/refund.ts:31)\n7. FATAL ERROR: CALL_AND_RETRY_LAST Allocation failed (reports/export.ts:56)\n8. 429 Rate limit exceeded from SendGrid (email/bulk.ts:78)",
+                "cluster_count": "2|two",
+                "null_cluster": "rate.*limit|429|throttl|backoff|queue|batch",
+                "db_cluster": "memory|heap|OOM|stream|chunk|pagination|limit.*size|batch.*process",
+                "systematic_fix": "rate.*limit|backoff|queue|batch|throttl|stream|pagination|chunk|generic|class.*of|centrali|middleware|wrapper",
+                "prioritization": "memory|OOM|crash|rate.*limit|payment|revenue|critical"
+              },
+              {
+                "error_log": "1. Error: ENOENT: no such file or directory '/uploads/avatar_123.png' (files/serve.ts:34)\n2. Error: EACCES: permission denied '/var/log/app.log' (logging/writer.ts:12)\n3. Error: ENOENT: no such file or directory '/uploads/document_456.pdf' (files/serve.ts:34)\n4. Error: ENOSPC: no space left on device '/tmp/export_789.csv' (export/csv.ts:56)\n5. Error: EACCES: permission denied '/etc/app/config.yml' (config/loader.ts:23)\n6. Error: ENOENT: no such file or directory '/uploads/report_012.xlsx' (files/serve.ts:34)\n7. Error: ENOSPC: no space left on device '/tmp/upload_345.tmp' (upload/handler.ts:67)\n8. Error: EACCES: permission denied '/var/run/app.pid' (process/manager.ts:45)",
+                "cluster_count": "3|three",
+                "null_cluster": "missing.*file|ENOENT|exist.*check|upload|storage|reference|orphan|integrity",
+                "db_cluster": "permission|EACCES|privilege|user|group|chmod|role|disk|space|ENOSPC|cleanup|rotation|quota",
+                "systematic_fix": "exist.*check|storage.*valid|permission.*audit|disk.*monitor|cleanup.*policy|file.*integrit|centrali|abstract|wrapper|class.*of",
+                "prioritization": "disk.*space|ENOSPC|cascad|prevent.*write|upload|user-facing"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 4, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "{{cluster_count}}",
+            "description": "Identified the correct number of distinct error clusters"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "{{null_cluster}}",
+            "description": "Identified first error pattern cluster and root cause"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "{{db_cluster}}",
+            "description": "Identified second error pattern cluster and root cause"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "{{systematic_fix}}",
+            "description": "Proposed systematic fixes (not one-off patches)"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "{{prioritization}}",
+            "description": "Prioritized clusters with reasoning about impact"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "cluster_adversarial_surface_similarity",
+      "promptTemplate": "You are reviewing an error log. Be careful: some errors have SIMILAR messages but DIFFERENT root causes, and some have DIFFERENT messages but the SAME root cause.\n\nError log:\n{{error_log}}\n\nGroup these by ROOT CAUSE, not by surface-level message similarity. For each group, explain why they share a root cause even if the messages look different (or why they have different root causes even if the messages look similar).",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "error_log",
+            "type": "paired_set",
+            "sets": [
+              {
+                "error_log": "1. TimeoutError: Request to /api/users timed out after 30s (client/api.ts:23)\n2. TimeoutError: Request to /api/posts timed out after 30s (client/api.ts:23)\n3. Error: ETIMEDOUT connecting to Redis (cache/client.ts:45)\n4. TimeoutError: Request to /api/search timed out after 30s (client/api.ts:23)\n5. Error: Query took too long, exceeded 5s limit (db/query.ts:67)\n6. Error: ETIMEDOUT connecting to Redis (cache/client.ts:45)\n\nContext: The /api/search endpoint depends on both the database and Redis cache. The /api/users and /api/posts endpoints only use the database.",
+                "same_root_trap": "1.*2.*4|user.*post.*search|API.*timeout.*different|search.*depends|not.*same.*root|different.*cause",
+                "different_surface_trap": "3.*6.*Redis|Redis.*separate|cache.*down|Redis.*connection|infrastructure",
+                "reasoning": "search.*database|search.*redis|cascade|downstream|depend|surface.*similar|look.*same|actually.*different|root.*cause.*different"
+              },
+              {
+                "error_log": "1. ValidationError: 'email' field is required (api/register.ts:34)\n2. Error: Duplicate key constraint on 'users.email' (db/insert.ts:56)\n3. ValidationError: 'email' must be a valid format (api/register.ts:40)\n4. Error: Unique constraint violation on 'subscriptions.email' (db/insert.ts:78)\n5. ValidationError: 'email' exceeds max length 255 (api/register.ts:45)\n6. Error: Foreign key constraint failed on 'orders.user_id' (db/insert.ts:92)\n\nContext: The application has a single registration form that creates a user, subscription, and first order in sequence.",
+                "same_root_trap": "1.*3.*5|validation.*different|input.*validation|separate.*checks|field.*level",
+                "different_surface_trap": "2.*4|duplicate.*unique|both.*constraint|email.*exists|already.*registered|same.*root|registration.*flow",
+                "reasoning": "validation.*separate|each.*check|duplicate.*email.*same|constraint.*different.*from.*validat|registration.*sequence|cascade|not.*group.*by.*message"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 4, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "{{same_root_trap}}",
+            "description": "Avoided grouping surface-similar errors that have different root causes"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "{{different_surface_trap}}",
+            "description": "Correctly grouped surface-different errors that share a root cause"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{reasoning}}",
+            "description": "Explained reasoning about why surface similarity is misleading"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}

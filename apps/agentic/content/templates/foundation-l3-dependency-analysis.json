@@ -1,0 +1,132 @@
+{
+  "capability": {
+    "slug": "dependency_analysis",
+    "name": "Dependency Analysis",
+    "description": "Given a set of tasks, identify which depend on which. Construct valid execution orderings and spot circular dependencies or missing prerequisites.",
+    "level": 3,
+    "prerequisites": ["sequential_chaining"]
+  },
+  "templates": [
+    {
+      "slug": "identify_task_dependencies",
+      "promptTemplate": "Here are tasks for a project:\n\n{{task_list}}\n\nFor each task, identify which other tasks it depends on (must be completed first). Then provide a valid execution order. If any tasks can run in parallel, note that.\n\nExplain your reasoning for each dependency.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "task_list",
+            "type": "paired_set",
+            "sets": [
+              {
+                "task_list": "A. Write unit tests for the API\nB. Design the database schema\nC. Implement API endpoints\nD. Set up the testing framework\nE. Run database migrations\nF. Deploy to staging",
+                "required_deps": "C.*depends.*B|C.*after.*B|B.*before.*C",
+                "parallel_opportunity": "parallel|concurrent|simultaneous|same time|independent",
+                "valid_first": "B|D",
+                "valid_last": "F|deploy"
+              },
+              {
+                "task_list": "A. Configure DNS records\nB. Provision SSL certificate\nC. Deploy application containers\nD. Set up load balancer\nE. Build Docker images\nF. Run smoke tests",
+                "required_deps": "B.*depends.*A|B.*after.*A|A.*before.*B|D.*depends.*C|D.*after.*C",
+                "parallel_opportunity": "parallel|concurrent|simultaneous|same time|independent",
+                "valid_first": "A|E",
+                "valid_last": "F|smoke|test"
+              },
+              {
+                "task_list": "A. Create user registration endpoint\nB. Set up email service integration\nC. Implement password hashing\nD. Build email verification flow\nE. Create login endpoint\nF. Add rate limiting middleware",
+                "required_deps": "D.*depends.*B|D.*after.*B|E.*depends.*C|E.*after.*C|D.*depends.*A|D.*after.*A",
+                "parallel_opportunity": "parallel|concurrent|simultaneous|same time|independent",
+                "valid_first": "A|B|C|F",
+                "valid_last": "D|E"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "{{required_deps}}",
+            "description": "Correctly identified key dependency relationships"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{parallel_opportunity}}",
+            "description": "Identified parallelization opportunities"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "{{valid_first}}",
+            "description": "Identified valid starting tasks (no unmet dependencies)"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "{{valid_last}}",
+            "description": "Placed terminal tasks at the end"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "detect_circular_dependency",
+      "promptTemplate": "A team has defined these task dependencies:\n\n{{dependency_spec}}\n\nAnalyze this dependency graph. Are there any problems? If so, identify them precisely and suggest how to fix them.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "dependency_spec",
+            "type": "paired_set",
+            "sets": [
+              {
+                "dependency_spec": "- Deploy app (depends on: Run tests)\n- Run tests (depends on: Build app)\n- Build app (depends on: Update config)\n- Update config (depends on: Deploy app)",
+                "problem_type": "circular",
+                "cycle_elements": "Deploy.*Build.*Config.*Deploy|Config.*Deploy.*Run.*Build.*Config|cycle|circular",
+                "fix_pattern": "break|remove|decouple|separate|config.*independent|config.*doesn't.*need"
+              },
+              {
+                "dependency_spec": "- Task A (depends on: Task B, Task C)\n- Task B (depends on: Task D)\n- Task C (depends on: Task D)\n- Task D (depends on: nothing)\n- Task E (depends on: Task F)\n- Task F (depends on: Task E)",
+                "problem_type": "circular",
+                "cycle_elements": "E.*F.*E|F.*E.*F|cycle.*E.*F|circular.*E.*F",
+                "fix_pattern": "break|remove|one.*first|decouple|E.*independent|F.*independent"
+              },
+              {
+                "dependency_spec": "- Generate report (depends on: Aggregate data)\n- Aggregate data (depends on: Clean data, Validate data)\n- Clean data (depends on: Import data)\n- Validate data (depends on: Import data)\n- Import data (depends on: nothing)\n- Send report (depends on: Generate report, Get recipient list)\n- Get recipient list (depends on: nothing)",
+                "problem_type": "valid",
+                "cycle_elements": "no.*circular|no.*cycle|valid|acyclic|DAG|no.*problem",
+                "fix_pattern": "parallel|Clean.*Validate.*parallel|Import.*first|concurrent"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.4,
+            "pattern": "{{cycle_elements}}",
+            "description": "Correctly identified the presence or absence of cycles"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{problem_type}}",
+            "description": "Named the problem type correctly"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{fix_pattern}}",
+            "description": "Proposed a reasonable fix or optimization"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}

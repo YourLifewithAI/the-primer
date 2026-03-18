@@ -2,131 +2,136 @@
   "capability": {
     "slug": "token_optimization",
     "name": "Token Optimization",
-    "description": "Accomplish goals with fewer tool calls and less context usage. Recognize when you're being inefficient and course-correct.",
+    "description": "Efficient use of context window and tool calls. Identify verbose vs. concise approaches, plan strategies that minimize unnecessary token consumption while maintaining quality.",
     "level": 5,
-    "prerequisites": ["resource_estimation", "plan_revision"]
+    "prerequisites": ["resource_estimation"]
   },
   "templates": [
     {
-      "slug": "efficient_approach",
-      "promptTemplate": "You need to accomplish this goal:\n\n{{goal}}\n\nHere is an inefficient approach that uses {{inefficient_count}} tool calls:\n{{inefficient_plan}}\n\nDesign a more efficient approach. Your target: accomplish the same goal in {{target_count}} or fewer tool calls. Explain what you'd do differently and why it's more efficient.",
+      "slug": "identify_efficient_approach",
+      "promptTemplate": "Two agents were given the same task: {{task_description}}\n\nAgent A's approach:\n{{approach_a}}\n\nAgent B's approach:\n{{approach_b}}\n\nWhich approach is more token-efficient? Analyze:\n1. Which uses fewer tool calls and why\n2. Which consumes less context window space\n3. Whether the more efficient approach sacrifices any quality\n4. What makes one approach wasteful",
       "parameterSchema": {
         "parameters": [
           {
-            "name": "goal",
+            "name": "task_description",
             "type": "paired_set",
             "sets": [
               {
-                "goal": "Find which file in the project defines a function called 'processPayment'",
-                "inefficient_plan": "1. List all directories\n2. List files in src/\n3. List files in src/utils/\n4. List files in src/services/\n5. Read src/services/payment.ts\n6. Read src/services/billing.ts\n7. Read src/services/checkout.ts",
-                "inefficient_count": "7",
-                "target_count": "2"
+                "task_description": "Find which file in a project exports a function called 'parseConfig'",
+                "approach_a": "1. List all files in src/\n2. Read each file one by one (12 files)\n3. Check each file for 'parseConfig'\n4. Report the file that contains it",
+                "approach_b": "1. Use grep/search to find 'parseConfig' across the project\n2. Report the matching file",
+                "efficient_choice": "B|second|Agent B",
+                "waste_explanation": "read.*each|one.*by.*one|12.*files|unnecessary.*read|brute.*force|linear.*scan",
+                "quality_analysis": "same.*quality|no.*sacrifice|grep.*sufficient|search.*finds|equally.*correct"
               },
               {
-                "goal": "Count how many TypeScript files exist in the project",
-                "inefficient_plan": "1. List root directory\n2. List src/\n3. List src/components/\n4. List src/utils/\n5. List src/pages/\n6. Count .ts files in each listing manually",
-                "inefficient_count": "6",
-                "target_count": "1"
+                "task_description": "Check if a REST API returns the correct response for a health endpoint",
+                "approach_a": "1. Read the API source code to understand the health endpoint\n2. Read the route configuration\n3. Read the middleware chain\n4. Read the health handler function\n5. Predict what the response should be\n6. Call the endpoint to verify",
+                "approach_b": "1. Call GET /api/health\n2. Verify the response status is 200 and body contains expected fields",
+                "efficient_choice": "B|second|Agent B",
+                "waste_explanation": "read.*source|unnecessary.*context|predict.*instead.*test|4.*file.*read|over-prepar|don't.*need.*source",
+                "quality_analysis": "B.*direct|test.*better.*than.*predict|source.*reading.*unnecessary|actual.*response|empirical"
               },
               {
-                "goal": "Find all files that import from '@utils/logger' and check if they handle errors",
-                "inefficient_plan": "1. Search for '@utils/logger' in file 1\n2. Search for '@utils/logger' in file 2\n3. Search for '@utils/logger' in file 3\n... (repeat for each file)\n10. Read each matching file individually",
-                "inefficient_count": "10+",
-                "target_count": "3"
+                "task_description": "Add error handling to a function that reads a JSON config file",
+                "approach_a": "1. Read the function source\n2. Identify the failure modes (file not found, invalid JSON, permission denied)\n3. Write the try-catch with specific error handling for each case",
+                "approach_b": "1. Read the function source\n2. Search npm for JSON parsing libraries\n3. Compare 5 different error handling libraries\n4. Read documentation for the top 3\n5. Decide to just use try-catch\n6. Write the try-catch",
+                "efficient_choice": "A|first|Agent A",
+                "waste_explanation": "search.*npm|compare.*librar|read.*doc|unnecessary.*research|over-engineer|yak.*shav|known.*solution",
+                "quality_analysis": "A.*same.*quality|try.*catch.*sufficient|standard.*pattern|library.*overkill|built-in"
               }
             ]
           }
         ]
       },
-      "difficultyRange": {
-        "min": 3,
-        "max": 5,
-        "difficultyParams": []
-      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
       "rubricTemplate": {
         "criteria": [
           {
-            "type": "plan_quality",
-            "weight": 0.4,
-            "description": "Produced a concrete efficient plan"
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{efficient_choice}}",
+            "description": "Correctly identified the more efficient approach"
           },
           {
             "type": "result_correct",
-            "weight": 0.35,
-            "pattern": "\\b(?:grep|search|glob|batch|single|one call|instead of|combine|fewer)\\b",
-            "description": "Used efficient tools (search/glob vs manual listing)"
+            "weight": 0.3,
+            "pattern": "{{waste_explanation}}",
+            "description": "Explained what makes the wasteful approach inefficient"
           },
           {
             "type": "result_correct",
-            "weight": 0.25,
-            "pattern": "\\b(?:efficient|redundant|unnecessary|wasted|overhead|avoid|skip|direct)\\b",
-            "description": "Explained why the original was inefficient"
+            "weight": 0.2,
+            "pattern": "{{quality_analysis}}",
+            "description": "Analyzed whether efficiency comes at the cost of quality"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "tool.*call|context|token|read|step|overhead|unnecessary",
+            "description": "Reasoning references concrete efficiency metrics (calls, context, steps)"
           }
         ],
         "passThreshold": 0.7
       }
     },
     {
-      "slug": "context_conservation",
-      "promptTemplate": "You're working in a constrained environment with a {{context_size}}-token context window. You need to:\n\n{{task}}\n\nThe naive approach would read all the data into context at once. Design an approach that stays within budget by being selective about what you read and when. Explain your strategy.",
+      "slug": "plan_minimal_approach",
+      "promptTemplate": "You need to accomplish this task: {{task}}\n\nPlan the most token-efficient approach. Specifically:\n1. What is the minimum number of tool calls needed?\n2. What information do you need vs. what can you skip?\n3. What order of operations avoids redundant work?\n4. Where might you be tempted to over-read or over-search, and how do you resist that?",
       "parameterSchema": {
         "parameters": [
           {
-            "name": "context_size",
-            "type": "enum",
-            "values": ["4000", "8000", "16000"],
-            "affectsDifficulty": true
-          },
-          {
             "name": "task",
-            "type": "enum",
-            "values": [
-              "Analyze 20 log files (each ~500 lines) to find the root cause of a recurring error",
-              "Review a 3000-line source file to identify all security vulnerabilities",
-              "Compare two large JSON configuration files (each ~1000 lines) and list differences"
-            ],
-            "affectsDifficulty": true
+            "type": "paired_set",
+            "sets": [
+              {
+                "task": "A user reports that the /api/users endpoint returns 500 errors. The codebase has a standard Express structure: routes/, controllers/, middleware/, models/. Diagnose and fix the issue.",
+                "min_calls": "2|3|two|three",
+                "skip_info": "don't.*read.*all|skip.*unrela|focus.*error|log.*first|stack.*trace|specific.*file|targeted",
+                "avoid_waste": "don't.*read.*every|resist.*explor|avoid.*broad|targeted.*search|start.*narrow|error.*log.*first|specific.*endpoint"
+              },
+              {
+                "task": "Update the copyright year in the footer of a Next.js website from 2025 to 2026.",
+                "min_calls": "1|2|one|two",
+                "skip_info": "don't.*need.*understand|skip.*architect|simple.*find|just.*search|one.*file|footer|targeted",
+                "avoid_waste": "don't.*read.*layout|don't.*explore|resist.*understand.*whole|simple.*change|surgical|minimal"
+              },
+              {
+                "task": "Determine whether a Python project uses requests or httpx for HTTP calls, and which version.",
+                "min_calls": "1|2|one|two",
+                "skip_info": "requirements|pyproject|package|dependency|don't.*read.*source|manifest|lock",
+                "avoid_waste": "don't.*grep.*imports|don't.*read.*source|dependency.*file.*first|requirements.*txt|pyproject.*toml|single.*file"
+              }
+            ]
           }
         ]
       },
-      "difficultyRange": {
-        "min": 3,
-        "max": 5,
-        "difficultyParams": [
-          {
-            "param": "context_size",
-            "scaling": "stepped",
-            "steps": { "3": "16000", "4": "8000", "5": "4000" }
-          },
-          {
-            "param": "task",
-            "scaling": "stepped",
-            "steps": {
-              "3": "Compare two large JSON configuration files (each ~1000 lines) and list differences",
-              "4": "Review a 3000-line source file to identify all security vulnerabilities",
-              "5": "Analyze 20 log files (each ~500 lines) to find the root cause of a recurring error"
-            }
-          }
-        ]
-      },
+      "difficultyRange": { "min": 4, "max": 5, "difficultyParams": [] },
       "rubricTemplate": {
         "criteria": [
           {
             "type": "result_correct",
-            "weight": 0.4,
-            "pattern": "\\b(?:selective|partial|chunk|section|sample|skim|scan first|summary|targeted)\\b",
-            "description": "Strategy avoids reading everything at once"
-          },
-          {
-            "type": "plan_quality",
-            "weight": 0.35,
-            "description": "Has a structured approach with clear steps"
+            "weight": 0.25,
+            "pattern": "{{min_calls}}",
+            "description": "Estimated a reasonable minimum number of tool calls"
           },
           {
             "type": "result_correct",
             "weight": 0.25,
-            "pattern": "\\b(?:token|context|budget|limit|overflow|window|capacity)\\b",
-            "description": "Explicitly considered context budget"
+            "pattern": "{{skip_info}}",
+            "description": "Identified information that can be skipped"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{avoid_waste}}",
+            "description": "Identified specific temptations to over-read and strategies to resist"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "order|sequence|first.*then|before.*after|start.*with|priorit",
+            "description": "Specified an order of operations that avoids redundancy"
           }
         ],
         "passThreshold": 0.7

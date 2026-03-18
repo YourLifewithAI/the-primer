@@ -1,15 +1,15 @@
 {
   "capability": {
     "slug": "build_vs_leverage",
-    "name": "Build vs Leverage Judgment",
-    "description": "Evaluate existing solutions against building custom. Decide when to use, adapt, or build. Justify the decision with clear rationale.",
+    "name": "Build-vs-Leverage Judgment",
+    "description": "Evaluate when to build something custom vs. use an existing tool, library, or service. The judgment that separates productive agents from yak-shavers.",
     "level": 5,
-    "prerequisites": ["options_presentation", "search_strategy"]
+    "prerequisites": ["resource_estimation"]
   },
   "templates": [
     {
-      "slug": "evaluate_existing",
-      "promptTemplate": "You need to solve this problem:\n\n{{problem}}\n\nHere are existing solutions available:\n{{options}}\n\nEvaluate each option and make a recommendation:\n1. For each solution: what it does well, what it doesn't cover, maintenance/reliability concerns\n2. Your recommendation: use as-is, adapt, or build custom\n3. Justify your choice with specific rationale\n4. What would change your mind?",
+      "slug": "evaluate_build_or_use",
+      "promptTemplate": "You need to solve this problem: {{problem}}\n\nHere are the options you're considering:\n\nOption A (Build custom): {{build_option}}\nOption B (Use existing): {{leverage_option}}\n\nEvaluate both options:\n1. What are the costs of each? (time, maintenance, complexity)\n2. What are the risks of each? (reliability, lock-in, technical debt)\n3. Which option is better for THIS specific situation and why?\n4. Under what circumstances would the OTHER option be better?",
       "parameterSchema": {
         "parameters": [
           {
@@ -17,112 +17,142 @@
             "type": "paired_set",
             "sets": [
               {
-                "problem": "Validate form inputs in a React application (email, phone, dates, custom patterns)",
-                "options": "A) Zod — TypeScript-first schema validation, 15K GitHub stars, actively maintained\nB) Yup — JS schema builder, 22K stars, mature but slower TypeScript support\nC) Custom regex validators — write your own for each field type",
-                "best_answer": "Probably Zod (TypeScript-first, active maintenance, covers all cases)"
+                "problem": "You need to send transactional emails (password resets, welcome emails) from a small SaaS app that sends ~500 emails/month.",
+                "build_option": "Set up your own SMTP server, write email templates, handle delivery, bounce processing, and spam compliance",
+                "leverage_option": "Use SendGrid or Resend's free tier (up to 100/day) with their API and pre-built template system",
+                "correct_choice": "B|leverage|existing|SendGrid|Resend|use",
+                "cost_analysis": "SMTP.*complex|maintain|deliverability|spam|free.*tier|500.*month|within.*limit|time.*to.*market",
+                "risk_analysis": "vendor.*lock|API.*change|deliverability|blacklist|compliance|SPF|DKIM|reputation",
+                "reversal_condition": "scale|volume|million|custom.*need|cost|control|deliverability.*control|special.*requirement"
               },
               {
-                "problem": "Send real-time notifications to users (in-app, email, push)",
-                "options": "A) Novu — open-source notification infrastructure, handles all channels\nB) Firebase Cloud Messaging — Google's push notification service, free tier\nC) Custom WebSocket server with nodemailer for email",
-                "best_answer": "Depends on scale and channels needed — no single right answer"
+                "problem": "You need a simple key-value cache for a single-server Node.js application. Cache will hold ~100 items with 5-minute TTL.",
+                "build_option": "Use a plain JavaScript Map with setTimeout-based expiry (20 lines of code)",
+                "leverage_option": "Set up Redis, configure connection pooling, add health checks, and use ioredis client library",
+                "correct_choice": "A|build|custom|Map|simple",
+                "cost_analysis": "20.*line|simple|Redis.*overkill|infrastructure|maintain.*Redis|connection.*pool|overhead|Map.*trivial",
+                "risk_analysis": "Map.*memory.*leak|no.*persistence|Redis.*reliable|single.*server|100.*items|no.*distribut",
+                "reversal_condition": "multiple.*server|distribut|persist|scale|share.*across|more.*data|complex.*eviction"
               },
               {
-                "problem": "Generate unique, URL-safe identifiers for database records",
-                "options": "A) uuid (v4) — universally unique, 36 chars, well-understood\nB) nanoid — shorter (21 chars default), URL-safe, faster\nC) cuid2 — collision-resistant, sortable, designed for distributed systems\nD) Auto-incrementing integer — simple, sequential, database-native",
-                "best_answer": "Depends on requirements (sortable? short? distributed?)"
+                "problem": "You need to add PDF generation to a web app for invoice exports. Invoices have a fixed layout with company logo, line items, and totals.",
+                "build_option": "Write a custom PDF generator using low-level PDF primitives (pdf-lib), manually positioning every element",
+                "leverage_option": "Use a headless browser (Puppeteer) to render an HTML/CSS template to PDF",
+                "correct_choice": "B|leverage|Puppeteer|HTML|headless|existing",
+                "cost_analysis": "HTML.*CSS.*familiar|manual.*position|pdf-lib.*tedious|Puppeteer.*setup|maintain.*template|pixel.*perfect",
+                "risk_analysis": "Puppeteer.*heavy|memory|headless.*crash|pdf-lib.*control|exact.*layout|browser.*depend",
+                "reversal_condition": "server.*resource|lambda|no.*browser|size.*constraint|pdf-lib.*lightweight|embed|programmatic|thousands"
+              },
+              {
+                "problem": "You need to parse and validate JSON configuration files that follow a custom schema specific to your application.",
+                "build_option": "Write a custom validation function with hand-coded checks for each field, type, and constraint",
+                "leverage_option": "Define a JSON Schema or Zod schema and use the library's built-in validation",
+                "correct_choice": "B|leverage|Zod|JSON.*Schema|library|schema",
+                "cost_analysis": "hand.*coded.*error|Zod.*declarative|maintain|type.*inference|custom.*harder.*maintain|schema.*self.*document",
+                "risk_analysis": "library.*dependency|schema.*language.*learn|custom.*brittle|edge.*case|hand-coded.*miss|type.*safety",
+                "reversal_condition": "no.*dependency|tiny.*project|one.*field|trivial|single.*check|minimal"
               }
             ]
           }
         ]
       },
-      "difficultyRange": {
-        "min": 3,
-        "max": 5,
-        "difficultyParams": []
-      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
       "rubricTemplate": {
         "criteria": [
           {
             "type": "result_correct",
             "weight": 0.3,
-            "pattern": "\\b(?:pros?|cons?|strength|weakness|covers?|lacks?|doesn't|limitation|maintained|active|abandoned)\\b",
-            "description": "Evaluated each option's strengths and weaknesses"
+            "pattern": "{{correct_choice}}",
+            "description": "Made the correct build-vs-leverage decision"
           },
           {
             "type": "result_correct",
-            "weight": 0.3,
-            "pattern": "\\b(?:recommend|use|choose|build|adapt|custom|as-is|leverage|existing)\\b",
-            "description": "Made a clear build/use/adapt recommendation"
-          },
-          {
-            "type": "collaboration_quality",
             "weight": 0.25,
-            "description": "Justified the decision with specific rationale"
+            "pattern": "{{cost_analysis}}",
+            "description": "Analyzed costs of both options (time, maintenance, complexity)"
           },
           {
             "type": "result_correct",
-            "weight": 0.15,
-            "pattern": "\\b(?:would change|if|depends|scale|requirements|team size|timeline|budget)\\b",
-            "description": "Identified conditions that would change the recommendation"
+            "weight": 0.25,
+            "pattern": "{{risk_analysis}}",
+            "description": "Identified risks of both approaches"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "{{reversal_condition}}",
+            "description": "Identified conditions where the other option would be better"
           }
         ],
         "passThreshold": 0.7
       }
     },
     {
-      "slug": "build_vs_leverage_adversarial",
-      "promptTemplate": "Your team is debating what to do about this:\n\n{{scenario}}\n\nOne camp says: \"{{build_argument}}\"\nThe other says: \"{{leverage_argument}}\"\n\nWho's right? Or is the answer more nuanced? Make a decision and defend it.",
+      "slug": "evaluate_adversarial_shiny_tool",
+      "promptTemplate": "A colleague recommends using {{shiny_tool}} to solve this problem: {{problem}}\n\nThe tool is impressive — {{tool_appeal}}. But the problem itself is: {{problem_reality}}\n\nShould you use the recommended tool? Or is this a case of over-engineering? Evaluate honestly — don't dismiss tools because they're new, but don't adopt them because they're impressive either.",
       "parameterSchema": {
         "parameters": [
           {
-            "name": "scenario",
+            "name": "shiny_tool",
             "type": "paired_set",
             "sets": [
               {
-                "scenario": "The project needs a user authentication system",
-                "build_argument": "We should build it ourselves. Auth is core to our product and we need full control over the user experience and security model.",
-                "leverage_argument": "We should use Auth0 or Clerk. Authentication is a solved problem and rolling your own is a security risk.",
-                "nuance": "Both have valid points — depends on whether auth IS the product or just enables it"
+                "shiny_tool": "Kubernetes",
+                "problem": "deploying a personal blog that gets 50 visitors/day",
+                "tool_appeal": "it handles scaling, rolling deployments, health checks, and auto-healing",
+                "problem_reality": "a static site with a single container that changes once a week",
+                "correct_assessment": "over-engineer|overkill|too.*complex|unnecessary|simple.*deploy|doesn't.*need|excessive",
+                "alternative": "static.*host|Vercel|Netlify|single.*VPS|docker.*compose|simple|fly.io",
+                "honest_caveat": "learn|portfolio|experience|scale.*later|if.*grow|unless.*learning"
               },
               {
-                "scenario": "The CLI tool needs a configuration file parser",
-                "build_argument": "Let's build a custom parser that handles our exact config format. It'll be 50 lines of code, no dependencies.",
-                "leverage_argument": "Let's use cosmiconfig — it handles JSON, YAML, TOML, and JS config files. Don't reinvent the wheel.",
-                "nuance": "50 lines is genuinely simple enough to build, unless you need multi-format support"
+                "shiny_tool": "a custom-built microservices architecture with event sourcing and CQRS",
+                "problem": "building an MVP for a task management app to validate product-market fit",
+                "tool_appeal": "it's the architecture that Netflix and Amazon use at scale",
+                "problem_reality": "you have 2 developers, 0 users, and need to ship in 3 weeks",
+                "correct_assessment": "over-engineer|overkill|MVP|premature|ship.*first|complex|YAGNI|not.*Netflix",
+                "alternative": "monolith|simple|Rails|Next.js|single.*deploy|start.*simple|proven.*framework",
+                "honest_caveat": "if.*product.*fit|after.*validat|scale.*when.*need|revisit|earn.*complex"
               },
               {
-                "scenario": "The API needs rate limiting",
-                "build_argument": "We should build it. Our rate limiting needs are unique — per-user, per-endpoint, with burst allowances and priority queues.",
-                "leverage_argument": "Use express-rate-limit or upstash/ratelimit. They're battle-tested and cover 90% of use cases.",
-                "nuance": "The 'unique needs' argument is often overblown, but if they genuinely need priority queues, off-the-shelf won't cut it"
+                "shiny_tool": "a graph database (Neo4j)",
+                "problem": "storing user profiles with friend/follower relationships for a social app expecting 100k+ users",
+                "tool_appeal": "it's purpose-built for relationship-heavy data and makes graph queries O(1) per hop",
+                "problem_reality": "the core feature is traversing social graphs — friend-of-friend recommendations, mutual connections, influence paths",
+                "correct_assessment": "actually.*good|appropriate|right.*tool|fits|graph.*query|relationship|justified|not.*overkill",
+                "alternative": "PostgreSQL.*with.*recursive|relational.*can.*work|start.*PostgreSQL|adjacency|if.*simpler",
+                "honest_caveat": "operational.*complex|team.*experience|learning.*curve|PostgreSQL.*viable|recruit|maintain"
               }
             ]
           }
         ]
       },
-      "difficultyRange": {
-        "min": 4,
-        "max": 5,
-        "difficultyParams": []
-      },
+      "difficultyRange": { "min": 4, "max": 5, "difficultyParams": [] },
       "rubricTemplate": {
         "criteria": [
           {
             "type": "result_correct",
             "weight": 0.35,
-            "pattern": "\\b(?:nuanc|both|valid|depends|context|however|true that|but also|right about|wrong about)\\b",
-            "description": "Engaged with both sides rather than dismissing one"
+            "pattern": "{{correct_assessment}}",
+            "description": "Correctly assessed whether the tool is over-engineering or appropriate"
           },
           {
             "type": "result_correct",
-            "weight": 0.35,
-            "pattern": "\\b(?:decide|recommend|would|choose|go with|build|use|leverage|because|given)\\b",
-            "description": "Made a clear decision despite nuance"
+            "weight": 0.25,
+            "pattern": "{{alternative}}",
+            "description": "Suggested a more appropriate alternative (or validated the choice)"
           },
           {
-            "type": "collaboration_quality",
-            "weight": 0.3,
-            "description": "Defended the decision with specific reasoning"
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "{{honest_caveat}}",
+            "description": "Included an honest caveat about edge cases or context-dependence"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "problem.*fit|match.*need|requirement|use.*case|context|specific.*situation",
+            "description": "Reasoning ties the decision to the specific problem context"
           }
         ],
         "passThreshold": 0.7

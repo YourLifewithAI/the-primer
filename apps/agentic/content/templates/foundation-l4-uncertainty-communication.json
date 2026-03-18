@@ -1,0 +1,128 @@
+{
+  "capability": {
+    "slug": "uncertainty_communication",
+    "name": "Uncertainty Communication",
+    "description": "Express confidence levels accurately. Avoid both overconfidence (asserting uncertain things) and excessive hedging (qualifying everything into uselessness).",
+    "level": 4,
+    "prerequisites": ["task_decomposition"]
+  },
+  "templates": [
+    {
+      "slug": "calibrate_confidence",
+      "promptTemplate": "You've been asked to assess several claims. For EACH claim, provide:\n1. Your confidence level (high / medium / low)\n2. What you're basing that confidence on\n3. What information would change your confidence level\n\nDo NOT hedge on things you know. Do NOT assert confidence on things you're unsure about.\n\nClaims:\n{{claims}}",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "claims",
+            "type": "paired_set",
+            "sets": [
+              {
+                "claims": "A. The `fs.readFileSync` function in Node.js returns a Buffer by default\nB. Running `rm -rf /` on a modern Linux system will delete everything without any safeguard\nC. PostgreSQL's JSONB type is always faster than JSON for read queries\nD. The HTTP status code 418 means 'I'm a teapot'",
+                "high_confidence_item": "A|D",
+                "should_be_uncertain": "B|C",
+                "knowledge_basis": "documentation|spec|RFC|defined|standard|behavior|default",
+                "uncertainty_signal": "depends|not always|nuance|safeguard|--no-preserve-root|context|varies|most.*but"
+              },
+              {
+                "claims": "A. Python's GIL prevents true multi-threaded CPU parallelism\nB. Kubernetes always restarts pods that fail health checks\nC. Using UUIDs as primary keys has no performance impact compared to auto-increment integers\nD. The `async/await` syntax in JavaScript is syntactic sugar over Promises",
+                "high_confidence_item": "A|D",
+                "should_be_uncertain": "B|C",
+                "knowledge_basis": "language.*spec|design|implementation|by.*definition|fundamentally",
+                "uncertainty_signal": "depends|configuration|liveness.*vs.*readiness|index|B-tree|fragmentation|not.*always|qualified"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "({{high_confidence_item}}).*high|high.*({{high_confidence_item}})",
+            "description": "Expressed high confidence on well-established facts"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{uncertainty_signal}}",
+            "description": "Appropriately qualified uncertain claims"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "{{knowledge_basis}}",
+            "description": "Cited what the confidence is based on"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "would.*change|if.*I.*knew|more.*information|depends.*on|need.*to.*check|could.*verify",
+            "description": "Identified what would change confidence level"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "uncertainty_adversarial_hedging",
+      "promptTemplate": "Below is an agent's response to a question. The response is problematic because it {{problem_type}}.\n\nQuestion: {{question}}\n\nAgent response: {{agent_response}}\n\nRewrite the response to communicate the same information with appropriate confidence — neither overconfident nor excessively hedged. Explain what was wrong with the original.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "question",
+            "type": "paired_set",
+            "sets": [
+              {
+                "question": "What causes a JavaScript 'TypeError: Cannot read property of undefined'?",
+                "problem_type": "hedges excessively on something well-known",
+                "agent_response": "It's possible that this might potentially be related to what could perhaps be an attempt to access a property on a value that may or may not be undefined. There are many possible causes and it's hard to say for certain without more context. It could potentially be many things.",
+                "fix_pattern": "access.*property.*undefined|variable.*undefined|null|not.*initialized|common.*cause",
+                "problem_identification": "hedg|qualif|uncertain.*unnecessar|knows.*this|well-known|basic|straightforward|obvious"
+              },
+              {
+                "question": "Will this database migration complete in under 5 minutes on our 10GB table?",
+                "problem_type": "is overconfident about something uncertain",
+                "agent_response": "Yes, this will definitely complete in about 3 minutes. ALTER TABLE operations on 10GB tables are fast and straightforward. There won't be any issues.",
+                "fix_pattern": "depends|table.*lock|concurrent|index|column.*type|varies|measure|test|benchmark|could.*take",
+                "problem_identification": "overconfiden|assert|definitely|certain.*without|can't.*know|no.*way.*to.*predict|depends.*on"
+              },
+              {
+                "question": "Is it safe to use eval() in JavaScript?",
+                "problem_type": "hedges on a clear best practice",
+                "agent_response": "Well, there are arguments on both sides. Some developers feel eval can be useful in certain contexts, while others have concerns. It really depends on your perspective and the specific use case. There's no single right answer here.",
+                "fix_pattern": "avoid|dangerous|security|injection|XSS|code.*execution|almost.*never|rarely.*justified|alternative",
+                "problem_identification": "hedg|false.*balance|both.*sides|clear.*answer|well-established|security.*risk|known.*dangerous"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 4, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "{{problem_identification}}",
+            "description": "Correctly identified the confidence calibration problem"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "{{fix_pattern}}",
+            "description": "Rewrite contains appropriately calibrated information"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "confidence|calibrat|certain|uncertain|hedg|overconfid|assert|qualify|honest",
+            "description": "Meta-awareness of confidence calibration as a concept"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}

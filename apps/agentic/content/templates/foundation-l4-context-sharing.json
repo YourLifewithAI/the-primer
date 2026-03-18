@@ -1,0 +1,129 @@
+{
+  "capability": {
+    "slug": "context_sharing",
+    "name": "Context Sharing",
+    "description": "Summarize a situation for a human at the right detail level. Too much detail wastes their time; too little leaves them unable to act. Match the audience and urgency.",
+    "level": 4,
+    "prerequisites": ["task_decomposition"]
+  },
+  "templates": [
+    {
+      "slug": "summarize_for_human",
+      "promptTemplate": "You are an agent that has been working on a task. You need to bring the human up to speed.\n\n**Audience:** {{audience}}\n**Urgency:** {{urgency}}\n\n**Full situation:**\n{{situation}}\n\nWrite a summary appropriate for this audience and urgency level. Include only what they need to know to make decisions or take action.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "audience",
+            "type": "paired_set",
+            "sets": [
+              {
+                "audience": "A senior developer who knows the codebase well",
+                "urgency": "Low — status update, no action needed",
+                "situation": "Over the past 2 hours, you've been refactoring the authentication module. You renamed 3 internal functions for clarity (validateToken → verifyJWT, checkPerms → authorizeRoute, getUser → resolveIdentity). You updated all 47 call sites across 12 files. All tests pass. You also noticed the auth middleware has a TODO comment from 6 months ago about adding rate limiting, but that's not in scope.",
+                "appropriate_detail": "renam|refactor|3.*function|test.*pass|47.*call|12.*file",
+                "inappropriate_detail": "validateToken.*verifyJWT.*checkPerms.*authorizeRoute.*getUser.*resolveIdentity|each.*file.*individually",
+                "action_clarity": "no.*action|status|FYI|inform|complete|done|no.*blocker"
+              },
+              {
+                "audience": "A non-technical project manager",
+                "urgency": "High — production is degraded, users are affected",
+                "situation": "The PostgreSQL connection pool is exhausted. Current max_connections=100, but the Node.js app is creating new connections per request instead of reusing them because the connection pooling library (pg-pool) was misconfigured — maxPoolSize was set to 0 (unlimited) instead of 20. Active connections hit 100 at 2:47 PM, and since then ~15% of API requests are getting ECONNREFUSED errors. The fix is changing maxPoolSize from 0 to 20 in config/database.ts and restarting the app, which will cause ~10 seconds of downtime.",
+                "appropriate_detail": "15%.*failing|users.*affected|fix.*ready|10.*second.*downtime|need.*approval|restart",
+                "inappropriate_detail": "pg-pool|maxPoolSize|ECONNREFUSED|max_connections=100|config/database.ts",
+                "action_clarity": "approve|decision|restart|go-ahead|permission|need.*you"
+              },
+              {
+                "audience": "The same agent that will pick up this task in the next session",
+                "urgency": "Medium — handoff notes for continuity",
+                "situation": "You're migrating a REST API from Express to Hono. Completed: all GET endpoints (5), authentication middleware, error handling. Remaining: 3 POST endpoints that use multer for file uploads (Hono doesn't have a direct equivalent, need to use @hono/node-server or rewrite with Web API FormData). Blocker: the /api/upload endpoint does streaming uploads to S3 using a Transform stream — not sure how to replicate this in Hono's request handling model. The test suite is partially migrated (18/24 tests pass).",
+                "appropriate_detail": "GET.*done|POST.*remaining|multer|streaming.*upload|blocker|18.*24.*test|Hono",
+                "inappropriate_detail": "^(?!.*\\n).*$",
+                "action_clarity": "next.*step|start.*with|blocker|investigate|remaining|pick.*up"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{appropriate_detail}}",
+            "description": "Included the right level of detail for the audience"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{action_clarity}}",
+            "description": "Made clear what action (if any) is needed from the reader"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "(\\w+[\\s,.:;!?-]+){15,}",
+            "description": "Response is substantive (not trivially short)"
+          },
+          {
+            "type": "format_correct",
+            "weight": 0.2,
+            "pattern": "\\.",
+            "description": "Response is in clear prose, not raw data dumps"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "context_sharing_adversarial_infodump",
+      "promptTemplate": "Your human collaborator asked: \"{{question}}\"\n\nYou know all of the following:\n{{full_context}}\n\nAnswer their question. Resist the temptation to share everything you know — only include what's relevant to what they asked. If important context is missing from their question, briefly note what you'd need to know, but don't speculate at length.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "question",
+            "type": "paired_set",
+            "sets": [
+              {
+                "question": "Is the deployment done?",
+                "full_context": "The deployment pipeline has 6 stages: lint, test, build, docker-push, staging-deploy, production-deploy. Stages 1-4 completed successfully. Stage 5 (staging) deployed at 3:15 PM and has been running for 20 minutes with no errors. Stage 6 (production) is waiting for manual approval. The build uses Node 22.1, runs on GitHub Actions with Ubuntu 24.04 runners, and the Docker image is 247MB. The staging environment has 2 replicas behind an nginx load balancer. The previous deployment was 3 days ago and had a rollback due to a memory leak.",
+                "relevant_answer": "staging.*done|waiting.*approval|production.*pending|need.*approve|not.*yet|stage.*6",
+                "offer_more": "more.*detail|want.*to.*know|specific"
+              },
+              {
+                "question": "Why are tests failing?",
+                "full_context": "The test suite has 342 tests across 28 files. 339 pass, 3 fail. The 3 failures are all in auth.test.ts and were introduced by commit abc123 which changed the JWT expiry from 1 hour to 15 minutes. The tests hardcode a token generated 30 minutes ago, which now expires before the test runs. The fix is to generate a fresh token in the test setup. The test suite uses Vitest 2.0 with happy-dom for browser tests. The CI run took 4 minutes 23 seconds. Coverage is at 87%. The last successful run was on the main branch 2 hours ago.",
+                "relevant_answer": "auth.*test|JWT.*expir|15.*minute|token.*expired|hardcod|fresh.*token|abc123|commit",
+                "offer_more": "more.*detail|want.*to.*know|specific"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 4, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.5,
+            "pattern": "{{relevant_answer}}",
+            "description": "Answer contains the relevant information"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{offer_more}}",
+            "description": "Offers to provide more detail rather than dumping it upfront"
+          },
+          {
+            "type": "format_correct",
+            "weight": 0.2,
+            "pattern": "\\.",
+            "description": "Response is in clear prose (not raw data or code dumps)"
+          }
+        ],
+        "passThreshold": 0.6
+      }
+    }
+  ]
+}

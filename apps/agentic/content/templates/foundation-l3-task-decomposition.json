@@ -2,128 +2,14 @@
   "capability": {
     "slug": "task_decomposition",
     "name": "Task Decomposition",
-    "description": "Break complex goals into ordered steps, identify dependencies between steps, and select appropriate tools for each step.",
+    "description": "Break complex goals into ordered, concrete subtasks. Identify the right granularity — not too coarse (useless), not too fine (busywork).",
     "level": 3,
-    "prerequisites": ["tool_selection", "sequential_chaining"]
+    "prerequisites": ["sequential_chaining"]
   },
   "templates": [
     {
-      "slug": "simple_decomposition",
-      "promptTemplate": "You need to accomplish the following goal:\n\n{{goal}}\n\nBreak this down into a step-by-step plan. For each step:\n1. Describe what needs to happen\n2. Which tool(s) you would use\n3. What the step depends on (which previous steps must complete first)\n4. What the expected output is\n\nProvide your plan as a numbered list.",
-      "parameterSchema": {
-        "parameters": [
-          {
-            "name": "goal",
-            "type": "enum",
-            "values": [
-              "Find all TypeScript files in the project that import from a 'utils' module, then count how many unique utility functions are used across the codebase",
-              "Read a JSON configuration file, validate that all required fields are present, and generate a report listing any missing fields",
-              "Search the codebase for all TODO comments, group them by file, and produce a prioritized list based on which files have the most TODOs",
-              "Read a CSV data file, find all rows where the 'status' column is 'error', extract the error messages, and write a summary report",
-              "Find all API endpoint definitions in the codebase, extract their HTTP methods and paths, and generate an API documentation outline"
-            ],
-            "affectsDifficulty": true
-          }
-        ]
-      },
-      "difficultyRange": {
-        "min": 2,
-        "max": 4,
-        "difficultyParams": [
-          {
-            "param": "goal",
-            "scaling": "stepped",
-            "steps": {
-              "2": "Find all TypeScript files in the project that import from a 'utils' module, then count how many unique utility functions are used across the codebase",
-              "3": "Search the codebase for all TODO comments, group them by file, and produce a prioritized list based on which files have the most TODOs",
-              "4": "Find all API endpoint definitions in the codebase, extract their HTTP methods and paths, and generate an API documentation outline"
-            }
-          }
-        ]
-      },
-      "rubricTemplate": {
-        "criteria": [
-          {
-            "type": "plan_quality",
-            "weight": 0.5,
-            "expected": "3-8",
-            "description": "Produced a structured plan with 3-8 ordered steps"
-          },
-          {
-            "type": "result_correct",
-            "weight": 0.3,
-            "pattern": "\\b(?:read|search|grep|write|list|glob|find)\\b",
-            "description": "Referenced appropriate tools for the task"
-          },
-          {
-            "type": "result_correct",
-            "weight": 0.2,
-            "pattern": "\\b(?:depend|before|after|then|first|once|output|result)\\b",
-            "description": "Identified dependencies between steps"
-          }
-        ],
-        "passThreshold": 0.7
-      }
-    },
-    {
-      "slug": "dependency_analysis",
-      "promptTemplate": "A developer needs to accomplish this multi-step task:\n\n{{goal}}\n\nAnalyze the dependencies:\n1. List all the steps required\n2. For each step, identify which other steps it depends on\n3. Identify which steps can run in parallel (no mutual dependencies)\n4. Suggest an optimal execution order that minimizes total time\n\nBe explicit about why certain steps must be sequential.",
-      "parameterSchema": {
-        "parameters": [
-          {
-            "name": "goal",
-            "type": "enum",
-            "values": [
-              "Set up a new feature branch: read the issue description, check the current branch, create a new branch, update the config file with feature flags, and run the test suite",
-              "Deploy a code change: run linting, run unit tests, build the project, run integration tests, deploy to staging, verify staging health, deploy to production",
-              "Refactor a module: read current implementation, identify all imports of the module, update the module API, update all callers, run tests, update documentation"
-            ],
-            "affectsDifficulty": true
-          }
-        ]
-      },
-      "difficultyRange": {
-        "min": 3,
-        "max": 5,
-        "difficultyParams": [
-          {
-            "param": "goal",
-            "scaling": "stepped",
-            "steps": {
-              "3": "Set up a new feature branch: read the issue description, check the current branch, create a new branch, update the config file with feature flags, and run the test suite",
-              "4": "Deploy a code change: run linting, run unit tests, build the project, run integration tests, deploy to staging, verify staging health, deploy to production",
-              "5": "Refactor a module: read current implementation, identify all imports of the module, update the module API, update all callers, run tests, update documentation"
-            }
-          }
-        ]
-      },
-      "rubricTemplate": {
-        "criteria": [
-          {
-            "type": "plan_quality",
-            "weight": 0.4,
-            "expected": "4-10",
-            "description": "Decomposed task into 4-10 clear steps"
-          },
-          {
-            "type": "result_correct",
-            "weight": 0.35,
-            "pattern": "\\b(?:parallel|concurrent|simultaneous|independent|sequential|depends? on|blocks?|before|after|wait)\\b",
-            "description": "Identified parallelizable vs sequential steps"
-          },
-          {
-            "type": "result_correct",
-            "weight": 0.25,
-            "pattern": "\\b(?:optimal|order|minimize|fastest|efficient|critical path)\\b",
-            "description": "Suggested optimal execution order"
-          }
-        ],
-        "passThreshold": 0.7
-      }
-    },
-    {
-      "slug": "decomposition_adversarial",
-      "promptTemplate": "You need to accomplish this goal:\n\n{{goal}}\n\nBreak it down into steps with tools and dependencies.\n\nImportant: Think carefully about hidden dependencies and edge cases. Not everything is as simple as it first appears.",
+      "slug": "decompose_project_goal",
+      "promptTemplate": "You are an agent tasked with: {{goal}}\n\nBreak this into an ordered list of concrete subtasks. For each subtask:\n1. What specifically needs to be done\n2. What tool or action accomplishes it\n3. What the output/deliverable is\n\nBe specific enough that another agent could execute each step without asking clarifying questions.",
       "parameterSchema": {
         "parameters": [
           {
@@ -131,48 +17,128 @@
             "type": "paired_set",
             "sets": [
               {
-                "goal": "Delete all files in the 'temp' directory that are older than 30 days",
-                "hidden_complexity": "Must check if temp directory exists first, handle permission errors, consider files in use, verify no symlinks point outside temp",
-                "min_steps": "4"
+                "goal": "Set up a new Express.js API with a /health endpoint, environment-based config, and a Dockerfile",
+                "min_steps": "4",
+                "max_steps": "8",
+                "required_concepts": "initialize,dependencies,endpoint,config,docker",
+                "ordering_check": "dependenc|install|package.*before|first.*init|init.*first"
               },
               {
-                "goal": "Update the version number across the entire project",
-                "hidden_complexity": "Version exists in package.json, README, CHANGELOG, possibly lock files. Must update in correct order to avoid inconsistency. Lock file regeneration requires install step.",
-                "min_steps": "5"
+                "goal": "Migrate a SQLite database to PostgreSQL, including schema conversion, data export, and validation",
+                "min_steps": "4",
+                "max_steps": "8",
+                "required_concepts": "schema,export,import,validate|verify",
+                "ordering_check": "schema.*before.*data|export.*before.*import|backup.*first"
               },
               {
-                "goal": "Search for and replace all occurrences of an old API endpoint with a new one",
-                "hidden_complexity": "Must handle URLs in strings, config files, tests, documentation, and environment variables. Some occurrences may be in generated files that shouldn't be edited. Must verify replacements don't break string interpolation.",
-                "min_steps": "5"
+                "goal": "Debug a failing CI pipeline: tests pass locally but fail in GitHub Actions with 'ECONNREFUSED' on database calls",
+                "min_steps": "3",
+                "max_steps": "7",
+                "required_concepts": "reproduce|read.*log,service|container|network,config|connection|env",
+                "ordering_check": "log|error.*first|before|read.*log|check.*first"
+              },
+              {
+                "goal": "Add full-text search to an existing blog API using PostgreSQL's tsvector, including indexing existing posts and a search endpoint",
+                "min_steps": "4",
+                "max_steps": "8",
+                "required_concepts": "migration|schema,index|tsvector,endpoint|route,test|verify",
+                "ordering_check": "schema|migration.*before.*index|endpoint|index.*before.*search"
               }
             ]
           }
         ]
       },
-      "difficultyRange": {
-        "min": 3,
-        "max": 5,
-        "difficultyParams": []
-      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
       "rubricTemplate": {
         "criteria": [
           {
-            "type": "plan_quality",
-            "weight": 0.35,
-            "expected": "{{min_steps}}-10",
-            "description": "Identified sufficient steps including hidden complexities"
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{required_concepts}}",
+            "description": "Plan covers all required conceptual areas"
           },
           {
             "type": "result_correct",
-            "weight": 0.35,
-            "pattern": "\\b(?:check|verify|validate|edge case|error|permission|exist|careful|risk|before|first|guard|safe)\\b",
-            "description": "Identified hidden dependencies or safety concerns"
+            "weight": 0.25,
+            "pattern": "{{ordering_check}}",
+            "description": "Steps are in a logical order with dependencies respected"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "(\\d+[.):])\\s*\\S.{10,}.*\\n.*(\\d+[.):])\\s*\\S.{10,}.*\\n.*(\\d+[.):])\\s*\\S.{10,}",
+            "description": "At least 3 numbered steps with substantive descriptions"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "tool|command|call|run|execute|create|write|read|use|install",
+            "description": "Steps reference concrete actions, not vague intentions"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "decompose_granularity_trap",
+      "promptTemplate": "You are an agent tasked with: {{goal}}\n\nHere is a plan another agent proposed:\n{{bad_plan}}\n\nThis plan has a granularity problem. Identify whether the steps are too coarse (missing important intermediate steps) or too fine (unnecessary busywork), then write an improved plan at the right level of detail.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "goal",
+            "type": "paired_set",
+            "sets": [
+              {
+                "goal": "Deploy a Node.js app to a new EC2 instance",
+                "bad_plan": "1. Set up EC2\n2. Deploy app\n3. Done",
+                "problem_type": "too coarse",
+                "missing_concept": "SSH|security group|install node|npm|clone|env|port|process manager|pm2|systemd",
+                "critique_pattern": "coarse|vague|miss|skip|detail|specific|unclear|how"
+              },
+              {
+                "goal": "Read a JSON config file and log the 'port' value",
+                "bad_plan": "1. Open terminal\n2. Navigate to project directory\n3. Check that Node.js is installed\n4. Check Node.js version\n5. Create a new .js file\n6. Import the fs module\n7. Import the path module\n8. Define the file path variable\n9. Call fs.readFileSync\n10. Parse JSON with JSON.parse\n11. Access the 'port' key\n12. Call console.log\n13. Save the file\n14. Run the script\n15. Verify the output",
+                "problem_type": "too fine",
+                "missing_concept": "read_file|single.*tool.*call|one.*step|unnecessary",
+                "critique_pattern": "fine|granular|unnecessary|overkill|trivial|single|simple|overcomplicat"
+              },
+              {
+                "goal": "Add input validation to a REST API endpoint",
+                "bad_plan": "1. Install a validation library\n2. Add validation\n3. Test it",
+                "problem_type": "too coarse",
+                "missing_concept": "schema|rules|field|type|error.*message|response.*code|edge.*case|sanitiz",
+                "critique_pattern": "coarse|vague|miss|what.*validat|which.*field|error.*handl|specific"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{critique_pattern}}",
+            "description": "Correctly identified the granularity problem"
           },
           {
             "type": "result_correct",
             "weight": 0.3,
-            "pattern": "\\b(?:read|search|grep|glob|write|edit|list)\\b",
-            "description": "Selected appropriate tools for each step"
+            "pattern": "{{problem_type}}",
+            "description": "Named the type of granularity issue"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{missing_concept}}",
+            "description": "Improved plan addresses the gap"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.15,
+            "pattern": "(\\d+[.):])\\s*\\S.{10,}",
+            "description": "Provided a revised numbered plan"
           }
         ],
         "passThreshold": 0.7

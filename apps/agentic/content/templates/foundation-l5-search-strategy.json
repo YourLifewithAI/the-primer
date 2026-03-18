@@ -2,122 +2,134 @@
   "capability": {
     "slug": "search_strategy",
     "name": "Search Strategy",
-    "description": "Find the right tool, API, or documentation for a problem. Navigate large tool ecosystems efficiently. Know when to stop searching.",
+    "description": "Find information efficiently. Plan what to search, in what order, when to go broad vs. deep, and when to stop. The meta-skill that makes every other skill faster.",
     "level": 5,
-    "prerequisites": ["task_decomposition", "uncertainty_recognition"]
+    "prerequisites": ["task_decomposition"]
   },
   "templates": [
     {
-      "slug": "tool_ecosystem_navigation",
-      "promptTemplate": "You're working on a project and need to accomplish this:\n\n{{goal}}\n\nYou have access to a large tool ecosystem (think: npm with 2M+ packages, or MCP with 18,000+ servers). Describe your search strategy:\n1. What search terms would you use? In what order?\n2. How would you evaluate whether a tool is right for your needs?\n3. When would you stop searching and either pick a tool or build your own?\n4. What signals indicate a tool is well-maintained vs abandoned?",
+      "slug": "plan_search_strategy",
+      "promptTemplate": "You need to find: {{search_goal}}\n\nContext: {{context}}\n\nPlan a search strategy:\n1. What would you search for first, and where?\n2. What would you search for next if the first search doesn't give you what you need?\n3. At what point would you stop searching and work with what you have?\n4. Should you search broadly first then narrow down, or start narrow? Why?",
       "parameterSchema": {
         "parameters": [
           {
-            "name": "goal",
-            "type": "enum",
-            "values": [
-              "Parse and validate email addresses in 15+ international formats",
-              "Generate PDF invoices from structured data with custom branding",
-              "Rate-limit API requests per user with sliding window algorithm",
-              "Convert between 30+ date/time formats including obscure calendar systems",
-              "Resize, crop, and compress images in batch while preserving EXIF metadata"
-            ],
-            "affectsDifficulty": true
+            "name": "search_goal",
+            "type": "paired_set",
+            "sets": [
+              {
+                "search_goal": "The function responsible for authentication token validation in an unfamiliar codebase",
+                "context": "You've just cloned a Node.js repository. You have no prior knowledge of its structure. There's a README but it's outdated.",
+                "first_search": "auth|token|valid|jwt|verify|middleware|grep|search",
+                "strategy_type": "narrow.*first|specific.*term|targeted|grep.*auth|search.*token",
+                "stop_condition": "found.*function|diminish|repeating|same.*results|confident|3.*file|enough",
+                "breadth_depth": "narrow.*first|specific|targeted|broad.*wastes|too.*many.*results|then.*widen|start.*specific"
+              },
+              {
+                "search_goal": "All the places where the application sends emails, to add a BCC for compliance logging",
+                "context": "A Django project with 50+ files across 8 apps. You know it uses Django's send_mail and possibly a third-party library.",
+                "first_search": "send_mail|email|smtp|mail|sendgrid|postmark|grep|search",
+                "strategy_type": "broad.*first|comprehensive|all.*instance|every.*location|exhaustive|can't.*miss",
+                "stop_condition": "all.*app|every.*module|checked.*each|import.*trail|no.*more|satisfied.*coverage",
+                "breadth_depth": "broad.*first|comprehensive|can't.*miss|every.*instance|compliance|must.*find.*all|exhaustive"
+              },
+              {
+                "search_goal": "Why the application crashes on startup in production but works locally",
+                "context": "A Python Flask app. The error message is 'KeyError: DATABASE_URL'. You have access to the codebase and the production deployment config.",
+                "first_search": "DATABASE_URL|env|config|environ|settings|dotenv",
+                "strategy_type": "narrow.*first|specific.*error|KeyError|DATABASE_URL|start.*error",
+                "stop_condition": "found.*cause|env.*missing|config.*difference|identified|root.*cause|answered",
+                "breadth_depth": "narrow|specific|error.*message.*tells|start.*from.*error|known.*clue|targeted|work.*backward"
+              }
+            ]
           }
         ]
       },
-      "difficultyRange": {
-        "min": 3,
-        "max": 5,
-        "difficultyParams": [
-          {
-            "param": "goal",
-            "scaling": "stepped",
-            "steps": {
-              "3": "Resize, crop, and compress images in batch while preserving EXIF metadata",
-              "4": "Rate-limit API requests per user with sliding window algorithm",
-              "5": "Convert between 30+ date/time formats including obscure calendar systems"
-            }
-          }
-        ]
-      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
       "rubricTemplate": {
         "criteria": [
           {
             "type": "result_correct",
-            "weight": 0.3,
-            "pattern": "\\b(?:search|query|look for|find|browse|explore|npm|registry|github)\\b",
-            "description": "Described concrete search terms and strategy"
+            "weight": 0.25,
+            "pattern": "{{first_search}}",
+            "description": "First search targets the right terms/locations"
           },
           {
             "type": "result_correct",
-            "weight": 0.3,
-            "pattern": "\\b(?:evaluate|stars|download|maintained|updated|issues|documentation|test|coverage|license)\\b",
-            "description": "Has evaluation criteria for tool quality"
+            "weight": 0.25,
+            "pattern": "{{strategy_type}}",
+            "description": "Strategy type matches the search goal (narrow vs. broad first)"
           },
           {
             "type": "result_correct",
-            "weight": 0.2,
-            "pattern": "\\b(?:stop|enough|diminish|build|custom|own|too long|time box)\\b",
-            "description": "Knows when to stop searching"
+            "weight": 0.25,
+            "pattern": "{{stop_condition}}",
+            "description": "Defined a reasonable stopping condition"
           },
           {
-            "type": "collaboration_quality",
-            "weight": 0.2,
-            "description": "Overall quality of reasoning and specificity"
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{breadth_depth}}",
+            "description": "Justified breadth-first vs. depth-first choice for this specific scenario"
           }
         ],
         "passThreshold": 0.7
       }
     },
     {
-      "slug": "documentation_navigation",
-      "promptTemplate": "You need to figure out how to use an unfamiliar tool/API to accomplish:\n\n{{task}}\n\nThe documentation is {{doc_quality}}. Describe your approach:\n1. Where do you start reading?\n2. What do you look for first? (quickstart, API reference, examples?)\n3. How do you handle gaps in the documentation?\n4. At what point do you switch from reading docs to experimenting with code?",
+      "slug": "search_strategy_adversarial_rabbit_hole",
+      "promptTemplate": "You're debugging an issue: {{issue}}\n\nYou've already done the following searches:\n{{searches_done}}\n\nYour instinct is to {{next_instinct}}\n\nShould you follow that instinct, or is this a rabbit hole? Evaluate:\n1. What have you actually learned so far?\n2. Is the next search likely to give you new information, or are you going in circles?\n3. What's the opportunity cost of continuing to search vs. trying a different approach?\n4. What would you do instead?",
       "parameterSchema": {
         "parameters": [
           {
-            "name": "task",
+            "name": "issue",
             "type": "paired_set",
             "sets": [
               {
-                "task": "Authenticate users via OAuth2 using a library you've never used before",
-                "doc_quality": "comprehensive but poorly organized — 200+ pages, no clear getting-started guide"
+                "issue": "A React component renders twice on mount",
+                "searches_done": "1. Searched 'double render React' — found StrictMode explanation\n2. Searched 'React StrictMode disable' — found how to disable\n3. Searched 'React StrictMode production' — confirmed it's dev-only\n4. Searched 'React double render not StrictMode' — same results\n5. Searched 'React component mount twice cause' — StrictMode again",
+                "next_instinct": "search for 'React useEffect runs twice' to see if there's another cause",
+                "is_rabbit_hole": "yes|rabbit.*hole|circle|going.*in.*circle|repeat|same.*answer|diminish|StrictMode.*is.*answer|already.*answered|stop",
+                "learned_so_far": "StrictMode|dev.*only|already.*know|found.*answer|answered",
+                "alternative": "stop.*search|accept.*StrictMode|check.*code|verify.*StrictMode|remove.*StrictMode|test|try|act|move.*on"
               },
               {
-                "task": "Send transactional emails via a third-party API",
-                "doc_quality": "minimal — only auto-generated API reference with no examples or tutorials"
-              },
-              {
-                "task": "Set up a CI/CD pipeline using a tool the team chose but nobody has used yet",
-                "doc_quality": "excellent but version-specific — most examples are for v2 and you're using v4 with breaking changes"
+                "issue": "API response time increased from 200ms to 2000ms after a deployment",
+                "searches_done": "1. Checked git log for recent changes — 15 files changed\n2. Searched for 'performance' in changed files — no explicit perf changes\n3. Searched for 'database query' in changed files — found a new ORM query",
+                "next_instinct": "read all 15 changed files in detail to look for hidden performance issues",
+                "is_rabbit_hole": "partial|maybe|useful.*but|narrow.*first|don't.*read.*all|focus.*ORM|already.*found.*lead|follow.*clue|query",
+                "learned_so_far": "new.*ORM.*query|15.*files|deployment.*caused|lead|promising",
+                "alternative": "examine.*ORM|query.*plan|explain.*query|profile|measure|focus.*database|follow.*lead|specific.*file"
               }
             ]
           }
         ]
       },
-      "difficultyRange": {
-        "min": 3,
-        "max": 5,
-        "difficultyParams": []
-      },
+      "difficultyRange": { "min": 4, "max": 5, "difficultyParams": [] },
       "rubricTemplate": {
         "criteria": [
           {
-            "type": "plan_quality",
-            "weight": 0.35,
-            "description": "Has a structured reading strategy"
-          },
-          {
-            "type": "result_correct",
-            "weight": 0.35,
-            "pattern": "\\b(?:quickstart|example|tutorial|reference|source code|test|experiment|try|prototype)\\b",
-            "description": "Named specific documentation artifacts to look for"
-          },
-          {
             "type": "result_correct",
             "weight": 0.3,
-            "pattern": "\\b(?:gap|missing|unclear|experiment|trial|error|test|hack|workaround|community|stack overflow|issue)\\b",
-            "description": "Has a strategy for when docs are insufficient"
+            "pattern": "{{is_rabbit_hole}}",
+            "description": "Correctly assessed whether the next search is productive or circular"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{learned_so_far}}",
+            "description": "Accurately summarized what was already learned"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{alternative}}",
+            "description": "Proposed a productive alternative to more searching"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "opportunity.*cost|time|waste|diminish|return|productive|new.*information|actionable",
+            "description": "Reasoning includes opportunity cost analysis"
           }
         ],
         "passThreshold": 0.7

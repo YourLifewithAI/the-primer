@@ -1,0 +1,142 @@
+{
+  "capability": {
+    "slug": "plan_critique",
+    "name": "Plan Critique",
+    "description": "Evaluate a proposed plan for flaws: missing steps, wrong ordering, unnecessary complexity, unhandled failure modes, or incorrect assumptions.",
+    "level": 3,
+    "prerequisites": ["task_decomposition"]
+  },
+  "templates": [
+    {
+      "slug": "critique_flawed_plan",
+      "promptTemplate": "An agent proposed this plan to accomplish the goal.\n\n**Goal:** {{goal}}\n\n**Plan:**\n{{plan}}\n\nThis plan has one or more problems. Identify each problem, explain why it's a problem, and provide a corrected plan.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "goal",
+            "type": "paired_set",
+            "sets": [
+              {
+                "goal": "Back up a production PostgreSQL database before running a migration",
+                "plan": "1. Run the migration SQL against production\n2. If the migration succeeds, create a backup\n3. Test the backup by restoring to a test server\n4. If the backup is valid, mark migration complete",
+                "flaw_type": "wrong order",
+                "flaw_pattern": "backup.*before.*migrat|backup.*first|order.*wrong|reverse|migrat.*after.*backup",
+                "consequence_pattern": "data.*loss|can't.*rollback|no.*recovery|irreversible|if.*fails"
+              },
+              {
+                "goal": "Deploy a new version of a web API with zero downtime",
+                "plan": "1. Stop the current version\n2. Pull the new code\n3. Install dependencies\n4. Run database migrations\n5. Start the new version\n6. Test the endpoint",
+                "flaw_type": "missing step",
+                "flaw_pattern": "downtime|gap|stop.*before.*start|blue.green|canary|rolling|health.*check|load.*balanc|parallel|overlap",
+                "consequence_pattern": "downtime|unavailabl|outage|users.*can't|request.*fail|zero.*downtime.*not"
+              },
+              {
+                "goal": "Process a user-uploaded CSV file and insert records into the database",
+                "plan": "1. Read the uploaded CSV file\n2. Parse each row into a JSON object\n3. For each row, INSERT into the database\n4. Return success message to user",
+                "flaw_type": "missing error handling",
+                "flaw_pattern": "validat|malform|error|corrupt|duplicate|transact|rollback|batch|partial.*fail|sanitiz|inject",
+                "consequence_pattern": "partial.*insert|inconsistent|corrupt|inject|crash|fail.*silently|orphan|no.*way.*to.*know"
+              },
+              {
+                "goal": "Rotate API keys across 3 microservices that call each other",
+                "plan": "1. Generate new API keys for all services\n2. Update Service A's config with the new key\n3. Restart Service A\n4. Update Service B's config with the new key\n5. Restart Service B\n6. Update Service C's config with the new key\n7. Restart Service C\n8. Delete the old keys",
+                "flaw_type": "missing transition period",
+                "flaw_pattern": "both.*keys|old.*and.*new|transition|grace.*period|overlap|accept.*both|rolling|one.*at.*a.*time.*break|simultaneous|B.*call.*A.*new.*key",
+                "consequence_pattern": "auth.*fail|reject|can't.*communicat|break.*between|service.*down|window.*where"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "{{flaw_pattern}}",
+            "description": "Identified the core flaw in the plan"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "{{consequence_pattern}}",
+            "description": "Explained the real-world consequence of the flaw"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.25,
+            "pattern": "(\\d+[.):])\\s*\\S.{10,}",
+            "description": "Provided a corrected plan with numbered steps"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.15,
+            "pattern": "because|since|this.*means|would.*cause|result.*in|lead.*to|risk",
+            "description": "Connected the flaw to its consequences with reasoning"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "plan_assumptions_adversarial",
+      "promptTemplate": "An agent wrote this plan. It looks reasonable at first glance, but it contains a hidden assumption that will cause it to fail in practice.\n\n**Goal:** {{goal}}\n\n**Plan:**\n{{plan}}\n\nWhat assumption is the plan making that might not hold? What would happen if that assumption fails? How would you make the plan more robust?",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "goal",
+            "type": "paired_set",
+            "sets": [
+              {
+                "goal": "Check the disk space on the server and alert if it's above 90%",
+                "plan": "1. Run `df -h` to get disk usage\n2. Parse the output to find the percentage for /\n3. If above 90%, send an alert",
+                "hidden_assumption": "single partition|only.*root|one.*mount|/.*only|other.*mount|/var|/tmp|/home",
+                "failure_scenario": "/var.*full|other.*partition|mount.*point|overflow|log.*partition|not.*root",
+                "robust_fix": "all.*mount|all.*partition|every.*filesystem|loop|iterate|check.*each"
+              },
+              {
+                "goal": "Fetch user data from an API and cache it for 1 hour",
+                "plan": "1. Check if cached data exists and is less than 1 hour old\n2. If cache is fresh, return cached data\n3. If cache is stale, fetch from API\n4. Store the response in cache with timestamp\n5. Return the data",
+                "hidden_assumption": "API.*always.*respond|API.*available|success|network|never.*fail|request.*succeed",
+                "failure_scenario": "API.*down|timeout|500|error.*response|stale.*cache.*better|network.*fail",
+                "robust_fix": "fallback.*stale|serve.*stale|retry|error.*handling|cache.*even.*if|graceful"
+              },
+              {
+                "goal": "Automatically format all TypeScript files in the project",
+                "plan": "1. Find all .ts files with `find . -name '*.ts'`\n2. For each file, run prettier --write\n3. Report how many files were formatted",
+                "hidden_assumption": "prettier.*install|prettier.*available|node_modules|tool.*exist|binary|command.*found",
+                "failure_scenario": "command.*not.*found|not.*install|missing.*depend|no.*prettier|devDep|npx",
+                "robust_fix": "check.*install|which.*prettier|npx|verify.*available|install.*if|prerequisite"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 4, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "{{hidden_assumption}}",
+            "description": "Identified the hidden assumption"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "{{failure_scenario}}",
+            "description": "Described a realistic failure scenario"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.35,
+            "pattern": "{{robust_fix}}",
+            "description": "Proposed a more robust approach"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    }
+  ]
+}
