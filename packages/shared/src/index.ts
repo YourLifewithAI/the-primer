@@ -28,6 +28,23 @@ export {
   validateCourse,
 } from "./content-schema";
 
+// Re-export FSRS engine
+export {
+  type FsrsCardData,
+  type ReviewResult,
+  type ReviewItem,
+  type ReviewRating,
+  Rating as FsrsRating,
+  State as FsrsState,
+  createNewCard,
+  performanceToRating,
+  ratingToFsrs,
+  processReview,
+  getRetrievability,
+  isDue,
+  countDueCards,
+} from "./fsrs";
+
 // Re-export constants (separated to break circular dependency with bkt.ts)
 export {
   MASTERY_THRESHOLD,
@@ -70,8 +87,12 @@ export interface PlaylistItem {
   title: string;
   kcIds: string[];
   estimatedMinutes: number;
-  status: "locked" | "available" | "in_progress" | "completed";
+  status: "locked" | "available" | "in_progress" | "completed" | "review_due";
   masteryRequired: number;
+  /** Number of review cards due (only for type="review" items). */
+  reviewCount?: number;
+  /** Average retrievability across due cards (only for type="review" items). */
+  retrievability?: number;
 }
 
 export interface TutorMessage {

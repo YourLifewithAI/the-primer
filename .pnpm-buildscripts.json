@@ -1,0 +1,1 @@
+{"allowedBuildScripts": ["prisma", "@prisma/client", "@prisma/engines", "esbuild"]}

@@ -10,6 +10,9 @@
     "build": "turbo build",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "db:generate": "pnpm --filter @primer/web exec prisma generate",
@@ -18,8 +21,12 @@
     "db:studio": "pnpm --filter @primer/web exec prisma studio"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.0",
     "prettier": "^3.4.0",
     "turbo": "^2.4.0",
-    "typescript": "^5.7.0"
+    "typescript": "^5.7.0",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.0",
+    "vitest-mock-extended": "^3.1.0"
   }
 }
