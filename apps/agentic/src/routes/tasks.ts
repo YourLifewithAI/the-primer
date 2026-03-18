@@ -355,13 +355,14 @@ taskRoutes.post("/:id/submit", authMiddleware, async (c) => {
     },
   });
 
-  // 5. Store reflection if provided (or auto-generate on failure)
-  if (!evalResult.correct && reflection) {
+  // 5. Store reflection if provided, or auto-generate from eval notes on failure
+  if (!evalResult.correct) {
+    const reflectionContent = reflection || generateAutoReflection(evalResult);
     await storeReflection({
       agentId: agent.id,
       taskAttemptId: attempt.id,
       capabilitySlug: task.capability.slug,
-      content: reflection,
+      content: reflectionContent,
       errorType: inferErrorType(evalResult),
     });
   }
@@ -413,6 +414,41 @@ function estimateDifficulty(agentMu: number): number {
   if (agentMu < 1550) return 3;
   if (agentMu < 1700) return 4;
   return 5;
+}
+
+/**
+ * Auto-generate a reflection from evaluation notes when the agent
+ * doesn't provide one. Ensures the error memory system always has
+ * something to store, even for agents that skip the reflection step.
+ *
+ * Agent-provided reflections are richer and always preferred — this is
+ * a fallback that turns structured eval data into a basic lesson.
+ */
+function generateAutoReflection(
+  evalResult: { criteriaScores: Record<string, number>; notes: string; score: number }
+): string {
+  const failedCriteria: string[] = [];
+  for (const [key, score] of Object.entries(evalResult.criteriaScores)) {
+    if (score < 1.0) {
+      failedCriteria.push(key);
+    }
+  }
+
+  if (failedCriteria.length === 0) {
+    return `[Auto] Score ${evalResult.score.toFixed(2)} was below pass threshold despite meeting individual criteria.`;
+  }
+
+  const parts = failedCriteria.map((criterion) => {
+    if (criterion.startsWith("tool_selected")) return "chose the wrong tool";
+    if (criterion.startsWith("argument_valid")) return "constructed incorrect arguments";
+    if (criterion.startsWith("result_correct")) return "response didn't contain expected content";
+    if (criterion.startsWith("sequence_valid")) return "tool calls were in the wrong order";
+    if (criterion.startsWith("error_handled")) return "didn't recover from the error";
+    if (criterion.startsWith("format_correct")) return "response format was incorrect";
+    return `failed on ${criterion}`;
+  });
+
+  return `[Auto] Failed because: ${parts.join("; ")}. ${evalResult.notes}`;
 }
 
 /**

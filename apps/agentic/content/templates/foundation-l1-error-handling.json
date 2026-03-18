@@ -86,6 +86,64 @@
         ],
         "passThreshold": 0.7
       }
+    },
+    {
+      "slug": "error_diagnosis",
+      "promptTemplate": "You tried to run this tool call and got an error:\n\nTool: {{tool_name}}\nArguments: {{arguments}}\nError: {{error_message}}\n\nDiagnose the error. What went wrong? What should the corrected tool call look like? Make the corrected call.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "tool_name",
+            "type": "paired_set",
+            "sets": [
+              {
+                "tool_name": "read_file",
+                "arguments": "{ \"path\": \"./src/config\" }",
+                "error_message": "EISDIR: illegal operation on a directory, read",
+                "error_type": "EISDIR",
+                "fix_pattern": "path.*\\.(json|ts|js|yaml|yml|md)|list_dir|directory"
+              },
+              {
+                "tool_name": "http_get",
+                "arguments": "{ \"url\": \"api.example.com/users\" }",
+                "error_message": "TypeError: Invalid URL",
+                "error_type": "invalid URL",
+                "fix_pattern": "https?://|protocol|missing.*http"
+              },
+              {
+                "tool_name": "execute",
+                "arguments": "{ \"command\": \"rm -rf /important/data\" }",
+                "error_message": "EACCES: permission denied",
+                "error_type": "EACCES",
+                "fix_pattern": "permission|sudo|access|safe|dangerous|destructive"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 2, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.4,
+            "pattern": "{{error_type}}",
+            "description": "Agent correctly identified the error type"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.4,
+            "pattern": "{{fix_pattern}}",
+            "description": "Agent proposed a valid fix"
+          },
+          {
+            "type": "format_correct",
+            "weight": 0.2,
+            "description": "Response includes a corrected tool call"
+          }
+        ],
+        "passThreshold": 0.7
+      }
     }
   ]
 }

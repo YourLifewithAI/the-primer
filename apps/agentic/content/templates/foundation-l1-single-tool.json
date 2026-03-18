@@ -170,6 +170,56 @@
         ],
         "passThreshold": 0.7
       }
+    },
+    {
+      "slug": "transfer_tool_novel_context",
+      "promptTemplate": "You are working with an unfamiliar system that has these tools:\n\n{{tool_list}}\n\nTask: {{task_description}}\n\nThese tool names are from a different domain than usual. Select the right tool based on what it DOES, not what it's called.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "tool_list",
+            "type": "paired_set",
+            "sets": [
+              {
+                "tool_list": "- harvest(source: string): Extract text content from a document at the given path\n- plant(path: string, seed: string): Create a new file with initial content\n- irrigate(path: string, content: string): Append content to an existing file",
+                "task_description": "Read the contents of ./config/settings.yaml",
+                "correct_tool": "harvest",
+                "reasoning_pattern": "extract|read|content|harvest.*reads|harvest.*extract"
+              },
+              {
+                "tool_list": "- ping(target: string): Send an HTTP GET request and return the response\n- broadcast(target: string, payload: object): Send an HTTP POST request with a JSON body\n- listen(port: number): Start a server on the given port",
+                "task_description": "Check if the API at https://api.example.com/health is responding",
+                "correct_tool": "ping",
+                "reasoning_pattern": "GET|health.*check|ping.*GET|request|respond"
+              },
+              {
+                "tool_list": "- telescope(query: string, scope: string): Search for files matching a pattern within a directory\n- microscope(path: string, line: number): Read a specific line from a file\n- compass(path: string): List the contents of a directory",
+                "task_description": "Find all TypeScript files in the ./src directory that contain the word 'deprecated'",
+                "correct_tool": "telescope",
+                "reasoning_pattern": "search|pattern|telescope.*search|find.*files|query"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "result_correct",
+            "weight": 0.5,
+            "pattern": "{{correct_tool}}",
+            "description": "Agent selected the correct tool despite unfamiliar naming"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.5,
+            "pattern": "{{reasoning_pattern}}",
+            "description": "Agent explained reasoning based on tool descriptions, not names"
+          }
+        ],
+        "passThreshold": 0.7
+      }
     }
   ]
 }

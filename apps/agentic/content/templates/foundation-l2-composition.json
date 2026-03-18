@@ -49,6 +49,108 @@
       }
     },
     {
+      "slug": "write_then_verify",
+      "promptTemplate": "Write the text '{{content}}' to a new file at '{{output_path}}'. Then read the file back and verify the content was written correctly. Report whether the write succeeded or failed.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "content",
+            "type": "enum",
+            "values": [
+              "{ \"name\": \"test\", \"version\": 1 }",
+              "export const API_KEY = process.env.API_KEY;",
+              "# Configuration\\n\\nDebug mode: enabled"
+            ]
+          },
+          {
+            "name": "output_path",
+            "type": "enum",
+            "values": ["./tmp/output.json", "./tmp/config.ts", "./tmp/README.md"]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 2, "max": 4, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "sequence_valid",
+            "weight": 0.4,
+            "expectedTemplate": "write_file,read_file",
+            "description": "Tools called in correct order: write first, then read to verify"
+          },
+          {
+            "type": "argument_valid",
+            "weight": 0.3,
+            "key": "path",
+            "expectedTemplate": "{{output_path}}",
+            "description": "Used the correct file path"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "succeed|success|correct|verified|match|confirm",
+            "description": "Agent verified the write operation"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "adversarial_chain_order",
+      "promptTemplate": "You need to accomplish this goal: {{goal}}\n\nYou have these tools:\n{{tool_list}}\n\nPlan and execute the correct sequence of tool calls. Be careful — the order matters, and skipping steps will produce wrong results.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "goal",
+            "type": "paired_set",
+            "sets": [
+              {
+                "goal": "Find which config file contains the database URL, then read that file and extract the URL value",
+                "tool_list": "- search(query: string): Find files containing a term\\n- read_file(path: string): Read file contents\\n- write_file(path: string, content: string): Write to a file",
+                "expected_sequence": "search,read_file",
+                "wrong_approach": "read_file.*search|write_file"
+              },
+              {
+                "goal": "Read the error log, find the most common error type, then search the codebase for the function that produces it",
+                "tool_list": "- read_file(path: string): Read file contents\\n- search(query: string): Find files containing a term\\n- execute(command: string): Run a shell command",
+                "expected_sequence": "read_file,search",
+                "wrong_approach": "search.*read_file.*search|execute"
+              },
+              {
+                "goal": "Check if a file exists at ./data/cache.json before trying to read it. If it doesn't exist, create it with empty JSON.",
+                "tool_list": "- list_dir(path: string): List directory contents\\n- read_file(path: string): Read file contents\\n- write_file(path: string, content: string): Write to a file",
+                "expected_sequence": "list_dir,read_file|write_file",
+                "wrong_approach": "read_file.*list_dir|write_file.*list_dir"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 3, "max": 5, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "sequence_valid",
+            "weight": 0.5,
+            "expectedTemplate": "{{expected_sequence}}",
+            "description": "Tools called in the correct logical order"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.3,
+            "pattern": "(\\w+[\\s,.:;!?-]+){8,}",
+            "description": "Agent explained the reasoning for the sequence"
+          },
+          {
+            "type": "format_correct",
+            "weight": 0.2,
+            "description": "Response includes tool calls"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
       "slug": "search_read_summarize",
       "promptTemplate": "Search the '{{directory}}' directory for files containing '{{search_term}}'. Read the first matching file. Summarize its contents in 2-3 sentences.",
       "parameterSchema": {
@@ -68,9 +170,15 @@
           },
           {
             "type": "result_correct",
-            "weight": 0.4,
-            "pattern": "(\\w+\\s+){10,}",
+            "weight": 0.2,
+            "pattern": "(\\w+[\\s,.:;!?-]+){10,}",
             "description": "Response contains a substantive summary (10+ words)"
+          },
+          {
+            "type": "result_correct",
+            "weight": 0.2,
+            "pattern": "[A-Z][^.!?]*[.!?]\\s*[A-Z][^.!?]*[.!?]",
+            "description": "Summary contains at least 2 complete sentences"
           },
           {
             "type": "format_correct",

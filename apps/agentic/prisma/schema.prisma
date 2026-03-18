@@ -28,11 +28,11 @@ model Agent {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  enrollments    Enrollment[]
-  masteryStates  AgentMasteryState[]
-  taskAttempts   TaskAttempt[]
-  reflections    Reflection[]
-  trustStates    TrustState[]
+  enrollments               Enrollment[]
+  masteryStates             AgentMasteryState[]
+  taskAttempts              TaskAttempt[]
+  reflections               Reflection[]
+  specializationEnrollments SpecializationEnrollment[]
 }
 
 enum ModelClass {
@@ -66,6 +66,7 @@ model Capability {
   name          String
   description   String
   level         Int      @default(0) // Foundation level: 0-5; specialization: 10+
+  branch        String?  // null = foundation; "research", "webdev", etc.
   courseId       String
   course         Course   @relation(fields: [courseId], references: [id])
 
@@ -244,6 +245,28 @@ model TaskAttempt {
   createdAt   DateTime @default(now())
 }
 
+// ─── Specialization Enrollment (Sprint 2F) ─────────────────────
+
+model SpecializationEnrollment {
+  id              String   @id @default(cuid())
+  agentId         String
+  agent           Agent    @relation(fields: [agentId], references: [id])
+  branch          String   // "research", "webdev", etc.
+  status          SpecializationStatus @default(ACTIVE)
+
+  enrolledAt      DateTime @default(now())
+  completedAt     DateTime?
+  updatedAt       DateTime @updatedAt
+
+  @@unique([agentId, branch])
+}
+
+enum SpecializationStatus {
+  ACTIVE
+  COMPLETED
+  PAUSED
+}
+
 // ─── Error Memory (Phase 2: Reflexion Pattern) ────────────────
 
 model Reflection {
@@ -276,25 +299,7 @@ enum ErrorType {
   ARGUMENT_ERROR    // Correct tool, wrong parameters
   INTERPRETATION    // Misread tool output
   PLANNING          // Bad task decomposition
-  COLLABORATION     // Poor human collaboration (L4)
   MEMORY            // Failed to use available context
   SYSTEM            // External failure (timeout, permission, etc.)
   UNKNOWN
-}
-
-// ─── Trust Affirmation (Sprint 2D) ─────────────────────────────
-
-model TrustState {
-  id              String   @id @default(cuid())
-  agentId         String
-  agent           Agent    @relation(fields: [agentId], references: [id])
-  actionClass     String   // e.g., "read_only", "reversible_write", "irreversible"
-  trustLevel      Int      @default(1)  // 1-5 graduated autonomy
-  totalActions    Int      @default(0)
-  correctActions  Int      @default(0)
-  lastActionAt    DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  @@unique([agentId, actionClass])
 }

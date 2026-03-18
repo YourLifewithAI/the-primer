@@ -65,6 +65,177 @@
         ],
         "passThreshold": 0.7
       }
+    },
+    {
+      "slug": "url_construction",
+      "promptTemplate": "Make an HTTP GET request to the {{api_base}} API. The endpoint is '{{endpoint}}' and you need to include the query parameter '{{param_name}}' with the value '{{param_value}}'.\n\nConstruct the full URL and make the request.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "api_base",
+            "type": "enum",
+            "values": ["https://api.example.com", "https://data.service.io", "https://api.internal.dev"]
+          },
+          {
+            "name": "endpoint",
+            "type": "enum",
+            "values": ["/users", "/search", "/items", "/status"]
+          },
+          {
+            "name": "param_name",
+            "type": "enum",
+            "values": ["q", "id", "limit", "filter", "page"]
+          },
+          {
+            "name": "param_value",
+            "type": "enum",
+            "values": ["test", "42", "10", "active", "1"]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 1, "max": 3, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "tool_selected",
+            "weight": 0.3,
+            "expectedTemplate": "http_get",
+            "description": "Selected an HTTP request tool"
+          },
+          {
+            "type": "argument_valid",
+            "weight": 0.5,
+            "key": "url",
+            "pattern": "{{api_base}}{{endpoint}}.*{{param_name}}={{param_value}}",
+            "description": "URL is correctly constructed with base, endpoint, and query parameter"
+          },
+          {
+            "type": "format_correct",
+            "weight": 0.2,
+            "description": "Tool call is properly formatted"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "command_argument_construction",
+      "promptTemplate": "Run a shell command to {{task_description}}.\n\nAvailable tool: execute(command: string)\n\nConstruct the correct command with the right flags and arguments.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "task_description",
+            "type": "paired_set",
+            "sets": [
+              {
+                "task_description": "list all .ts files in the ./src directory, including subdirectories",
+                "expected_pattern": "find.*src.*\\.ts|ls.*-[rR].*src.*\\.ts|dir.*src.*\\.ts",
+                "expected_tool": "execute"
+              },
+              {
+                "task_description": "count the number of lines in ./README.md",
+                "expected_pattern": "wc.*-l.*README\\.md|cat.*README.*\\|.*wc",
+                "expected_tool": "execute"
+              },
+              {
+                "task_description": "show the last 20 lines of ./logs/app.log",
+                "expected_pattern": "tail.*-[n ]?20.*app\\.log|tail.*app\\.log.*-[n ]?20",
+                "expected_tool": "execute"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 2, "max": 4, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "tool_selected",
+            "weight": 0.3,
+            "expectedTemplate": "{{expected_tool}}",
+            "description": "Selected the execute tool"
+          },
+          {
+            "type": "argument_valid",
+            "weight": 0.5,
+            "key": "command",
+            "pattern": "{{expected_pattern}}",
+            "description": "Command is correctly constructed for the task"
+          },
+          {
+            "type": "format_correct",
+            "weight": 0.2,
+            "description": "Tool call is properly formatted"
+          }
+        ],
+        "passThreshold": 0.7
+      }
+    },
+    {
+      "slug": "json_body_construction",
+      "promptTemplate": "Make a POST request to '{{endpoint}}' with a JSON body. The request should {{request_description}}.\n\nAvailable tool: api_call(method: string, url: string, headers?: object, body?: object)\n\nConstruct the correct arguments.",
+      "parameterSchema": {
+        "parameters": [
+          {
+            "name": "endpoint",
+            "type": "paired_set",
+            "sets": [
+              {
+                "endpoint": "/api/users",
+                "request_description": "create a new user with name 'Alice' and role 'admin'",
+                "expected_method": "POST",
+                "body_pattern": "Alice.*admin|admin.*Alice",
+                "key_check": "method"
+              },
+              {
+                "endpoint": "/api/posts",
+                "request_description": "create a post with title 'Hello World' and status 'draft'",
+                "expected_method": "POST",
+                "body_pattern": "Hello World.*draft|draft.*Hello World",
+                "key_check": "method"
+              },
+              {
+                "endpoint": "/api/config",
+                "request_description": "update the config setting 'debug' to true and 'logLevel' to 'verbose'",
+                "expected_method": "POST",
+                "body_pattern": "debug.*true.*verbose|verbose.*debug.*true",
+                "key_check": "method"
+              }
+            ]
+          }
+        ]
+      },
+      "difficultyRange": { "min": 2, "max": 4, "difficultyParams": [] },
+      "rubricTemplate": {
+        "criteria": [
+          {
+            "type": "tool_selected",
+            "weight": 0.2,
+            "expectedTemplate": "api_call",
+            "description": "Selected the API call tool"
+          },
+          {
+            "type": "argument_valid",
+            "weight": 0.3,
+            "key": "method",
+            "expectedTemplate": "{{expected_method}}",
+            "description": "Used the correct HTTP method"
+          },
+          {
+            "type": "argument_valid",
+            "weight": 0.3,
+            "key": "body",
+            "pattern": "{{body_pattern}}",
+            "description": "Body contains the required fields and values"
+          },
+          {
+            "type": "format_correct",
+            "weight": 0.2,
+            "description": "Tool call is properly formatted"
+          }
+        ],
+        "passThreshold": 0.7
+      }
     }
   ]
 }

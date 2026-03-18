@@ -153,7 +153,12 @@ function evaluateArgumentValid(criterion: Criterion, response: AgentResponse): n
 function evaluateResultCorrect(criterion: Criterion, response: AgentResponse): number {
   const text = response.text || "";
   const lastResult = response.toolCalls?.at(-1)?.result;
-  const searchable = `${text} ${JSON.stringify(lastResult || "")}`;
+  // Also include tool call arguments in the searchable text — agents may
+  // demonstrate correct results through their argument choices (e.g., using
+  // the correct file path) even when the tool result itself is opaque content.
+  const lastArgs = response.toolCalls?.at(-1)?.arguments;
+  const allArgs = response.toolCalls?.map((tc) => JSON.stringify(tc.arguments || "")).join(" ") || "";
+  const searchable = `${text} ${JSON.stringify(lastResult || "")} ${JSON.stringify(lastArgs || "")} ${allArgs}`;
 
   if (criterion.expected) {
     const expected = Array.isArray(criterion.expected) ? criterion.expected : [criterion.expected];

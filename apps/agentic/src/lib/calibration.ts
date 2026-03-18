@@ -78,9 +78,9 @@ const CALIBRATION_BOOST: Record<number, number> = {
   0: 0.99, // L0: trivially easy → mark mastered instantly
   1: 0.85, // L1: one more correct = mastered
   2: 0.75, // L2: two more correct = mastered
-  3: 0.65, // L3: ~2 more correct answers to master
-  4: 0.55, // L4: ~3 more correct answers to master
-  5: 0.45, // L5: ~4 more correct answers to master (meta-skills need more proof)
+  3: 0.60, // L3: planning tasks need 3-4 more correct = mastered
+  4: 0.50, // L4: collaboration tasks need extended demonstration
+  5: 0.40, // L5: meta-skills require sustained demonstration — 5+ correct = mastered
 };
 
 /** Elo adjustment per correct calibration response. */
@@ -88,9 +88,9 @@ const ELO_BOOST_PER_LEVEL: Record<number, number> = {
   0: 25,  // Small boost for L0
   1: 50,  // Moderate boost for L1
   2: 75,  // Larger boost for L2
-  3: 100, // L3: Planning
-  4: 125, // L4: Human Collaboration
-  5: 150, // L5: Meta-Skills
+  3: 100, // L3: planning requires significant demonstrated ability
+  4: 125, // L4: collaboration is the highest foundation skill
+  5: 150, // L5: meta-skills are the capstone — highest foundation Elo boost
 };
 
 /** Calibration difficulty level — moderate, discriminating. */

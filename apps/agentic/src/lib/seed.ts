@@ -29,6 +29,7 @@ interface TemplateFile {
     description: string;
     level: number;
     prerequisites?: string[];
+    branch?: string; // null/undefined = foundation; "research", "webdev", etc.
   };
   templates: Array<{
     slug: string;
@@ -87,12 +88,14 @@ async function seed() {
         name: tf.capability.name,
         description: tf.capability.description,
         level: tf.capability.level,
+        branch: tf.capability.branch || null,
       },
       create: {
         slug: tf.capability.slug,
         name: tf.capability.name,
         description: tf.capability.description,
         level: tf.capability.level,
+        branch: tf.capability.branch || null,
         courseId: course.id,
       },
     });
@@ -128,33 +131,54 @@ async function seed() {
     }
   }
 
-  // Create modules (one per level)
-  const levels = [...new Set(templateFiles.map((tf) => tf.capability.level))].sort();
-  const moduleMap = new Map<number, string>(); // level → moduleId
+  // Create modules (one per level for foundation, one per branch+level for specializations)
+  // Key: "foundation:L0", "research:L10", "webdev:L10", etc.
+  const moduleKeys = new Set<string>();
+  for (const tf of templateFiles) {
+    const branch = tf.capability.branch || "foundation";
+    moduleKeys.add(`${branch}:${tf.capability.level}`);
+  }
+  const moduleMap = new Map<string, string>(); // "branch:level" → moduleId
 
-  for (const level of levels) {
+  let moduleOrder = 0;
+  for (const key of [...moduleKeys].sort((a, b) => {
+    const [aBranch, aLevel] = a.split(":");
+    const [bBranch, bLevel] = b.split(":");
+    // Foundation first, then branches alphabetically, then by level
+    if (aBranch === "foundation" && bBranch !== "foundation") return -1;
+    if (bBranch === "foundation" && aBranch !== "foundation") return 1;
+    if (aBranch !== bBranch) return aBranch.localeCompare(bBranch);
+    return Number(aLevel) - Number(bLevel);
+  })) {
+    const [branch, levelStr] = key.split(":");
+    const level = Number(levelStr);
+
     const levelName =
-      level === 0 ? "Orientation" :
-      level === 1 ? "Single Tool Mastery" :
-      level === 2 ? "Composition" :
-      level === 3 ? "Planning" :
-      level === 4 ? "Human Collaboration" :
-      level === 5 ? "Meta-Skills" :
-      level === 10 ? "Specialization I" :
-      level === 11 ? "Specialization II" :
-      `Level ${level}`;
+      branch === "foundation" ? (
+        level === 0 ? "Orientation" :
+        level === 1 ? "Single Tool Mastery" :
+        level === 2 ? "Composition" :
+        level === 3 ? "Planning" :
+        level === 4 ? "Human Collaboration" :
+        level === 5 ? "Meta-Skills" :
+        `Foundation Level ${level}`
+      ) :
+      `Specialization: ${branch} (L${level})`;
+
+    const moduleId = branch === "foundation" ? `module-l${level}` : `module-${branch}-l${level}`;
 
     const mod = await db.module.upsert({
-      where: { id: `module-l${level}` },
-      update: { title: levelName, orderIndex: level },
+      where: { id: moduleId },
+      update: { title: levelName, orderIndex: moduleOrder },
       create: {
-        id: `module-l${level}`,
+        id: moduleId,
         title: levelName,
-        orderIndex: level,
+        orderIndex: moduleOrder,
         courseId: course.id,
       },
     });
-    moduleMap.set(level, mod.id);
+    moduleMap.set(key, mod.id);
+    moduleOrder++;
     console.log(`  📦 Module: ${mod.title}`);
   }
 
@@ -192,7 +216,8 @@ async function seed() {
       // Generate 3 initial static tasks per template at different difficulties
       const diffMin = tmpl.difficultyRange.min ?? 1;
       const diffMax = tmpl.difficultyRange.max ?? 3;
-      const moduleId = moduleMap.get(tf.capability.level);
+      const branch = tf.capability.branch || "foundation";
+      const moduleId = moduleMap.get(`${branch}:${tf.capability.level}`);
 
       for (let d = diffMin; d <= Math.min(diffMax, diffMin + 2); d++) {
         const templateInput: TaskTemplateInput = {
