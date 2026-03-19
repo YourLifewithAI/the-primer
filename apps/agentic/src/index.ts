@@ -8,7 +8,9 @@ import { taskRoutes } from "./routes/tasks.js";
 import { assessRoutes } from "./routes/assess.js";
 import { specializationRoutes } from "./routes/specializations.js";
 import { runtimeRoutes } from "./routes/runtime.js";
+import { mcpRoutes } from "./routes/mcp.js";
 import { startWorker, shutdown } from "./lib/agent-runner.js";
+import { disconnectAll as disconnectMcpServers } from "./lib/mcp-client.js";
 
 const app = new Hono();
 
@@ -33,6 +35,9 @@ app.route("/specializations", specializationRoutes);
 // Sprint 3A: Agent runtime routes (nested under /agents/:id)
 app.route("/agents", runtimeRoutes);
 
+// Sprint 3B: MCP server management routes
+app.route("/mcp", mcpRoutes);
+
 // Start BullMQ worker for agent runs (no-op if Redis unavailable — queue lazy-inits)
 try {
   startWorker();
@@ -44,12 +49,12 @@ try {
 // Graceful shutdown
 process.on("SIGTERM", async () => {
   console.log("[shutdown] SIGTERM received, draining worker...");
-  await shutdown();
+  await Promise.allSettled([shutdown(), disconnectMcpServers()]);
   process.exit(0);
 });
 process.on("SIGINT", async () => {
   console.log("[shutdown] SIGINT received, draining worker...");
-  await shutdown();
+  await Promise.allSettled([shutdown(), disconnectMcpServers()]);
   process.exit(0);
 });
 

@@ -16,6 +16,7 @@
 import { Agent } from "@mastra/core/agent";
 import { createTool, type Tool } from "@mastra/core/tools";
 import { z } from "zod";
+import { getToolsForAgent as getMcpTools } from "./mcp-registry.js";
 
 // ─── Types ───────────────────────────────────────────────────
 
@@ -210,17 +211,29 @@ export function getToolsForCapability(capabilitySlug?: string): AnyTool[] {
  *
  * The agent is preconfigured with:
  * - Tools appropriate for the task's capability area
+ * - MCP tools from registered external servers (Sprint 3B)
  * - System instructions that frame the agent as a learner
  * - Budget constraints from RuntimeConfig
+ *
+ * @param capabilitySlug - Limit built-in tools to a specific capability area
+ * @param config - Runtime config (budgets, model, timeouts)
+ * @param mcpTools - Additional MCP tools to merge in (fetched externally)
  */
 export function createPrimerAgent(
   capabilitySlug?: string,
-  config: RuntimeConfig = DEFAULT_RUNTIME_CONFIG
+  config: RuntimeConfig = DEFAULT_RUNTIME_CONFIG,
+  mcpTools: AnyTool[] = [],
 ): Agent {
   const tools = getToolsForCapability(capabilitySlug);
   const toolRecord: Record<string, AnyTool> = {};
   for (const tool of tools) {
     toolRecord[tool.id] = tool;
+  }
+
+  // Sprint 3B: Merge MCP tools into the tool record.
+  // MCP tool IDs are prefixed with "mcp_" so they won't collide with built-in tools.
+  for (const mcpTool of mcpTools) {
+    toolRecord[mcpTool.id] = mcpTool;
   }
 
   return new Agent({
@@ -260,7 +273,15 @@ export async function executeTask(
   let toolCallCount = 0;
 
   try {
-    const agent = createPrimerAgent(undefined, ctx.config);
+    // Sprint 3B: Fetch MCP tools (best-effort — failure doesn't block execution)
+    let mcpTools: AnyTool[] = [];
+    try {
+      mcpTools = await getMcpTools();
+    } catch (err: any) {
+      console.warn(`[agent-runtime] MCP tool fetch failed (non-fatal): ${err.message}`);
+    }
+
+    const agent = createPrimerAgent(undefined, ctx.config, mcpTools);
 
     // Execute with timeout (clear timer on completion to avoid holding the event loop)
     let timeoutHandle: ReturnType<typeof setTimeout>;

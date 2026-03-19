@@ -303,3 +303,30 @@ enum ErrorType {
   SYSTEM            // External failure (timeout, permission, etc.)
   UNKNOWN
 }
+
+// ─── MCP Integration (Sprint 3B) ─────────────────────────────
+
+model McpServer {
+  id          String   @id @default(cuid())
+  name        String
+  url         String   @unique
+  transport   String   @default("streamable-http") // "streamable-http" | "stdio"
+  description String?
+  enabled     Boolean  @default(true)
+
+  capabilities McpCapability[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model McpCapability {
+  id          String    @id @default(cuid())
+  serverId    String
+  server      McpServer @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  toolName    String
+  description String?
+  inputSchema Json?
+
+  @@unique([serverId, toolName])
+}
