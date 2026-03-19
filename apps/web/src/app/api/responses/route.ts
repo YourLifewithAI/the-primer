@@ -131,6 +131,20 @@ export async function POST(req: NextRequest) {
     });
   }
 
+  // Look up KC names for any newly mastered KCs so the frontend can show celebrations
+  const newlyMasteredUpdates = masteryUpdates.filter((m) => m.justMastered);
+  if (newlyMasteredUpdates.length > 0) {
+    const masteredKcIds = newlyMasteredUpdates.map((m) => m.kcId);
+    const kcs = await db.knowledgeComponent.findMany({
+      where: { id: { in: masteredKcIds } },
+      select: { id: true, name: true },
+    });
+    const nameMap = new Map(kcs.map((kc) => [kc.id, kc.name]));
+    for (const update of masteryUpdates) {
+      (update as Record<string, unknown>).kcName = nameMap.get(update.kcId) ?? null;
+    }
+  }
+
   // Fire notifications asynchronously — never block the response
   const newlyMastered = masteryUpdates.filter((m) => m.justMastered);
   if (newlyMastered.length > 0) {

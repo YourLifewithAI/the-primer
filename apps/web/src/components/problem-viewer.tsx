@@ -8,11 +8,19 @@ import { TutorChat } from "./tutor-chat";
 import type { TutorContext } from "@/lib/tutor";
 import { announce } from "@/lib/a11y";
 
+export interface MasteryEvent {
+  kcId: string;
+  kcName: string;
+  pMastery: number;
+}
+
 interface ProblemViewerProps {
   /** The DB problem ID (for response tracking) */
   problemId: string;
   problem: ProblemDefinition;
   onComplete?: (results: StepResult[]) => void;
+  /** Called when a KC transitions to mastered during this problem */
+  onMastery?: (event: MasteryEvent) => void;
   /** KC name for the current problem's target skill (for tutor context) */
   kcName?: string;
   /** Student's mastery level for the target KC */
@@ -32,6 +40,7 @@ export function ProblemViewer({
   problemId,
   problem,
   onComplete,
+  onMastery,
   kcName,
   pMastery,
   totalKcAttempts,
@@ -84,7 +93,7 @@ export function ProblemViewer({
 
     setAttempts((a) => a + 1);
 
-    // Record response + BKT update (fire-and-forget — don't block UI)
+    // Record response + BKT update — check for mastery transitions
     const responseTimeMs = Date.now() - stepStartTime.current;
     fetch("/api/responses", {
       method: "POST",
@@ -98,9 +107,23 @@ export function ProblemViewer({
         attemptNumber: attempts + 1,
         kcIds: currentStep.kcs,
       }),
-    }).catch(() => {
-      // Silent fail — don't break the learning flow for tracking errors
-    });
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data?.masteryUpdates || !onMastery) return;
+        for (const update of data.masteryUpdates) {
+          if (update.justMastered && update.kcName) {
+            onMastery({
+              kcId: update.kcId,
+              kcName: update.kcName,
+              pMastery: update.pMastery,
+            });
+          }
+        }
+      })
+      .catch(() => {
+        // Silent fail — don't break the learning flow for tracking errors
+      });
 
     if (correct) {
       setFeedback("correct");

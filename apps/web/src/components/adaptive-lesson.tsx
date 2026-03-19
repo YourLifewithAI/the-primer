@@ -1,8 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { ProblemViewer } from "./problem-viewer";
+import type { MasteryEvent } from "./problem-viewer";
 import { MasteryBar } from "./mastery-bar";
+import { MasteryCelebration } from "./mastery-celebration";
+import { SessionSummary } from "./session-summary";
+import type { SessionStats } from "./session-summary";
 import type { ProblemDefinition } from "@primer/shared/src/content-schema";
 
 interface AdaptiveLessonProps {
@@ -60,6 +65,14 @@ export function AdaptiveLesson({
   } | null>(null);
   const [problemCount, setProblemCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
+
+  // Gamification state
+  const [celebrationKc, setCelebrationKc] = useState<MasteryEvent | null>(null);
+  const [sessionMastered, setSessionMastered] = useState<string[]>([]);
+  const [sessionCorrect, setSessionCorrect] = useState(0);
+  const [sessionHints, setSessionHints] = useState(0);
+  const [showSessionSummary, setShowSessionSummary] = useState(false);
+  const router = useRouter();
 
   const fetchNextProblem = useCallback(async () => {
     setLoading(true);
@@ -120,11 +133,26 @@ export function AdaptiveLesson({
     fetchNextProblem();
   }, [fetchNextProblem]);
 
-  const handleProblemComplete = useCallback(() => {
-    setProblemCount((c) => c + 1);
-    // Small delay before fetching next
-    setTimeout(() => fetchNextProblem(), 800);
-  }, [fetchNextProblem]);
+  const handleMastery = useCallback((event: MasteryEvent) => {
+    setCelebrationKc(event);
+    setSessionMastered((prev) =>
+      prev.includes(event.kcName) ? prev : [...prev, event.kcName]
+    );
+  }, []);
+
+  const handleProblemComplete = useCallback(
+    (results: { stepId: string; correct: boolean; attempts: number; hintsUsed: number }[]) => {
+      setProblemCount((c) => c + 1);
+      // Track session stats
+      const correctSteps = results.filter((r) => r.attempts === 1).length;
+      const hintSteps = results.reduce((s, r) => s + r.hintsUsed, 0);
+      setSessionCorrect((c) => c + correctSteps);
+      setSessionHints((h) => h + hintSteps);
+      // Small delay before fetching next
+      setTimeout(() => fetchNextProblem(), 800);
+    },
+    [fetchNextProblem]
+  );
 
   // Static mode — show all problems in sequence (for unauthenticated users)
   if (mode === "static") {
@@ -154,29 +182,24 @@ export function AdaptiveLesson({
     );
   }
 
-  // Lesson complete
+  // Lesson complete — show session summary
   if (lessonComplete) {
+    const sessionStats: SessionStats = {
+      problemsAttempted: problemCount,
+      correctCount: sessionCorrect,
+      hintsUsed: sessionHints,
+      kcsProgressed: [],
+      kcsMastered: sessionMastered,
+      streakCount: 0, // Will be populated if we fetch it
+    };
+
     return (
       <div className="space-y-4 animate-fade-in">
-        <div className="border border-green-500/30 bg-green-500/5 rounded-lg p-8 text-center">
-          <div className="text-4xl mb-3 animate-pop">🎉</div>
-          <h3 className="text-xl font-semibold mb-2">Lesson Mastered!</h3>
-          <p className="text-muted-foreground">
-            You&apos;ve mastered all knowledge components in this lesson.
-          </p>
-          {progress && (
-            <p className="text-sm text-muted-foreground mt-2">
-              {progress.masteredKCs}/{progress.totalKCs} skills mastered ·{" "}
-              {problemCount} problems completed this session
-            </p>
-          )}
-          <a
-            href="/learn"
-            className="inline-block mt-4 px-5 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm font-medium"
-          >
-            Back to My Playlist
-          </a>
-        </div>
+        <SessionSummary
+          stats={sessionStats}
+          onContinue={() => router.push("/learn")}
+          onGoToDashboard={() => router.push("/dashboard")}
+        />
       </div>
     );
   }
@@ -234,9 +257,19 @@ export function AdaptiveLesson({
           problemId={currentProblem.dbId}
           problem={currentProblem.problem}
           onComplete={handleProblemComplete}
+          onMastery={handleMastery}
           kcName={targetKc?.id}
           pMastery={targetKc?.pMastery}
           totalKcAttempts={targetKc?.totalAttempts}
+        />
+      )}
+
+      {/* Mastery celebration modal */}
+      {celebrationKc && (
+        <MasteryCelebration
+          kcName={celebrationKc.kcName}
+          pMastery={celebrationKc.pMastery}
+          onDismiss={() => setCelebrationKc(null)}
         />
       )}
     </div>

@@ -97,3 +97,7 @@ export async function getStreak(studentId: string): Promise<StreakResult> {
 
   return { current, longest, todayComplete, last7Days };
 }
+
+// Re-export milestone utilities (pure functions, also usable on client via streak-milestones.ts)
+export { getMilestone, getMilestoneMessage } from "./streak-milestones";
+export type { StreakMilestone } from "./streak-milestones";

@@ -4,6 +4,9 @@ import { redirect } from "next/navigation";
 import { MASTERY_THRESHOLD } from "@primer/shared";
 import Link from "next/link";
 import { MasteryBar } from "@/components/mastery-bar";
+import { StreakDisplay } from "@/components/streak-display";
+import { WeeklyVelocity } from "@/components/weekly-velocity";
+import { StreakMilestoneCheck } from "@/components/streak-milestone-check";
 import { ensureUser } from "@/lib/ensure-user";
 import { getStreak } from "@/lib/streaks";
 import { getReviewStats } from "@/lib/fsrs-service";
@@ -76,6 +79,38 @@ export default async function DashboardPage() {
     getReviewStats(baseUser.id, enrollment?.courseId),
   ]);
 
+  // Weekly velocity: skills mastered in the last 7 days vs previous 7
+  const now = new Date();
+  const sevenDaysAgo = new Date(now);
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+  const fourteenDaysAgo = new Date(now);
+  fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+
+  const thisWeekMastered = user.masteryStates.filter(
+    (ms) => ms.masteredAt && ms.masteredAt >= sevenDaysAgo
+  );
+  const lastWeekMastered = user.masteryStates.filter(
+    (ms) =>
+      ms.masteredAt &&
+      ms.masteredAt >= fourteenDaysAgo &&
+      ms.masteredAt < sevenDaysAgo
+  );
+
+  // Per-day mastery counts for the last 7 days [today, yesterday, ..., 6 days ago]
+  const dailyMasteryCounts: number[] = [];
+  for (let i = 0; i < 7; i++) {
+    const dayStart = new Date(now);
+    dayStart.setDate(dayStart.getDate() - i);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(dayStart);
+    dayEnd.setDate(dayEnd.getDate() + 1);
+    dailyMasteryCounts.push(
+      user.masteryStates.filter(
+        (ms) => ms.masteredAt && ms.masteredAt >= dayStart && ms.masteredAt < dayEnd
+      ).length
+    );
+  }
+
   // Build mastery summary
   const masteryStates = user.masteryStates;
   const totalKCs = masteryStates.length;
@@ -118,25 +153,41 @@ export default async function DashboardPage() {
   return (
     <main className="min-h-screen px-4 py-6 md:px-8 max-w-4xl mx-auto" aria-labelledby="dashboard-title">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h1 id="dashboard-title" className="text-2xl font-bold">My Progress</h1>
-          <p className="text-muted-foreground mt-1">
-            {user.name ?? "Student"} · Mastery Dashboard
-          </p>
-        </div>
-        <div className="flex items-center gap-4">
-          {streak.current > 0 && (
-            <span className="text-sm">
-              🔥 {streak.current} day{streak.current !== 1 ? "s" : ""}
-            </span>
-          )}
+      <div className="flex flex-col gap-4 mb-8">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 id="dashboard-title" className="text-2xl font-bold">My Progress</h1>
+            <p className="text-muted-foreground mt-1">
+              {user.name ?? "Student"} · Mastery Dashboard
+            </p>
+          </div>
           <Link
             href="/learn"
-            className="text-sm px-4 py-1.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            className="text-sm px-4 py-2 min-h-[44px] flex items-center rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
           >
             Continue Learning
           </Link>
+        </div>
+
+        {/* Streak + Weekly Velocity row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Featured streak card */}
+          <div className="border border-border rounded-lg p-4">
+            <div className="text-sm text-muted-foreground mb-2">Practice Streak</div>
+            <StreakDisplay current={streak.current} last7Days={streak.last7Days} />
+            {streak.longest > streak.current && (
+              <div className="text-xs text-muted-foreground mt-2">
+                Longest: {streak.longest} days
+              </div>
+            )}
+          </div>
+
+          {/* Weekly velocity */}
+          <WeeklyVelocity
+            thisWeek={thisWeekMastered.length}
+            lastWeek={lastWeekMastered.length}
+            dailyCounts={dailyMasteryCounts}
+          />
         </div>
       </div>
 
@@ -270,6 +321,9 @@ export default async function DashboardPage() {
           </div>
         )}
       </section>
+
+      {/* Streak milestone toast */}
+      <StreakMilestoneCheck streakCount={streak.current} />
     </main>
   );
 }

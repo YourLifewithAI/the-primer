@@ -7,6 +7,7 @@ import { getStreak } from "@/lib/streaks";
 import { db } from "@/lib/db";
 import { CheckChart } from "@/components/check-chart";
 import { StreakDisplay } from "@/components/streak-display";
+import { StreakMilestoneCheck } from "@/components/streak-milestone-check";
 import { SessionTimer } from "@/components/session-timer";
 
 export const metadata: Metadata = {
@@ -69,6 +70,9 @@ export default async function LearnPage() {
         studentName={user.name}
         courseId={enrollment.courseId}
       />
+
+      {/* Streak milestone toast */}
+      <StreakMilestoneCheck streakCount={streak.current} />
     </main>
   );
 }
